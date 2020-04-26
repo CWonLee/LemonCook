@@ -1,5 +1,6 @@
 package com.makers.lemoncook.src.main.fragment;
 
+import android.graphics.Rect;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.makers.lemoncook.R;
+import com.makers.lemoncook.src.main.MainActivity;
 import com.makers.lemoncook.src.main.adapter.MainRecyclerViewAdapterMy;
 
 public class MainFragmentMy extends Fragment {
@@ -32,9 +34,9 @@ public class MainFragmentMy extends Fragment {
         mMainRecyclerViewAdapterMy = new MainRecyclerViewAdapterMy();
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 3);
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 8, true));
         mRecyclerView.setAdapter(mMainRecyclerViewAdapterMy);
 
         return view;
     }
-
 }

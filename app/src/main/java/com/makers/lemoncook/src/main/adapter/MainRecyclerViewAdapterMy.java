@@ -42,6 +42,9 @@ public class MainRecyclerViewAdapterMy extends RecyclerView.Adapter<MainRecycler
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) ;
 
         View view = inflater.inflate(R.layout.item_main_recycler, parent, false) ;
+        double height = parent.getMeasuredWidth() / 3.75;
+        view.setMinimumHeight((int)height);
+        view.setMinimumWidth((int)height);
         MainRecyclerViewAdapterMy.ViewHolder vh = new MainRecyclerViewAdapterMy.ViewHolder(view) ;
 
         return vh ;

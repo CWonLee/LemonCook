@@ -27,9 +27,10 @@ public class MainFragmentStar extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main_fragment_star, container, false);
 
-        mRecyclerView = view.findViewById(R.id.rv_main_my);
+        mRecyclerView = view.findViewById(R.id.rv_main_star);
         mMainRecyclerViewAdapterStar = new MainRecyclerViewAdapterStar();
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 3);
+        mRecyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 8, true));
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mMainRecyclerViewAdapterStar);
 

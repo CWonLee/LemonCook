@@ -8,4 +8,7 @@
     <color name="colorBlack">#000000</color>
 
     <color name="colorLoginGray">#898989</color>
+
+    <!-- MainActivity -->
+    <color name="colorMainGray">#DBDBDB</color>
 </resources>

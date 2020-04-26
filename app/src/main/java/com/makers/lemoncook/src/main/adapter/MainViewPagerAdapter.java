@@ -1,10 +1,14 @@
 package com.makers.lemoncook.src.main.adapter;
 
+import android.content.Context;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import com.makers.lemoncook.R;
 import com.makers.lemoncook.src.main.fragment.MainFragmentMy;
 import com.makers.lemoncook.src.main.fragment.MainFragmentStar;
 
