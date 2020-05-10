@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="24dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:tag="HideTag"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/round_swipe_right_background">
+        <ImageView
+            android:id="@+id/magnifier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:src="@drawable/ic_lemon" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp"
+        android:orientation="vertical"
+        android:background="@drawable/round_fill_gray">
+        <TextView
+            android:tag="Hover"
+            android:text="Swipe Example"
+            android:textColor="#000000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <Button
+            android:visibility="invisible"
+            android:id="@+id/click"
+            android:text="Click"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</com.daimajia.swipe.SwipeLayout>

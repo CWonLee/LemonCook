@@ -16,17 +16,23 @@
         android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="n">
-        <activity android:name=".src.join.JoinActivity"></activity>
-        <activity android:name=".src.login.LoginActivity">
-
-        </activity>
-        <activity android:name=".src.main.MainActivity">
+        <activity android:name=".src.recipeList.RecipeListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".src.splash.SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".src.join.JoinActivity" />
+        <activity android:name=".src.login.LoginActivity" />
+        <activity android:name=".src.main.MainActivity" />
     </application>
 
 </manifest>

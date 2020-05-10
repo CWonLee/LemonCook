@@ -1,6 +1,7 @@
 package com.makers.lemoncook.src.join;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,12 +20,14 @@ public class JoinActivity extends BaseActivity implements JoinActivityView {
 
     EditText mEtEmail, mEtNickname, mEtPassword, mEtPhoneNumber;
     Button mBtnDupCheck, mBtnCert, mBtnComplete;
+    ConstraintLayout mConstraintLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join);
 
+        mConstraintLayout = findViewById(R.id.join_cl);
         mEtEmail = findViewById(R.id.join_et_email);
         mEtNickname = findViewById(R.id.join_et_nickname);
         mEtPassword = findViewById(R.id.join_et_password);
@@ -33,21 +36,27 @@ public class JoinActivity extends BaseActivity implements JoinActivityView {
         mBtnCert = findViewById(R.id.join_btn_phone_cert);
         mBtnComplete = findViewById(R.id.join_btn_complete);
 
-        mBtnDupCheck.setOnClickListener(new View.OnClickListener() {
+        mConstraintLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideKeyboard(v);
+            }
+        });
+        mBtnDupCheck.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
 
             }
         });
-        mBtnCert.setOnClickListener(new View.OnClickListener() {
+        mBtnCert.setOnClickListener(new OnSingleClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onSingleClick(View v) {
 
             }
         });
-        mBtnComplete.setOnClickListener(new View.OnClickListener() {
+        mBtnComplete.setOnClickListener(new OnSingleClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onSingleClick(View v) {
                 join();
             }
         });
@@ -55,8 +64,10 @@ public class JoinActivity extends BaseActivity implements JoinActivityView {
 
     @Override
     public void joinSuccess(boolean isSuccess, int code, String message) {
-        if (isSuccess) {
+        hideProgressDialog();
+        if (isSuccess && code == 200) {
             showCustomToast(message);
+            finish();
         }
         else {
             showCustomToast(message);
@@ -65,10 +76,12 @@ public class JoinActivity extends BaseActivity implements JoinActivityView {
 
     @Override
     public void joinFailure() {
+        hideProgressDialog();
         showCustomToast(getResources().getString(R.string.network_error));
     }
 
     public void join() {
+        showProgressDialog();
         JoinService joinService = new JoinService(this);
         JoinRequest joinRequest = new JoinRequest();
         joinRequest.setEmail(mEtEmail.getText().toString());

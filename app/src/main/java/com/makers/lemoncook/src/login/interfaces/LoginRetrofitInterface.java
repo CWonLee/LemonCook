@@ -8,6 +8,6 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 public interface LoginRetrofitInterface {
-    @POST("/jwt")
+    @POST("/signin")
     Call<LoginResponse> postLogin(@Body LoginRequest params);
 }

@@ -16,9 +16,11 @@ import java.util.ArrayList;
 
 public class MainRecyclerViewAdapterStar extends RecyclerView.Adapter<MainRecyclerViewAdapterStar.ViewHolder> {
     private ArrayList<Integer> mImageArraylist;
-    private ArrayList<Integer> mTextArraylist;
+    private ArrayList<String> mTextArraylist;
 
-    public MainRecyclerViewAdapterStar() {
+    public MainRecyclerViewAdapterStar(ArrayList<Integer> imageArraylist, ArrayList<String> textArraylist) {
+        this.mImageArraylist = imageArraylist;
+        this.mTextArraylist = textArraylist;
     }
 
 
@@ -52,7 +54,8 @@ public class MainRecyclerViewAdapterStar extends RecyclerView.Adapter<MainRecycl
 
     @Override
     public void onBindViewHolder(@NonNull MainRecyclerViewAdapterStar.ViewHolder holder, int position) {
-
+        holder.mImage.setImageResource(mImageArraylist.get(position));
+        holder.mText.setText(mTextArraylist.get(position));
     }
 
     @Override

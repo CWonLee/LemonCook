@@ -8,38 +8,61 @@
     android:background="@color/colorWhite"
     tools:context=".src.main.MainActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/tb_main"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_cl_bar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorWhite"
-        app:menu="@menu/main_menu">
+        android:layout_height="58dp">
 
         <TextView
             android:id="@+id/main_tv_my_recipe"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
             android:text="@string/main_tab_my_recipe"
             android:textColor="@color/colorBlack"
-            android:textSize="15dp"
-            android:gravity="center_vertical"
+            android:textSize="16sp"
             android:layout_marginLeft="28dp"></TextView>
         <TextView
             android:id="@+id/main_tv_star_recipe"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/main_tv_my_recipe"
             android:text="@string/main_tab_star_recipe"
             android:textColor="@color/colorMainGray"
-            android:textSize="15dp"
+            android:textSize="16sp"
             android:gravity="center_vertical"
-            android:layout_marginLeft="7dp"></TextView>
+            android:layout_marginLeft="12dp"></TextView>
 
-    </androidx.appcompat.widget.Toolbar>
+        <ImageView
+            android:id="@+id/main_iv_lemon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginRight="24dp"
+            android:src="@drawable/ic_lemon"/>
+
+        <ImageView
+            android:id="@+id/main_iv_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/main_iv_lemon"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/ic_search"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/vp_main"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></androidx.viewpager.widget.ViewPager>
+        android:layout_height="match_parent"/>
 
 
 </LinearLayout>

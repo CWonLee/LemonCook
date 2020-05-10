@@ -5,8 +5,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 public class LoginResponse {
-    @SerializedName("userInfo")
-    private UserInfo userInfo;
+    @SerializedName("result")
+    private Result result;
 
     @SerializedName("jwt")
     private String jwt;
@@ -20,7 +20,7 @@ public class LoginResponse {
     @SerializedName("message")
     private String message;
 
-    public class UserInfo {
+    public class Result {
         @SerializedName("userNo")
         private int userNo;
 
@@ -57,8 +57,8 @@ public class LoginResponse {
         }
     }
 
-    public UserInfo getUserInfo() {
-        return userInfo;
+    public Result getUserInfo() {
+        return result;
     }
 
     public String getJwt() {

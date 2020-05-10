@@ -7,8 +7,21 @@
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlack">#000000</color>
 
+    <!-- SplashActivity -->
+    <color name="colorSplashGray">#898989</color>
+    <color name="colorSplashTitleBlack">#121212</color>
+    <color name="colorSplashTextBlack">#333333</color>
+
+    <!-- LoginActivity -->
+    <color name="colorLoginBlack">#121212</color>
+    <color name="colorLoginEtBlack">#333333</color>
     <color name="colorLoginGray">#898989</color>
 
     <!-- MainActivity -->
     <color name="colorMainGray">#DBDBDB</color>
+    <color name="colorMainBlack">#393939</color>
+
+    <!-- SwipeActivity -->
+    <color name="colorSwipeLeftColor">#e8505b</color>
+    <color name="colorSwipeRightColor">#f2c617</color>
 </resources>

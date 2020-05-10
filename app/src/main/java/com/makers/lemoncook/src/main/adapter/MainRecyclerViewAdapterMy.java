@@ -16,9 +16,11 @@ import java.util.ArrayList;
 
 public class MainRecyclerViewAdapterMy extends RecyclerView.Adapter<MainRecyclerViewAdapterMy.ViewHolder> {
     private ArrayList<Integer> mImageArraylist;
-    private ArrayList<Integer> mTextArraylist;
+    private ArrayList<String> mTextArraylist;
 
-    public MainRecyclerViewAdapterMy() {
+    public MainRecyclerViewAdapterMy(ArrayList<Integer> imageArraylist, ArrayList<String> textArraylist) {
+        this.mImageArraylist = imageArraylist;
+        this.mTextArraylist = textArraylist;
     }
 
 
@@ -45,14 +47,15 @@ public class MainRecyclerViewAdapterMy extends RecyclerView.Adapter<MainRecycler
         double height = parent.getMeasuredWidth() / 3.75;
         view.setMinimumHeight((int)height);
         view.setMinimumWidth((int)height);
-        MainRecyclerViewAdapterMy.ViewHolder vh = new MainRecyclerViewAdapterMy.ViewHolder(view) ;
+        MainRecyclerViewAdapterMy.ViewHolder vh = new MainRecyclerViewAdapterMy.ViewHolder(view);
 
         return vh ;
     }
 
     @Override
     public void onBindViewHolder(@NonNull MainRecyclerViewAdapterMy.ViewHolder holder, int position) {
-
+        holder.mImage.setImageResource(mImageArraylist.get(position));
+        holder.mText.setText(mTextArraylist.get(position));
     }
 
     @Override

@@ -8,6 +8,6 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 public interface JoinRetrofitInterface  {
-    @POST("/users")
+    @POST("/signup")
     Call<JoinResponse> postJoin(@Body JoinRequest params);
 }
