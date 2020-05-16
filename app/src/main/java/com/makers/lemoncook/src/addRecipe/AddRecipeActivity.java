@@ -1,40 +1,37 @@
-package com.makers.lemoncook.src.main;
+package com.makers.lemoncook.src.addRecipe;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
 import com.makers.lemoncook.R;
-import com.makers.lemoncook.src.BaseActivity;
-import com.makers.lemoncook.src.main.adapter.MainViewPagerAdapter;
+import com.makers.lemoncook.src.addRecipe.adapters.AddRecipeViewPagerAdapter;
 
-public class MainActivity extends BaseActivity {
+public class AddRecipeActivity extends AppCompatActivity {
 
-    FragmentPagerAdapter mFragmentPagerAdapter;
     ViewPager mViewPager;
-    TextView mTvMyRecipe, mTvStarRecipe;
+    TextView mTvNewRecipe, mTvLoadRecipe;
+    FragmentPagerAdapter mFragmentPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_add_recipe);
 
-        mViewPager = findViewById(R.id.vp_main);
-        mTvMyRecipe = findViewById(R.id.main_tv_my_recipe);
-        mTvStarRecipe = findViewById(R.id.main_tv_star_recipe);
+        mViewPager = findViewById(R.id.add_recipe_vp);
+        mTvNewRecipe = findViewById(R.id.add_recipe_tv_new);
+        mTvLoadRecipe = findViewById(R.id.add_recipe_tv_load);
 
-        mTvMyRecipe.setOnClickListener(movePageListener);
-        mTvMyRecipe.setTag(0);
-        mTvStarRecipe.setOnClickListener(movePageListener);
-        mTvStarRecipe.setTag(1);
+        mTvNewRecipe.setOnClickListener(movePageListener);
+        mTvNewRecipe.setTag(0);
+        mTvLoadRecipe.setOnClickListener(movePageListener);
+        mTvLoadRecipe.setTag(1);
 
-        mFragmentPagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager(), 0);
+        mFragmentPagerAdapter = new AddRecipeViewPagerAdapter(getSupportFragmentManager(), 0);
         mViewPager.setAdapter(mFragmentPagerAdapter);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -46,12 +43,12 @@ public class MainActivity extends BaseActivity {
             public void onPageSelected(int position) {
                 switch (position) {
                     case 0:
-                        mTvMyRecipe.setTextColor(getResources().getColor(R.color.colorBlack));
-                        mTvStarRecipe.setTextColor(getResources().getColor(R.color.colorMainGray));
+                        mTvNewRecipe.setTextColor(getResources().getColor(R.color.colorLoginBlack));
+                        mTvLoadRecipe.setTextColor(getResources().getColor(R.color.colorLoginGray));
                         break;
                     case 1:
-                        mTvMyRecipe.setTextColor(getResources().getColor(R.color.colorMainGray));
-                        mTvStarRecipe.setTextColor(getResources().getColor(R.color.colorBlack));
+                        mTvNewRecipe.setTextColor(getResources().getColor(R.color.colorLoginGray));
+                        mTvLoadRecipe.setTextColor(getResources().getColor(R.color.colorLoginBlack));
                         break;
                     default:
                 }

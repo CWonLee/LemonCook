@@ -40,4 +40,25 @@
     <string name="joinNickNameHint">Nickname</string>
     <string name="joinComplete">완료</string>
 
+    <!-- AddRecipeActivity -->
+    <string name="addRecipeTitle">레시피 추가하기</string>
+    <string name="addRecipeNew">새 레시피 등록</string>
+    <string name="addRecipeLoad">레시피 가져오기</string>
+
+    <!-- NewRecipeFragment -->
+    <string name="newRecipeTitle">Title</string>
+    <string name="newRecipeHashTag">Hashtag</string>
+    <string name="newRecipeMainImage">MainImage</string>
+    <string name="newRecipeRecipeImage">RecipeImage</string>
+    <string name="newRecipeIngredient">Ingredient</string>
+    <string name="newRecipeLittleTitleHint">소제목을 적어주세요</string>
+    <string name="newRecipeFoodNameHint">음식명을 적어주세요</string>
+    <string name="newRecipeHashTagHint">#Hashtag 추가 (예, #된장찌개 #한식 #고소한 )</string>
+    <string name="newRecipeMainImageHint">대표 사진을 설정해 주세요</string>
+    <string name="newRecipeRecommend">추천재료</string>
+    <string name="newRecipeAllPut">모두 담기</string>
+    <string name="newRecipeMaterialHint">재료명 (예, 양파)</string>
+    <string name="newRecipeQuantityHint">분량(예,1개)</string>
+    <string name="newRecipeStart">시작하기</string>
+
 </resources>

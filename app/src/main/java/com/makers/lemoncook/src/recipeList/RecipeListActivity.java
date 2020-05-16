@@ -1,6 +1,8 @@
 package com.makers.lemoncook.src.recipeList;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.View;
@@ -9,32 +11,33 @@ import android.widget.Toast;
 import com.daimajia.swipe.SwipeLayout;
 import com.makers.lemoncook.R;
 import com.makers.lemoncook.src.BaseActivity;
+import com.makers.lemoncook.src.recipeList.adapter.RecipeListRecyclerViewAdapter;
+
+import java.util.ArrayList;
 
 public class RecipeListActivity extends BaseActivity {
 
-    SwipeLayout mSwipeLayout;
+    RecyclerView mRecyclerView;
+    ArrayList<String> mUrlList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_list);
 
-        mSwipeLayout = findViewById(R.id.swipe_sample1);
-        mSwipeLayout.setShowMode(SwipeLayout.ShowMode.LayDown);
-        mSwipeLayout.addDrag(SwipeLayout.DragEdge.Right,mSwipeLayout.findViewWithTag("HideTag"));
-//swipe_layout을 클릭한 경우
-        mSwipeLayout.getSurfaceView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(RecipeListActivity.this, "Click on surface", Toast.LENGTH_SHORT).show();
-            }
-        });
-//star버튼을 클릭한 경우
-        mSwipeLayout.findViewById(R.id.magnifier).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(RecipeListActivity.this, "Star", Toast.LENGTH_SHORT).show();
-            }
-        });
+        Init();
+
+        mRecyclerView = findViewById(R.id.recipe_list_rv);
+
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        RecipeListRecyclerViewAdapter recipeListRecyclerViewAdapter = new RecipeListRecyclerViewAdapter(mUrlList);
+        mRecyclerView.setAdapter(recipeListRecyclerViewAdapter);
+
+    }
+
+    void Init() {
+        for (int i = 0; i < 7; i++) {
+            mUrlList.add("https://firebasestorage.googleapis.com/v0/b/lemoncook-80daa.appspot.com/o/unnamed.jpg?alt=media&token=8b5a2de7-9a45-4bf6-bb69-77488a28e08f");
+        }
     }
 }

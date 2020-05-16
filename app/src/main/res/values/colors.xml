@@ -24,4 +24,8 @@
     <!-- SwipeActivity -->
     <color name="colorSwipeLeftColor">#e8505b</color>
     <color name="colorSwipeRightColor">#f2c617</color>
+
+    <!-- NewRecipe -->
+    <color name="colorImageGray">#f1f5f8</color>
+    <color name="colorRecommendGray">#f8f8f8</color>
 </resources>
