@@ -7,9 +7,11 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.makers.lemoncook.src.addRecipe.fragments.LoadRecipeFragment;
 import com.makers.lemoncook.src.addRecipe.fragments.NewRecipeFragment;
+import com.makers.lemoncook.src.addRecipe.fragments.interfaces.NewRecipeFragmentView;
 
 public class AddRecipeViewPagerAdapter extends FragmentPagerAdapter {
     private static int NUM_ITEMS = 2;
+    private NewRecipeFragmentView mNewRecipeFragmentView;
 
     public AddRecipeViewPagerAdapter(@NonNull FragmentManager fm, int behavior) {
         super(fm, behavior);

@@ -9,11 +9,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.makers.lemoncook.R;
+import com.makers.lemoncook.src.NonSwipeViewPager;
 import com.makers.lemoncook.src.addRecipe.adapters.AddRecipeViewPagerAdapter;
 
 public class AddRecipeActivity extends AppCompatActivity {
 
-    ViewPager mViewPager;
+    NonSwipeViewPager mViewPager;
     TextView mTvNewRecipe, mTvLoadRecipe;
     FragmentPagerAdapter mFragmentPagerAdapter;
 
@@ -32,6 +33,7 @@ public class AddRecipeActivity extends AppCompatActivity {
         mTvLoadRecipe.setTag(1);
 
         mFragmentPagerAdapter = new AddRecipeViewPagerAdapter(getSupportFragmentManager(), 0);
+        mViewPager.setPagingEnabled(false);
         mViewPager.setAdapter(mFragmentPagerAdapter);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

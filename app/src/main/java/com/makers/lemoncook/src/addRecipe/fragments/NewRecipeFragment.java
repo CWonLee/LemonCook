@@ -1,12 +1,18 @@
 package com.makers.lemoncook.src.addRecipe.fragments;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.SystemClock;
 import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -20,19 +26,32 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.makers.lemoncook.R;
+import com.makers.lemoncook.src.BaseActivity;
 import com.makers.lemoncook.src.VerticalTextView;
+import com.makers.lemoncook.src.addRecipe.adapters.NewRecipeImageRecyclerViewAdapter;
+import com.makers.lemoncook.src.addRecipe.fragments.interfaces.NewRecipeFragmentView;
+import com.opensooq.supernova.gligar.GligarPicker;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class NewRecipeFragment extends Fragment {
+public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView {
 
     LinearLayout mLlExpandableContent, mLlDynamicArea;
-    ConstraintLayout mClExpandableBtn, mClDynamicPlusBtn;
+    ConstraintLayout mClExpandableBtn, mClDynamicPlusBtn, mClPlusRecipeImg;
     boolean expandable = true;
     VerticalTextView mTvIngredientTitle;
+    RecyclerView mRvImage;
+    NewRecipeImageRecyclerViewAdapter mNewRecipeImageRecyclerViewAdapter;
+
     private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
-    ArrayList<Integer> mLayoutID, mFirstEtID, mSecondEtID, mDeleteBtnID;
+    ArrayList<Integer> mRootLayoutID = new ArrayList<>();
+    ArrayList<Integer> mLayoutID = new ArrayList<>();
+    ArrayList<Integer> mFirstEtID = new ArrayList<>();
+    ArrayList<Integer> mSecondEtID = new ArrayList<>();
+    ArrayList<Integer> mDeleteBtnID = new ArrayList<>();
+    ArrayList<Uri> mUri = new ArrayList<>();
+    final static int PICKER_REQUEST_CODE = 30;
 
     public NewRecipeFragment() {
         // Required empty public constructor
@@ -44,11 +63,27 @@ public class NewRecipeFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_new_recipe, container, false);
 
+        mRvImage = view.findViewById(R.id.new_recipe_rv_recipe_image);
+        mClPlusRecipeImg = view.findViewById(R.id.new_recipe_cl_plus_recipe_image);
         mLlExpandableContent = view.findViewById(R.id.new_recipe_ll_expandable);
         mClExpandableBtn = view.findViewById(R.id.new_recipe_cl_expandable_btn);
         mTvIngredientTitle = view.findViewById(R.id.new_recipe_vt_ingredient);
         mLlDynamicArea = view.findViewById(R.id.new_recipe_ll_dynamic_area);
         mClDynamicPlusBtn = view.findViewById(R.id.new_recipe_cl_dynamic_plus_btn);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setOrientation(RecyclerView.HORIZONTAL);
+        mRvImage.setLayoutManager(layoutManager);
+        mNewRecipeImageRecyclerViewAdapter = new NewRecipeImageRecyclerViewAdapter(mUri, this);
+        mRvImage.setAdapter(mNewRecipeImageRecyclerViewAdapter);
+        //mRvImage.setNestedScrollingEnabled(false);
+
+        mClPlusRecipeImg.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                new GligarPicker().limit(12).disableCamera(false).requestCode(PICKER_REQUEST_CODE).withFragment(NewRecipeFragment.this).show();
+            }
+        });
 
         mClExpandableBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +111,24 @@ public class NewRecipeFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != getActivity().RESULT_OK) {
+            return;
+        }
+        switch (requestCode){
+            case PICKER_REQUEST_CODE : {
+                String pathsList[]= data.getExtras().getStringArray(GligarPicker.IMAGES_RESULT); // return list of selected images paths.
+                for (int i = pathsList.length - 1; i >= 0; i--) {
+                    mUri.add(Uri.parse(pathsList[i]));
+                }
+                mNewRecipeImageRecyclerViewAdapter.notifyDataSetChanged();
+                break;
+            }
+        }
     }
 
     public static void expand(final View v) {
@@ -201,6 +254,30 @@ public class NewRecipeFragment extends Fragment {
         rootLinearLayout.addView(deleteBtn, paramsIv);
 
         mLlDynamicArea.addView(rootLinearLayout, paramsRoot);
+
+        mRootLayoutID.add(rootLinearLayout.getId());
+        mLayoutID.add(dynamicLinearLayout.getId());
+        mFirstEtID.add(firstEt.getId());
+        mSecondEtID.add(secondEt.getId());
+        mDeleteBtnID.add(deleteBtn.getId());
+
+        deleteBtn.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                mRootLayoutID.remove(Integer.valueOf(rootLinearLayout.getId()));
+                mLayoutID.remove(Integer.valueOf(dynamicLinearLayout.getId()));
+                mFirstEtID.remove(Integer.valueOf(firstEt.getId()));
+                mSecondEtID.remove(Integer.valueOf(secondEt.getId()));
+                mDeleteBtnID.remove(Integer.valueOf(deleteBtn.getId()));
+                dynamicLinearLayout.removeView(firstEt);
+                dynamicLinearLayout.removeView(secondEt);
+                rootLinearLayout.removeView(dynamicLinearLayout);
+                rootLinearLayout.removeView(deleteBtn);
+                mLlDynamicArea.removeView(rootLinearLayout);
+            }
+        });
+
+        // mLayoutID mFirstEtID mSecondEtID mDeleteBtnID
     }
 
     private static int generateViewId() {
@@ -211,6 +288,38 @@ public class NewRecipeFragment extends Fragment {
             if (sNextGeneratedId.compareAndSet(result, newValue)) {
                 return result;
             }
+        }
+    }
+
+    @Override
+    public void removeImage(int idx) {
+        mUri.remove(idx);
+        mNewRecipeImageRecyclerViewAdapter.notifyDataSetChanged();
+    }
+
+    public abstract class OnSingleClickListener implements View.OnClickListener {
+        //중복클릭시간차이
+        private static final long MIN_CLICK_INTERVAL=600;
+
+        //마지막으로 클릭한 시간
+        private long mLastClickTime;
+
+        public abstract void onSingleClick(View v);
+
+        @Override
+        public final void onClick(View v) {
+            //현재 클릭한 시간
+            long currentClickTime= SystemClock.uptimeMillis();
+            //이전에 클릭한 시간과 현재시간의 차이
+            long elapsedTime=currentClickTime-mLastClickTime;
+            //마지막클릭시간 업데이트
+            mLastClickTime=currentClickTime;
+
+            //내가 정한 중복클릭시간 차이를 안넘었으면 클릭이벤트 발생못하게 return
+            if(elapsedTime<=MIN_CLICK_INTERVAL)
+                return;
+            //중복클릭시간 아니면 이벤트 발생
+            onSingleClick(v);
         }
     }
 }
