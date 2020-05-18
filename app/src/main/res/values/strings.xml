@@ -61,4 +61,9 @@
     <string name="newRecipeQuantityHint">분량(예,1개)</string>
     <string name="newRecipeStart">시작하기</string>
 
+    <!-- EditRecipe -->
+    <string name="editRecipeTitle">내 레시피</string>
+    <string name="editRecipeHint">레시피를 작성해 주세요</string>
+    <string name="editRecipeAddImage">사진 추가하기</string>
+
 </resources>

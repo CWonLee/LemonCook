@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,6 +31,7 @@ import com.makers.lemoncook.src.BaseActivity;
 import com.makers.lemoncook.src.VerticalTextView;
 import com.makers.lemoncook.src.addRecipe.adapters.NewRecipeImageRecyclerViewAdapter;
 import com.makers.lemoncook.src.addRecipe.fragments.interfaces.NewRecipeFragmentView;
+import com.makers.lemoncook.src.editRecipe.EditRecipeActivity;
 import com.opensooq.supernova.gligar.GligarPicker;
 
 import java.util.ArrayList;
@@ -38,11 +40,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView {
 
     LinearLayout mLlExpandableContent, mLlDynamicArea;
-    ConstraintLayout mClExpandableBtn, mClDynamicPlusBtn, mClPlusRecipeImg;
+    ConstraintLayout mClExpandableBtn, mClDynamicPlusBtn, mClPlusRecipeImg, mClMainImage;
     boolean expandable = true;
     VerticalTextView mTvIngredientTitle;
     RecyclerView mRvImage;
     NewRecipeImageRecyclerViewAdapter mNewRecipeImageRecyclerViewAdapter;
+    Button mBtnStart;
+    TextView mTvMainImage;
+    ImageView mIvMainPlusImage, mIvMainImage;
+    String mMainUri;
 
     private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
     ArrayList<Integer> mRootLayoutID = new ArrayList<>();
@@ -51,7 +57,9 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
     ArrayList<Integer> mSecondEtID = new ArrayList<>();
     ArrayList<Integer> mDeleteBtnID = new ArrayList<>();
     ArrayList<Uri> mUri = new ArrayList<>();
+    ArrayList<String> mStringUri = new ArrayList<>();
     final static int PICKER_REQUEST_CODE = 30;
+    final static int PICKER_MAIN_REQUEST_CODE = 31;
 
     public NewRecipeFragment() {
         // Required empty public constructor
@@ -63,6 +71,7 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
 
         View view = inflater.inflate(R.layout.fragment_new_recipe, container, false);
 
+        mClMainImage = view.findViewById(R.id.new_recipe_cl_main_image);
         mRvImage = view.findViewById(R.id.new_recipe_rv_recipe_image);
         mClPlusRecipeImg = view.findViewById(R.id.new_recipe_cl_plus_recipe_image);
         mLlExpandableContent = view.findViewById(R.id.new_recipe_ll_expandable);
@@ -70,6 +79,10 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
         mTvIngredientTitle = view.findViewById(R.id.new_recipe_vt_ingredient);
         mLlDynamicArea = view.findViewById(R.id.new_recipe_ll_dynamic_area);
         mClDynamicPlusBtn = view.findViewById(R.id.new_recipe_cl_dynamic_plus_btn);
+        mBtnStart = view.findViewById(R.id.new_recipe_btn_start);
+        mTvMainImage = view.findViewById(R.id.new_recipe_tv_plus_main_image);
+        mIvMainPlusImage = view.findViewById(R.id.new_recipe_iv_plus_main_image);
+        mIvMainImage = view.findViewById(R.id.new_recipe_iv_main_img);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(RecyclerView.HORIZONTAL);
@@ -103,10 +116,27 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
             }
         });
 
+        mClMainImage.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                new GligarPicker().limit(1).disableCamera(false).requestCode(PICKER_MAIN_REQUEST_CODE).withFragment(NewRecipeFragment.this).show();
+            }
+        });
+
         mClDynamicPlusBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addView();
+            }
+        });
+
+        mBtnStart.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                Intent intent = new Intent(getActivity(), EditRecipeActivity.class);
+                intent.putExtra("mStringUri", mStringUri);
+                intent.putExtra("mMainUri", mMainUri);
+                startActivity(intent);
             }
         });
 
@@ -124,8 +154,18 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
                 String pathsList[]= data.getExtras().getStringArray(GligarPicker.IMAGES_RESULT); // return list of selected images paths.
                 for (int i = pathsList.length - 1; i >= 0; i--) {
                     mUri.add(Uri.parse(pathsList[i]));
+                    mStringUri.add(pathsList[i]);
                 }
                 mNewRecipeImageRecyclerViewAdapter.notifyDataSetChanged();
+                break;
+            }
+            case PICKER_MAIN_REQUEST_CODE : {
+                String pathsList[]= data.getExtras().getStringArray(GligarPicker.IMAGES_RESULT);
+                mTvMainImage.setVisibility(View.GONE);
+                mIvMainPlusImage.setVisibility(View.GONE);
+                mIvMainImage.setVisibility(View.VISIBLE);
+                mMainUri = pathsList[0];
+                mIvMainImage.setImageURI(Uri.parse(pathsList[0]));
                 break;
             }
         }

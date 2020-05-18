@@ -46,4 +46,6 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 
     implementation 'com.opensooq.supernova:gligar:1.1.0'
+
+    implementation 'com.squareup.picasso:picasso:2.5.2'
 }

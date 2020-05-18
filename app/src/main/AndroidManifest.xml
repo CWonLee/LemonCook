@@ -16,6 +16,7 @@
         android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="n">
+        <activity android:name=".src.editRecipe.EditRecipeActivity"></activity>
         <activity android:name=".src.addRecipe.AddRecipeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
