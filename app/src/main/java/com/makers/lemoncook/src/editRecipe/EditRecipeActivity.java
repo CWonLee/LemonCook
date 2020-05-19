@@ -19,6 +19,7 @@ import com.makers.lemoncook.R;
 import com.makers.lemoncook.src.BaseActivity;
 import com.makers.lemoncook.src.editRecipe.adapters.EditRecipeRecyclerViewAdapter;
 import com.makers.lemoncook.src.editRecipe.adapters.EditRecipeViewPagerAdapter;
+import com.makers.lemoncook.src.editRecipe.fragments.EditRecipeFragment;
 import com.makers.lemoncook.src.editRecipe.interfaces.EditRecipeActivityView;
 import com.makers.lemoncook.src.editRecipe.interfaces.EditRecipeRecyclerViewAdapterInterface;
 import com.opensooq.supernova.gligar.GligarPicker;
@@ -30,6 +31,7 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
 
     ArrayList<Uri> mUri = new ArrayList<>();
     ArrayList<String> mStringUri = new ArrayList<>();
+    ArrayList<EditRecipeFragment> mFragments = new ArrayList<>();
     String mMainUri;
     RecyclerView mRecyclerView;
     ViewPager mViewPager;
@@ -57,7 +59,7 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
         mEditRecipeRecyclerViewAdapter = new EditRecipeRecyclerViewAdapter(mUri, this, this);
         mRecyclerView.setAdapter(mEditRecipeRecyclerViewAdapter);
 
-        mEditRecipeViewPagerAdapter = new EditRecipeViewPagerAdapter(getSupportFragmentManager(), 0, this, mUri);
+        mEditRecipeViewPagerAdapter = new EditRecipeViewPagerAdapter(getSupportFragmentManager(), 0, this, mUri, mFragments);
         mViewPager.setAdapter(mEditRecipeViewPagerAdapter);
         mViewPager.setOffscreenPageLimit(15);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -104,6 +106,8 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
         mStringUri = getIntent().getStringArrayListExtra("mStringUri");
         for (int i = 0; i < mStringUri.size(); i++) {
             mUri.add(Uri.parse(mStringUri.get(i)));
+            EditRecipeFragment editRecipeFragment = new EditRecipeFragment(mUri.size(), mUri.get(i));
+            mFragments.add(editRecipeFragment);
         }
 
         mEditRecipeViewPagerAdapter.notifyDataSetChanged();
@@ -133,6 +137,8 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
                 String pathsList[]= data.getExtras().getStringArray(GligarPicker.IMAGES_RESULT); // return list of selected images paths.
                 for (int i = pathsList.length - 1; i >= 0; i--) {
                     mUri.add(Uri.parse(pathsList[i]));
+                    EditRecipeFragment editRecipeFragment = new EditRecipeFragment(mUri.size(), mUri.get(i));
+                    mFragments.add(editRecipeFragment);
                 }
 
                 mEditRecipeRecyclerViewAdapter.notifyDataSetChanged();

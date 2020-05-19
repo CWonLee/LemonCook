@@ -10,24 +10,25 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import com.makers.lemoncook.src.editRecipe.fragments.EditRecipeFragment;
 import com.makers.lemoncook.src.editRecipe.interfaces.EditRecipeActivityView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class EditRecipeViewPagerAdapter extends FragmentPagerAdapter {
     private EditRecipeActivityView mEditRecipeActivityView;
     private ArrayList<Uri> mUri;
+    private ArrayList<EditRecipeFragment> mFragments;
 
-    public EditRecipeViewPagerAdapter(@NonNull FragmentManager fm, int behavior, EditRecipeActivityView editRecipeActivityView, ArrayList<Uri> arrayList) {
+    public EditRecipeViewPagerAdapter(@NonNull FragmentManager fm, int behavior, EditRecipeActivityView editRecipeActivityView, ArrayList<Uri> arrayList, ArrayList<EditRecipeFragment> fragments) {
         super(fm, behavior);
         this.mEditRecipeActivityView = editRecipeActivityView;
         this.mUri = arrayList;
+        this.mFragments = fragments;
     }
 
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        EditRecipeFragment editRecipeFragment = new EditRecipeFragment(position + 1, mUri.get(position));
-
-        return editRecipeFragment;
+        return mFragments.get(position);
     }
 
     @Override
