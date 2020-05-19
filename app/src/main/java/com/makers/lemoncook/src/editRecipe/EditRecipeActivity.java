@@ -59,6 +59,7 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
 
         mEditRecipeViewPagerAdapter = new EditRecipeViewPagerAdapter(getSupportFragmentManager(), 0, this, mUri);
         mViewPager.setAdapter(mEditRecipeViewPagerAdapter);
+        mViewPager.setOffscreenPageLimit(15);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
