@@ -12,20 +12,26 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.makers.lemoncook.R;
 import com.makers.lemoncook.src.editRecipe.interfaces.EditRecipeActivityView;
+import com.makers.lemoncook.src.editRecipe.interfaces.EditRecipeRecyclerViewAdapterInterface;
 
+import java.io.File;
 import java.util.ArrayList;
 
-public class EditRecipeRecyclerViewAdapter extends RecyclerView.Adapter<EditRecipeRecyclerViewAdapter.ViewHolder> {
+public class EditRecipeRecyclerViewAdapter extends RecyclerView.Adapter<EditRecipeRecyclerViewAdapter.ViewHolder> implements EditRecipeRecyclerViewAdapterInterface {
     private ArrayList<Uri> mData;
     private EditRecipeActivityView mEditRecipeActivityView;
-    private int mCurNum;
+    private int mCurNum = 0;
+    private Context mContext;
 
-    public EditRecipeRecyclerViewAdapter(ArrayList<Uri> arrayList, EditRecipeActivityView editRecipeActivityView, int curIdx) {
+    public EditRecipeRecyclerViewAdapter(ArrayList<Uri> arrayList, EditRecipeActivityView editRecipeActivityView, Context context) {
         mData = arrayList;
         this.mEditRecipeActivityView = editRecipeActivityView;
-        this.mCurNum = curIdx;
+        this.mContext = context;
+
+        mEditRecipeActivityView.getInterface(this);
     }
 
     @NonNull
@@ -41,17 +47,38 @@ public class EditRecipeRecyclerViewAdapter extends RecyclerView.Adapter<EditReci
     }
 
     @Override
-    public void onBindViewHolder(@NonNull EditRecipeRecyclerViewAdapter.ViewHolder holder, int position) {
-        holder.mImageView.setImageURI(mData.get(position));
+    public void onBindViewHolder(@NonNull EditRecipeRecyclerViewAdapter.ViewHolder holder, final int position) {
+        //Glide.with(mContext).load(mData.get(position)).centerCrop().into(holder.mImageView);
+        Glide.with(mContext).load(new File(mData.get(position).getPath())).into(holder.mImageView);
         holder.mImageView.setBackgroundResource(R.drawable.radius_2dp);
         if (position == mCurNum) {
             holder.mCl.setBackgroundResource(R.drawable.radius_2dp_lemon);
         }
+        else {
+            holder.mCl.setBackgroundResource(R.drawable.radius_2dp);
+        }
+
+        holder.mImageView.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                mEditRecipeActivityView.change(position);
+
+                mCurNum = position;
+                notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return mData.size();
+    }
+
+    @Override
+    public void changeCurNum(int num) {
+        mCurNum = num;
+
+        notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -64,14 +91,6 @@ public class EditRecipeRecyclerViewAdapter extends RecyclerView.Adapter<EditReci
 
             mImageView = itemView.findViewById(R.id.item_edit_recipe_rv_iv);
             mCl = itemView.findViewById(R.id.item_edit_recipe_cl);
-
-            mImageView.setOnClickListener(new OnSingleClickListener() {
-                @Override
-                public void onSingleClick(View v) {
-                    int pos = getAdapterPosition();
-                    mEditRecipeActivityView.change(pos);
-                }
-            });
         }
     }
 

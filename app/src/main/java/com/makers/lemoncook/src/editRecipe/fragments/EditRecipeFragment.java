@@ -12,7 +12,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.makers.lemoncook.R;
+
+import java.io.File;
 
 public class EditRecipeFragment extends Fragment {
 
@@ -33,8 +36,7 @@ public class EditRecipeFragment extends Fragment {
 
         mImageView = view.findViewById(R.id.fm_edit_recipe_iv);
         mTvNumber = view.findViewById(R.id.fm_edit_recipe_tv_img_num);
-
-        mImageView.setImageURI(mUri);
+        Glide.with(getContext()).load(new File(mUri.getPath())).into(mImageView);
         mTvNumber.setText(String.valueOf(mNumber));
 
         return view;

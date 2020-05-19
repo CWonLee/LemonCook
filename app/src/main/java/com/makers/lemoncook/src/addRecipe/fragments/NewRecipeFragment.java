@@ -25,7 +25,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.makers.lemoncook.R;
 import com.makers.lemoncook.src.BaseActivity;
 import com.makers.lemoncook.src.VerticalTextView;
@@ -34,6 +36,7 @@ import com.makers.lemoncook.src.addRecipe.fragments.interfaces.NewRecipeFragment
 import com.makers.lemoncook.src.editRecipe.EditRecipeActivity;
 import com.opensooq.supernova.gligar.GligarPicker;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -87,14 +90,19 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(RecyclerView.HORIZONTAL);
         mRvImage.setLayoutManager(layoutManager);
-        mNewRecipeImageRecyclerViewAdapter = new NewRecipeImageRecyclerViewAdapter(mUri, this);
+        mNewRecipeImageRecyclerViewAdapter = new NewRecipeImageRecyclerViewAdapter(mUri, this, getContext());
         mRvImage.setAdapter(mNewRecipeImageRecyclerViewAdapter);
         //mRvImage.setNestedScrollingEnabled(false);
 
         mClPlusRecipeImg.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
-                new GligarPicker().limit(12).disableCamera(false).requestCode(PICKER_REQUEST_CODE).withFragment(NewRecipeFragment.this).show();
+                if (mUri.size() < 15) {
+                    new GligarPicker().limit(15 - mUri.size()).disableCamera(false).requestCode(PICKER_REQUEST_CODE).withFragment(NewRecipeFragment.this).show();
+                }
+                else {
+                    showCustomToast("최대 15장만 불러올 수 있습니다");
+                }
             }
         });
 
@@ -165,7 +173,7 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
                 mIvMainPlusImage.setVisibility(View.GONE);
                 mIvMainImage.setVisibility(View.VISIBLE);
                 mMainUri = pathsList[0];
-                mIvMainImage.setImageURI(Uri.parse(pathsList[0]));
+                Glide.with(getContext()).load(new File(Uri.parse(pathsList[0]).getPath())).into(mIvMainImage);
                 break;
             }
         }
@@ -334,6 +342,7 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
     @Override
     public void removeImage(int idx) {
         mUri.remove(idx);
+        mStringUri.remove(idx);
         mNewRecipeImageRecyclerViewAdapter.notifyDataSetChanged();
     }
 
@@ -361,5 +370,9 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
             //중복클릭시간 아니면 이벤트 발생
             onSingleClick(v);
         }
+    }
+
+    public void showCustomToast(final String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
     }
 }

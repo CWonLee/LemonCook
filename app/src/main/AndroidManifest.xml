@@ -4,6 +4,11 @@
     package="com.makers.lemoncook">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name=".src.ApplicationClass"
@@ -15,7 +20,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning"
-        tools:targetApi="n">
+        tools:targetApi="n"
+        android:requestLegacyExternalStorage="true">
         <activity android:name=".src.editRecipe.EditRecipeActivity"></activity>
         <activity android:name=".src.addRecipe.AddRecipeActivity">
             <intent-filter>

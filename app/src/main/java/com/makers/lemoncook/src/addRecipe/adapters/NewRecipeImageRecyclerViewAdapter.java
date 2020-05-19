@@ -12,18 +12,23 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.makers.lemoncook.R;
 import com.makers.lemoncook.src.addRecipe.fragments.interfaces.NewRecipeFragmentView;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class NewRecipeImageRecyclerViewAdapter extends RecyclerView.Adapter<NewRecipeImageRecyclerViewAdapter.ViewHolder> {
     private ArrayList<Uri> mData;
     private NewRecipeFragmentView mNewRecipeFragmentView;
+    private Context mContext;
 
-    public NewRecipeImageRecyclerViewAdapter(ArrayList<Uri> arrayList, NewRecipeFragmentView newRecipeFragmentView) {
+    public NewRecipeImageRecyclerViewAdapter(ArrayList<Uri> arrayList, NewRecipeFragmentView newRecipeFragmentView, Context context) {
         mData = arrayList;
         this.mNewRecipeFragmentView = newRecipeFragmentView;
+        this.mContext = context;
     }
 
     @NonNull
@@ -40,7 +45,8 @@ public class NewRecipeImageRecyclerViewAdapter extends RecyclerView.Adapter<NewR
 
     @Override
     public void onBindViewHolder(@NonNull NewRecipeImageRecyclerViewAdapter.ViewHolder holder, int position) {
-        holder.mImageView.setImageURI(mData.get(position));
+        Glide.with(mContext).load(new File(mData.get(position).getPath())).into(holder.mImageView);
+        //Glide.with(mContext).load(mData.get(position)).centerCrop().into(holder.mImageView);
     }
 
     @Override
