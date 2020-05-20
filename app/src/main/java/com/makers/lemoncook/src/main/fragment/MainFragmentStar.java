@@ -41,7 +41,7 @@ public class MainFragmentStar extends Fragment {
 
         mTvText1.setText(Html.fromHtml("오늘은 <b>백종원</b>의<br><b>차돌된장찌개</b><br>어떠세요?"));
 
-        mMainRecyclerViewAdapterStar = new MainRecyclerViewAdapterStar(mImageList, mTextList);
+        mMainRecyclerViewAdapterStar = new MainRecyclerViewAdapterStar(mImageList, mTextList, getContext());
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 3);
         mRecyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 8, true));
         mRecyclerView.setLayoutManager(mLayoutManager);

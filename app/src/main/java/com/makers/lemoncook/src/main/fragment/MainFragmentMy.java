@@ -39,7 +39,7 @@ public class MainFragmentMy extends Fragment {
 
         mTvText1 = view.findViewById(R.id.my_tv_text1);
         mRecyclerView = view.findViewById(R.id.my_rv);
-        mMainRecyclerViewAdapterMy = new MainRecyclerViewAdapterMy(mImageList, mTextList);
+        mMainRecyclerViewAdapterMy = new MainRecyclerViewAdapterMy(mImageList, mTextList, getContext());
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 3);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 8, true));

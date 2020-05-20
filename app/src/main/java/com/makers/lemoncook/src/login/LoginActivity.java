@@ -78,6 +78,7 @@ public class LoginActivity extends BaseActivity implements LoginActivityView {
         if (isSuccess && code == 200) {
             SharedPreferences.Editor editor = sSharedPreferences.edit();
             editor.putString(X_ACCESS_TOKEN, jwt);
+            System.out.println("jwt = " + jwt);
             editor.putInt("userNo", userInfo.getUserNo());
             editor.putString("email", userInfo.getEmail());
             editor.putString("password", userInfo.getPassword());

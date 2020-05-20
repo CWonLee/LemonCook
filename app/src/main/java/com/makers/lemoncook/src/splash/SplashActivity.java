@@ -1,9 +1,6 @@
 package com.makers.lemoncook.src.splash;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -31,6 +28,8 @@ public class SplashActivity extends BaseActivity {
             @Override
             public void onSingleClick(View v) {
                 String jwt = sSharedPreferences.getString(X_ACCESS_TOKEN, null);
+                System.out.println("jwt : " + jwt);
+
                 if (jwt == null) {
                     startActivity(new Intent(getApplication(), LoginActivity.class));
                     SplashActivity.this.finish();

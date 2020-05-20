@@ -16,22 +16,22 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/network_security_config"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning"
-        tools:targetApi="n"
-        android:requestLegacyExternalStorage="true">
-        <activity android:name=".src.editRecipe.EditRecipeActivity"></activity>
-        <activity android:name=".src.addRecipe.AddRecipeActivity">
+        tools:targetApi="n">
+        <activity android:name=".src.editRecipe.EditRecipeActivity" />
+        <activity android:name=".src.addRecipe.AddRecipeActivity" />
+        <activity android:name=".src.recipeList.RecipeListActivity" />
+        <activity android:name=".src.splash.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".src.recipeList.RecipeListActivity" />
-        <activity android:name=".src.splash.SplashActivity" />
         <activity android:name=".src.join.JoinActivity" />
         <activity android:name=".src.login.LoginActivity" />
         <activity android:name=".src.main.MainActivity" />

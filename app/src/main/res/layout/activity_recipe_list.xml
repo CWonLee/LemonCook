@@ -73,7 +73,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/recipe_list_tv_new_order"
                 app:layout_constraintRight_toRightOf="parent"
                 android:layout_marginTop="10dp"
-                android:textColor="@color/colorLoginEtBlack"
+                android:textColor="@color/colorLoginGray"
                 android:text="이름순"
                 android:textSize="12sp"/>
 
