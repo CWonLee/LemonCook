@@ -137,7 +137,7 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
                 String pathsList[]= data.getExtras().getStringArray(GligarPicker.IMAGES_RESULT); // return list of selected images paths.
                 for (int i = pathsList.length - 1; i >= 0; i--) {
                     mUri.add(Uri.parse(pathsList[i]));
-                    EditRecipeFragment editRecipeFragment = new EditRecipeFragment(mUri.size(), mUri.get(i));
+                    EditRecipeFragment editRecipeFragment = new EditRecipeFragment(mUri.size(), mUri.get(mUri.size() - 1));
                     mFragments.add(editRecipeFragment);
                 }
 
