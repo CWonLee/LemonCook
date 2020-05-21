@@ -66,4 +66,10 @@
     <string name="editRecipeHint">레시피를 작성해 주세요</string>
     <string name="editRecipeAddImage">사진 추가하기</string>
 
+    <!-- MyPage -->
+    <string name="myPageTitle">마이페이지</string>
+    <string name="myPageMyRecipe">내 등록 레시피</string>
+    <string name="myPageGetRecipe">공유받은 레시피</string>
+    <string name="myPageZzim">찜 목록</string>
+
 </resources>

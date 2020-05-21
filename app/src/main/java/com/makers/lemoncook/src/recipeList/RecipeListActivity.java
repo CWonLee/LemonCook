@@ -110,6 +110,7 @@ public class RecipeListActivity extends BaseActivity implements RecipeListActivi
 
     @Override
     public void getRecipeFailure() {
-
+        hideProgressDialog();
+        showCustomToast(getResources().getString(R.string.network_error));
     }
 }

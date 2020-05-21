@@ -5,20 +5,24 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.makers.lemoncook.R;
 import com.makers.lemoncook.src.BaseActivity;
 import com.makers.lemoncook.src.main.adapter.MainViewPagerAdapter;
+import com.makers.lemoncook.src.myPage.MyPageActivity;
 
 public class MainActivity extends BaseActivity {
 
     FragmentPagerAdapter mFragmentPagerAdapter;
     ViewPager mViewPager;
     TextView mTvMyRecipe, mTvStarRecipe;
+    ImageView mIvLemon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +32,7 @@ public class MainActivity extends BaseActivity {
         mViewPager = findViewById(R.id.vp_main);
         mTvMyRecipe = findViewById(R.id.main_tv_my_recipe);
         mTvStarRecipe = findViewById(R.id.main_tv_star_recipe);
+        mIvLemon = findViewById(R.id.main_iv_lemon);
 
         mTvMyRecipe.setOnClickListener(movePageListener);
         mTvMyRecipe.setTag(0);
@@ -60,6 +65,14 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onPageScrollStateChanged(int state) {
 
+            }
+        });
+
+        mIvLemon.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MyPageActivity.class);
+                startActivity(intent);
             }
         });
     }
