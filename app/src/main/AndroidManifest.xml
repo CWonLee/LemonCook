@@ -22,7 +22,8 @@
         android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="n">
-        <activity android:name=".src.myPage.MyPageActivity"></activity>
+        <activity android:name=".src.search.SearchActivity"></activity>
+        <activity android:name=".src.myPage.MyPageActivity" />
         <activity android:name=".src.editRecipe.EditRecipeActivity" />
         <activity android:name=".src.addRecipe.AddRecipeActivity" />
         <activity android:name=".src.recipeList.RecipeListActivity" />
