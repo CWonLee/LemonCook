@@ -2,6 +2,7 @@ package com.makers.lemoncook.src.recipeList;
 
 import com.makers.lemoncook.src.recipeList.interfaces.RecipeListActivityView;
 import com.makers.lemoncook.src.recipeList.interfaces.RecipeListRetrofitInterface;
+import com.makers.lemoncook.src.recipeList.models.ResponseDeleteRecipe;
 import com.makers.lemoncook.src.recipeList.models.ResponseGetRecipe;
 
 import retrofit2.Call;
@@ -30,6 +31,23 @@ public class RecipeListService {
             public void onFailure(Call<ResponseGetRecipe> call, Throwable t) {
                 t.printStackTrace();
                 mRecipeListActivityView.getRecipeFailure();
+            }
+        });
+    }
+
+    void deleteRecipe(String recipeNo, final int idx) {
+        final RecipeListRetrofitInterface recipeListRetrofitInterface = getRetrofit().create(RecipeListRetrofitInterface.class);
+        recipeListRetrofitInterface.deleteRecipe(recipeNo).enqueue(new Callback<ResponseDeleteRecipe>() {
+            @Override
+            public void onResponse(Call<ResponseDeleteRecipe> call, Response<ResponseDeleteRecipe> response) {
+                final ResponseDeleteRecipe responseDeleteRecipe = response.body();
+                mRecipeListActivityView.deleteRecipeSuccess(responseDeleteRecipe.isSuccess(), responseDeleteRecipe.getCode(), responseDeleteRecipe.getMessage(), idx);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseDeleteRecipe> call, Throwable t) {
+                t.printStackTrace();
+                mRecipeListActivityView.deleteRecipeFailure();
             }
         });
     }

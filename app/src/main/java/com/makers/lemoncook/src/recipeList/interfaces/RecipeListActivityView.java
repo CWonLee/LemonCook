@@ -8,4 +8,10 @@ public interface RecipeListActivityView {
     void getRecipeSuccess(boolean isSuccess, int code, String message, ArrayList<ResponseGetRecipe.Result> result);
 
     void getRecipeFailure();
+
+    void deleteRecipeSuccess(boolean isSuccess, int code, String message, int idx);
+
+    void deleteRecipeFailure();
+
+    void deleteRecipe(int recipeNo, int idx);
 }

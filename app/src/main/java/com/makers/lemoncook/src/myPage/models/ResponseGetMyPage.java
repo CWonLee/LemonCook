@@ -25,8 +25,8 @@ public class ResponseGetMyPage {
         @SerializedName("nickname")
         private String nickname;
 
-        @SerializedName("registerdRecipe")
-        private int registerdRecipe;
+        @SerializedName("registerRecipe")
+        private int registerRecipe;
 
         @SerializedName("sharedRecipe")
         private int sharedRecipe;
@@ -86,8 +86,8 @@ public class ResponseGetMyPage {
             return nickname;
         }
 
-        public int getRegisterdRecipe() {
-            return registerdRecipe;
+        public int getRegisterRecipe() {
+            return registerRecipe;
         }
 
         public int getSharedRecipe() {

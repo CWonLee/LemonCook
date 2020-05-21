@@ -67,7 +67,8 @@ public class MyPageActivity extends BaseActivity implements MyPageActivityView {
             }
             mMyPageRecyclerViewAdapter.notifyDataSetChanged();
             mTvUserName.setText(result.getNickname());
-            mTvMyRecipeCnt.setText(Integer.toString(result.getRegisterdRecipe()));
+            System.out.println(result.getRegisterRecipe());
+            mTvMyRecipeCnt.setText(Integer.toString(result.getRegisterRecipe()));
             mTvGetRecipeCnt.setText(Integer.toString(result.getSharedRecipe()));
             mTvZzim.setText("0");
         }

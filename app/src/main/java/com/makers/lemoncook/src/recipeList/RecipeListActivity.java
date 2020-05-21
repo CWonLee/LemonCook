@@ -52,7 +52,7 @@ public class RecipeListActivity extends BaseActivity implements RecipeListActivi
         });
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecipeListRecyclerViewAdapter = new RecipeListRecyclerViewAdapter(mData);
+        mRecipeListRecyclerViewAdapter = new RecipeListRecyclerViewAdapter(mData, this);
         mRecyclerView.setAdapter(mRecipeListRecyclerViewAdapter);
 
         getRecipe("최신순");
@@ -112,5 +112,31 @@ public class RecipeListActivity extends BaseActivity implements RecipeListActivi
     public void getRecipeFailure() {
         hideProgressDialog();
         showCustomToast(getResources().getString(R.string.network_error));
+    }
+
+    @Override
+    public void deleteRecipeSuccess(boolean isSuccess, int code, String message, int idx) {
+        hideProgressDialog();
+        if (isSuccess && code == 200) {
+            mData.remove(idx);
+            mRecipeListRecyclerViewAdapter.notifyDataSetChanged();
+            showCustomToast(message);
+        }
+        else {
+            showCustomToast(message);
+        }
+    }
+
+    @Override
+    public void deleteRecipeFailure() {
+        hideProgressDialog();
+        showCustomToast(getResources().getString(R.string.network_error));
+    }
+
+    @Override
+    public void deleteRecipe(int recipeNo, int idx) {
+        showProgressDialog();
+        RecipeListService recipeListService = new RecipeListService(this);
+        recipeListService.deleteRecipe(Integer.toString(recipeNo), idx);
     }
 }

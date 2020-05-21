@@ -1,6 +1,7 @@
 package com.makers.lemoncook.src.recipeList.adapter;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,20 +9,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.daimajia.swipe.SwipeLayout;
 import com.makers.lemoncook.R;
+import com.makers.lemoncook.src.recipeList.interfaces.RecipeListActivityView;
 import com.makers.lemoncook.src.recipeList.models.ResponseGetRecipe;
 
 import java.util.ArrayList;
 
 public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<RecipeListRecyclerViewAdapter.ViewHolder> {
     private ArrayList<ResponseGetRecipe.Result> mData;
+    private RecipeListActivityView mRecipeListActivityView;
 
-    public RecipeListRecyclerViewAdapter(ArrayList<ResponseGetRecipe.Result> arrayList) {
-        mData = arrayList;
+    public RecipeListRecyclerViewAdapter(ArrayList<ResponseGetRecipe.Result> arrayList, RecipeListActivityView recipeListActivityView) {
+        this.mData = arrayList;
+        this.mRecipeListActivityView = recipeListActivityView;
     }
 
     @NonNull
@@ -37,7 +42,7 @@ public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<RecipeLi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         holder.mSwipeLayout.setShowMode(SwipeLayout.ShowMode.LayDown);
         holder.mSwipeLayout.addDrag(SwipeLayout.DragEdge.Right,holder.mSwipeLayout.findViewWithTag("Right"));
         holder.mSwipeLayout.addDrag(SwipeLayout.DragEdge.Left,holder.mSwipeLayout.findViewWithTag("Left"));
@@ -49,6 +54,13 @@ public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<RecipeLi
         holder.mTvName.setText(mData.get(position).getRecipeName());
         holder.mTvHashTag.setText(mData.get(position).getRecipeHashTag());
         holder.mTvDate.setText(mData.get(position).getRecipeCreatedAt());
+
+        holder.mClDelete.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                mRecipeListActivityView.deleteRecipe(mData.get(position).getRecipeNo(), position);
+            }
+        });
     }
 
     @Override
@@ -61,6 +73,7 @@ public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<RecipeLi
         ImageView mImageView;
         SwipeLayout mSwipeLayout;
         TextView mTvTitle, mTvName, mTvHashTag, mTvDate;
+        ConstraintLayout mClDelete;
 
         public ViewHolder(@NonNull final View itemView) {
             super(itemView);
@@ -71,6 +84,33 @@ public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<RecipeLi
             mTvName = itemView.findViewById(R.id.item_recipe_list_tv_name);
             mTvHashTag = itemView.findViewById(R.id.item_recipe_list_tv_hash_tag);
             mTvDate = itemView.findViewById(R.id.item_recipe_list_tv_date);
+            mClDelete = itemView.findViewById(R.id.item_recipe_list_cl_delete);
+        }
+    }
+
+    public abstract class OnSingleClickListener implements View.OnClickListener {
+        //중복클릭시간차이
+        private static final long MIN_CLICK_INTERVAL=600;
+
+        //마지막으로 클릭한 시간
+        private long mLastClickTime;
+
+        public abstract void onSingleClick(View v);
+
+        @Override
+        public final void onClick(View v) {
+            //현재 클릭한 시간
+            long currentClickTime= SystemClock.uptimeMillis();
+            //이전에 클릭한 시간과 현재시간의 차이
+            long elapsedTime=currentClickTime-mLastClickTime;
+            //마지막클릭시간 업데이트
+            mLastClickTime=currentClickTime;
+
+            //내가 정한 중복클릭시간 차이를 안넘었으면 클릭이벤트 발생못하게 return
+            if(elapsedTime<=MIN_CLICK_INTERVAL)
+                return;
+            //중복클릭시간 아니면 이벤트 발생
+            onSingleClick(v);
         }
     }
 }

@@ -49,6 +49,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/item_recipe_list_cl_delete"
             android:tag="Left"
             android:layout_width="50dp"
             android:layout_height="match_parent"
