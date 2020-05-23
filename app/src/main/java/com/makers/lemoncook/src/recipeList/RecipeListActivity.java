@@ -1,21 +1,20 @@
 package com.makers.lemoncook.src.recipeList;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.daimajia.swipe.SwipeLayout;
 import com.makers.lemoncook.R;
 import com.makers.lemoncook.src.BaseActivity;
 import com.makers.lemoncook.src.recipeList.adapter.RecipeListRecyclerViewAdapter;
 import com.makers.lemoncook.src.recipeList.interfaces.RecipeListActivityView;
 import com.makers.lemoncook.src.recipeList.models.ResponseGetRecipe;
+import com.makers.lemoncook.src.search.SearchActivity;
 
 import java.util.ArrayList;
 
@@ -24,7 +23,7 @@ public class RecipeListActivity extends BaseActivity implements RecipeListActivi
     RecyclerView mRecyclerView;
     ArrayList<ResponseGetRecipe.Result> mData = new ArrayList<>();
     TextView mTvTitle, mTvOrderNew, mTvOrderName;
-    ImageView mIvBack;
+    ImageView mIvBack, mIvSearch;
     RecipeListRecyclerViewAdapter mRecipeListRecyclerViewAdapter;
     int mOrder = 1;
 
@@ -37,7 +36,9 @@ public class RecipeListActivity extends BaseActivity implements RecipeListActivi
         mTvTitle = findViewById(R.id.recipe_list_tv_title);
         mIvBack = findViewById(R.id.recipe_list_iv_back);
         mTvOrderNew = findViewById(R.id.recipe_list_tv_new_order);
-        mTvOrderName = findViewById(R.id.recipe_list_tv_name_order);
+        mTvOrderName = findViewById(R.id.recipe_list_tv_popular_order);
+        mIvSearch = findViewById(R.id.recipe_list_iv_search);
+
         if (getIntent().getStringExtra("filter").equals("My Recipe")) {
             mTvTitle.setText("내 " + getIntent().getStringExtra("category") + " 레시피");
         }
@@ -77,8 +78,17 @@ public class RecipeListActivity extends BaseActivity implements RecipeListActivi
                     mTvOrderNew.setTextColor(getResources().getColor(R.color.colorLoginGray));
                     mTvOrderName.setTextColor(getResources().getColor(R.color.colorLoginEtBlack));
 
-                    getRecipe("이름순");
+                    getRecipe("인기순");
                 }
+            }
+        });
+
+        mIvSearch.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                Intent intent = new Intent(RecipeListActivity.this, SearchActivity.class);
+                intent.putExtra("filter", getIntent().getStringExtra("filter"));
+                startActivity(intent);
             }
         });
     }
@@ -96,9 +106,6 @@ public class RecipeListActivity extends BaseActivity implements RecipeListActivi
             mData.clear();
             for (int i = 0; i < result.size(); i++) {
                 mData.add(result.get(i));
-                System.out.println(result.get(i).getRecipeTilte());
-                System.out.println(result.get(i).getRecipeName());
-                System.out.println(result.get(i).getRecipeHashTag());
             }
 
             mRecipeListRecyclerViewAdapter.notifyDataSetChanged();

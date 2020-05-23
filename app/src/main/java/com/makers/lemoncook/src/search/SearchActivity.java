@@ -13,6 +13,7 @@ import android.widget.ImageView;
 
 import com.makers.lemoncook.R;
 import com.makers.lemoncook.src.BaseActivity;
+import com.makers.lemoncook.src.VerticalTextView;
 import com.makers.lemoncook.src.search.adapters.SearchRecyclerViewAdapter;
 import com.makers.lemoncook.src.search.interfaces.SearchActivityView;
 import com.makers.lemoncook.src.search.models.ResponseSearch;
@@ -26,6 +27,9 @@ public class SearchActivity extends BaseActivity implements SearchActivityView {
     SearchRecyclerViewAdapter mSearchRecyclerViewAdapter;
     ArrayList<ResponseSearch.Result> mData = new ArrayList<>();
     ImageView mIvBack;
+    String mOrder = "인기순";
+    String mFilter;
+    VerticalTextView mVtPopularOrder, mVtNewOrder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +39,17 @@ public class SearchActivity extends BaseActivity implements SearchActivityView {
         mRecyclerView = findViewById(R.id.search_rv);
         mEtSearchBar = findViewById(R.id.search_et_search_bar);
         mIvBack = findViewById(R.id.search_iv_back);
+        mVtPopularOrder = findViewById(R.id.search_vt_popular_order);
+        mVtNewOrder = findViewById(R.id.search_vt_new_order);
 
         mRecyclerView.setNestedScrollingEnabled(false);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mSearchRecyclerViewAdapter = new SearchRecyclerViewAdapter(mData);
         mRecyclerView.setAdapter(mSearchRecyclerViewAdapter);
+
+        mFilter = getIntent().getStringExtra("filter");
+
+        getSearch("");
 
         mEtSearchBar.addTextChangedListener(new TextWatcher() {
             @Override
@@ -54,7 +64,30 @@ public class SearchActivity extends BaseActivity implements SearchActivityView {
 
             @Override
             public void afterTextChanged(Editable s) {
-                getSearch(mEtSearchBar.getText().toString(), "My Recipe");
+                getSearch(s.toString());
+            }
+        });
+
+        mVtPopularOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mOrder == "최신순") {
+                    mVtPopularOrder.setTextColor(getResources().getColor(R.color.colorLoginEtBlack));
+                    mVtNewOrder.setTextColor(getResources().getColor(R.color.colorLoginGray));
+                    mOrder = "인기순";
+                    getSearch(mEtSearchBar.getText().toString());
+                }
+            }
+        });
+        mVtNewOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mOrder == "인기순") {
+                    mVtPopularOrder.setTextColor(getResources().getColor(R.color.colorLoginGray));
+                    mVtNewOrder.setTextColor(getResources().getColor(R.color.colorLoginEtBlack));
+                    mOrder = "최신순";
+                    getSearch(mEtSearchBar.getText().toString());
+                }
             }
         });
 
@@ -66,10 +99,10 @@ public class SearchActivity extends BaseActivity implements SearchActivityView {
         });
     }
 
-    public void getSearch(String search, String filter) {
-        System.out.println(search + " " + filter);
+    public void getSearch(String search) {
+        System.out.println(search);
         SearchService searchService = new SearchService(this);
-        searchService.getSearch(search, filter);
+        searchService.getSearch(search, mFilter, mOrder);
     }
 
     @Override

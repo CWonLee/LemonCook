@@ -81,6 +81,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onSingleClick(View v) {
                 Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                intent.putExtra("filter", "All");
                 startActivity(intent);
             }
         });

@@ -11,6 +11,7 @@ public interface SearchRetrofitInterface {
     @GET("/recipes")
     Call<ResponseSearch> getSearch(
             @Query("search") String search,
-            @Query("filter") String filter
+            @Query("filter") String filter,
+            @Query("sort") String sort
     );
 }

@@ -17,9 +17,9 @@ public class SearchService {
         this.mSearchActivityView = searchActivityView;
     }
 
-    void getSearch(String search, String filter) {
+    void getSearch(String search, String filter, String sort) {
         final SearchRetrofitInterface searchRetrofitInterface = getRetrofit().create(SearchRetrofitInterface.class);
-        searchRetrofitInterface.getSearch(search, filter).enqueue(new Callback<ResponseSearch>() {
+        searchRetrofitInterface.getSearch(search, filter, sort).enqueue(new Callback<ResponseSearch>() {
             @Override
             public void onResponse(Call<ResponseSearch> call, Response<ResponseSearch> response) {
                 final ResponseSearch responseSearch = response.body();
