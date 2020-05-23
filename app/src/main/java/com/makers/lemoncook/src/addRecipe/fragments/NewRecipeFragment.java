@@ -34,6 +34,7 @@ import com.makers.lemoncook.src.VerticalTextView;
 import com.makers.lemoncook.src.addRecipe.adapters.NewRecipeImageRecyclerViewAdapter;
 import com.makers.lemoncook.src.addRecipe.fragments.interfaces.NewRecipeFragmentView;
 import com.makers.lemoncook.src.editRecipe.EditRecipeActivity;
+import com.nex3z.flowlayout.FlowLayout;
 import com.opensooq.supernova.gligar.GligarPicker;
 
 import java.io.File;
@@ -53,6 +54,7 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
     ImageView mIvMainPlusImage, mIvMainImage;
     String mMainUri;
     EditText mEtHashTag;
+    FlowLayout mFlowLayout;
     private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
     ArrayList<Integer> mRootLayoutID = new ArrayList<>();
     ArrayList<Integer> mLayoutID = new ArrayList<>();
@@ -89,6 +91,7 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
         mIvMainImage = view.findViewById(R.id.new_recipe_iv_main_img);
         mBtnAddHashTag = view.findViewById(R.id.new_recipe_btn_add_hash_tag);
         mEtHashTag = view.findViewById(R.id.new_recipe_et_hash_tag);
+        mFlowLayout = view.findViewById(R.id.new_recipe_flowLayout);
 
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -96,7 +99,6 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
         mRvImage.setLayoutManager(layoutManager);
         mNewRecipeImageRecyclerViewAdapter = new NewRecipeImageRecyclerViewAdapter(mUri, this, getContext());
         mRvImage.setAdapter(mNewRecipeImageRecyclerViewAdapter);
-        //mRvImage.setNestedScrollingEnabled(false);
 
         mClPlusRecipeImg.setOnClickListener(new OnSingleClickListener() {
             @Override
@@ -179,7 +181,29 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
                                     }
                                 }
                                 if (b) {
-
+                                    final TextView textView = new TextView(getContext());
+                                    textView.setId(generateViewId());
+                                    textView.setText(mEtHashTag.getText().toString());
+                                    textView.setBackgroundResource(R.drawable.radius_8dp_lemon);
+                                    textView.setTextColor(getResources().getColor(R.color.colorWhite));
+                                    textView.setTextSize(11);
+                                    LinearLayout.LayoutParams paramsHashTag = new LinearLayout.LayoutParams(
+                                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                                            LinearLayout.LayoutParams.WRAP_CONTENT
+                                    );
+                                    textView.setLayoutParams(paramsHashTag);
+                                    DisplayMetrics dm = getResources().getDisplayMetrics();
+                                    textView.setPadding(Math.round(9*dm.density), Math.round(5*dm.density), Math.round(9*dm.density), Math.round(5*dm.density));
+                                    mHashTagId.add(textView.getId());
+                                    textView.setOnClickListener(new OnSingleClickListener() {
+                                        @Override
+                                        public void onSingleClick(View v) {
+                                            mHashTagId.remove(Integer.valueOf(textView.getId()));
+                                            mFlowLayout.removeView(textView);
+                                        }
+                                    });
+                                    mFlowLayout.addView(textView);
+                                    mEtHashTag.setText("");
                                 }
                             }
                         }
