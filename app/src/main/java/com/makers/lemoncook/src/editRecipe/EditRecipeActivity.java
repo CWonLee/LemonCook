@@ -95,7 +95,7 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
                     new GligarPicker().limit(15 - mUri.size()).disableCamera(false).requestCode(PICKER_REQUEST_CODE).withActivity(EditRecipeActivity.this).show();
                 }
                 else {
-                    showCustomToast("최대 15장만 불러올 수 있습니다");
+                    showCustomToast("최대 15장까지 불러올 수 있습니다");
                 }
             }
         });

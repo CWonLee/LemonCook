@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "46922276401",
+    "firebase_url": "https://lemoncook-21c79.firebaseio.com",
+    "project_id": "lemoncook-21c79",
+    "storage_bucket": "lemoncook-21c79.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:46922276401:android:57f232a656fcdd8da77f10",
+        "android_client_info": {
+          "package_name": "com.makers.lemoncook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "46922276401-do19as4glej1t124jmda53bpfb277ds7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.makers.lemoncook",
+            "certificate_hash": "46751e35ff5f850e6dea2ed00f87b925b98671e2"
+          }
+        },
+        {
+          "client_id": "46922276401-dttldl88r9m92o3egf8cohurcunucjad.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBYb4OFQnbyYGvXhKEk0qrWF9W0ZUcVww"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "46922276401-dttldl88r9m92o3egf8cohurcunucjad.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

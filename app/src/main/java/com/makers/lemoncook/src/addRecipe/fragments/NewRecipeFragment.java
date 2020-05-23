@@ -48,11 +48,11 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
     VerticalTextView mTvIngredientTitle;
     RecyclerView mRvImage;
     NewRecipeImageRecyclerViewAdapter mNewRecipeImageRecyclerViewAdapter;
-    Button mBtnStart;
+    Button mBtnStart, mBtnAddHashTag;
     TextView mTvMainImage;
     ImageView mIvMainPlusImage, mIvMainImage;
     String mMainUri;
-
+    EditText mEtHashTag;
     private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
     ArrayList<Integer> mRootLayoutID = new ArrayList<>();
     ArrayList<Integer> mLayoutID = new ArrayList<>();
@@ -61,6 +61,7 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
     ArrayList<Integer> mDeleteBtnID = new ArrayList<>();
     ArrayList<Uri> mUri = new ArrayList<>();
     ArrayList<String> mStringUri = new ArrayList<>();
+    ArrayList<Integer> mHashTagId = new ArrayList<>();
     final static int PICKER_REQUEST_CODE = 30;
     final static int PICKER_MAIN_REQUEST_CODE = 31;
 
@@ -86,6 +87,9 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
         mTvMainImage = view.findViewById(R.id.new_recipe_tv_plus_main_image);
         mIvMainPlusImage = view.findViewById(R.id.new_recipe_iv_plus_main_image);
         mIvMainImage = view.findViewById(R.id.new_recipe_iv_main_img);
+        mBtnAddHashTag = view.findViewById(R.id.new_recipe_btn_add_hash_tag);
+        mEtHashTag = view.findViewById(R.id.new_recipe_et_hash_tag);
+
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(RecyclerView.HORIZONTAL);
@@ -145,6 +149,42 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
                 intent.putExtra("mStringUri", mStringUri);
                 intent.putExtra("mMainUri", mMainUri);
                 startActivity(intent);
+            }
+        });
+        mBtnAddHashTag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mHashTagId.size() == 6) {
+                    showCustomToast("해시태그를 6개 이상 입력할 수 없습니다");
+                }
+                else {
+                    if (mEtHashTag.getText().toString().equals("")) {
+                        showCustomToast("해시태그를 입력해주세요");
+                    }
+                    else {
+                        if (mEtHashTag.getText().toString().charAt(0) != '#') {
+                            showCustomToast("해시태그는 #로 시작해야합니다");
+                        }
+                        else {
+                            if (mEtHashTag.getText().toString().length() == 1) {
+                                showCustomToast("해시태그를 입력해주세요");
+                            }
+                            else {
+                                boolean b = true;
+                                for (int i = 1; i < mEtHashTag.getText().toString().length(); i++) {
+                                    if (mEtHashTag.getText().toString().charAt(i) == '#' || mEtHashTag.getText().toString().charAt(i) == ' ') {
+                                        showCustomToast("잘못된 해시태그 형식입니다");
+                                        b = false;
+                                        break;
+                                    }
+                                }
+                                if (b) {
+
+                                }
+                            }
+                        }
+                    }
+                }
             }
         });
 

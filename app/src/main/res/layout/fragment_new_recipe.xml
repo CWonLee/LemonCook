@@ -46,7 +46,9 @@
                     android:textColor="@color/colorLoginBlack"
                     android:hint="@string/newRecipeLittleTitleHint"
                     android:textColorHint="@color/colorLoginGray"
-                    android:layout_marginTop="21dp"/>
+                    android:layout_marginTop="21dp"
+                    android:inputType="text"
+                    android:maxLength="20"/>
 
                 <EditText
                     android:id="@+id/new_recipe_et_food_name"
@@ -62,7 +64,9 @@
                     android:textColor="@color/colorLoginBlack"
                     android:textColorHint="@color/colorLoginGray"
                     android:textStyle="bold"
-                    android:hint="@string/newRecipeFoodNameHint"/>
+                    android:hint="@string/newRecipeFoodNameHint"
+                    android:inputType="text"
+                    android:maxLength="10"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -84,20 +88,36 @@
                     android:textSize="12sp"/>
 
                 <EditText
+                    android:id="@+id/new_recipe_et_hash_tag"
                     android:layout_width="match_parent"
-                    android:layout_height="44dp"
+                    android:layout_height="34dp"
                     android:background="@drawable/round_hashtag_edittext"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     android:layout_marginLeft="50dp"
                     android:layout_marginTop="14dp"
                     android:layout_marginBottom="5dp"
-                    android:layout_marginRight="24dp"
+                    android:layout_marginRight="88dp"
                     android:paddingLeft="9dp"
                     android:hint="@string/newRecipeHashTagHint"
                     android:textColorHint="@color/colorLoginGray"
                     android:textSize="12sp"
-                    android:textColor="@color/colorLoginBlack"/>
+                    android:textColor="@color/colorLoginBlack"
+                    android:maxLength="10"/>
+
+                <Button
+                    android:id="@+id/new_recipe_btn_add_hash_tag"
+                    android:layout_width="61dp"
+                    android:layout_height="34dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginRight="22dp"
+                    android:background="@drawable/radius_2dp_lemon"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="12sp"
+                    android:text="추가"/>
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

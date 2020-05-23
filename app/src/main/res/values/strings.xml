@@ -53,7 +53,7 @@
     <string name="newRecipeIngredient">Ingredient</string>
     <string name="newRecipeLittleTitleHint">소제목을 적어주세요</string>
     <string name="newRecipeFoodNameHint">음식명을 적어주세요</string>
-    <string name="newRecipeHashTagHint">#Hashtag 추가 (예, #된장찌개 #한식 #고소한 )</string>
+    <string name="newRecipeHashTagHint">#Hashtag 추가 (예, #된장찌개)</string>
     <string name="newRecipeMainImageHint">대표 사진을 설정해 주세요</string>
     <string name="newRecipeRecommend">추천재료</string>
     <string name="newRecipeAllPut">모두 담기</string>
