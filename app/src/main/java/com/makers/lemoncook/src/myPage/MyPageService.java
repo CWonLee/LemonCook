@@ -17,13 +17,13 @@ public class MyPageService {
         this.mMyPageActivityView = myPageActivityView;
     }
 
-    void getMyPage(int page) {
+    void getMyPage(int page, String tab, final boolean clearData) {
         final MyPageRetrofitInterface myPageRetrofitInterface = getRetrofit().create(MyPageRetrofitInterface.class);
-        myPageRetrofitInterface.getMyPage(page).enqueue(new Callback<ResponseGetMyPage>() {
+        myPageRetrofitInterface.getMyPage(page, tab).enqueue(new Callback<ResponseGetMyPage>() {
             @Override
             public void onResponse(Call<ResponseGetMyPage> call, Response<ResponseGetMyPage> response) {
                 final ResponseGetMyPage responseGetMyPage = response.body();
-                mMyPageActivityView.getMyPageSuccess(responseGetMyPage.isSuccess(), responseGetMyPage.getCode(), responseGetMyPage.getMessage(), responseGetMyPage.getResult());
+                mMyPageActivityView.getMyPageSuccess(responseGetMyPage.isSuccess(), responseGetMyPage.getCode(), responseGetMyPage.getMessage(), responseGetMyPage.getResult(), clearData);
             }
 
             @Override

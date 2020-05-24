@@ -31,6 +31,9 @@ public class ResponseGetMyPage {
         @SerializedName("sharedRecipe")
         private int sharedRecipe;
 
+        @SerializedName("saveListCnt")
+        private int saveListCnt;
+
         @SerializedName("recipeInfo")
         private ArrayList<RecipeInfo> recipeInfo;
 
@@ -92,6 +95,10 @@ public class ResponseGetMyPage {
 
         public int getSharedRecipe() {
             return sharedRecipe;
+        }
+
+        public int getSaveListCnt() {
+            return saveListCnt;
         }
 
         public ArrayList<RecipeInfo> getRecipeInfo() {
