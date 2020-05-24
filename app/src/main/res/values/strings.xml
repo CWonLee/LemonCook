@@ -57,7 +57,7 @@
     <string name="newRecipeMainImageHint">대표 사진을 설정해 주세요</string>
     <string name="newRecipeRecommend">추천재료</string>
     <string name="newRecipeAllPut">모두 담기</string>
-    <string name="newRecipeMaterialHint">재료명 (예, 양파)</string>
+    <string name="newRecipeMaterialHint">재료명 (예, 양파 1개)</string>
     <string name="newRecipeQuantityHint">분량(예,1개)</string>
     <string name="newRecipeStart">시작하기</string>
 

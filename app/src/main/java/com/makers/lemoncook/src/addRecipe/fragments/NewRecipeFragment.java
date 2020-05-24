@@ -57,9 +57,7 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
     FlowLayout mFlowLayout;
     private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
     ArrayList<Integer> mRootLayoutID = new ArrayList<>();
-    ArrayList<Integer> mLayoutID = new ArrayList<>();
     ArrayList<Integer> mFirstEtID = new ArrayList<>();
-    ArrayList<Integer> mSecondEtID = new ArrayList<>();
     ArrayList<Integer> mDeleteBtnID = new ArrayList<>();
     ArrayList<Uri> mUri = new ArrayList<>();
     ArrayList<String> mStringUri = new ArrayList<>();
@@ -439,15 +437,6 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
         );
         paramsRoot.topMargin = Math.round(4*dm.density);
 
-        final LinearLayout dynamicLinearLayout = new LinearLayout(getContext());
-        dynamicLinearLayout.setId(generateViewId());
-        dynamicLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
-        LinearLayout.LayoutParams paramsLl = new LinearLayout.LayoutParams(
-                Math.round(0*dm.density),
-                Math.round(35*dm.density),
-                1.0f
-        );
-
         final EditText firstEt = new EditText(getContext());
         firstEt.setId(generateViewId());
         firstEt.setBackground(getResources().getDrawable(R.drawable.radius_4dp_gray));
@@ -460,27 +449,8 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
         LinearLayout.LayoutParams paramsEt1 = new LinearLayout.LayoutParams(
                 Math.round(0*dm.density),
                 Math.round(35*dm.density),
-                0.68f
+                1.0f
         );
-
-        final EditText secondEt = new EditText(getContext());
-        secondEt.setId(generateViewId());
-        secondEt.setBackground(getResources().getDrawable(R.drawable.radius_4dp_gray));
-        secondEt.setHint(getResources().getString(R.string.newRecipeQuantityHint));
-        secondEt.setHintTextColor(getResources().getColor(R.color.colorLoginGray));
-        secondEt.setTextColor(getResources().getColor(R.color.colorLoginBlack));
-        secondEt.setTextSize(12);
-        secondEt.setInputType(InputType.TYPE_CLASS_TEXT);
-        secondEt.setPadding(Math.round(5*dm.density), 0, Math.round(5*dm.density), 0);
-        LinearLayout.LayoutParams paramsEt2 = new LinearLayout.LayoutParams(
-                Math.round(0*dm.density),
-                Math.round(35*dm.density),
-                0.32f
-        );
-        paramsEt2.leftMargin = Math.round(5*dm.density);
-
-        dynamicLinearLayout.addView(firstEt, paramsEt1);
-        dynamicLinearLayout.addView(secondEt, paramsEt2);
 
         final ImageView deleteBtn = new ImageView(getContext());
         deleteBtn.setImageResource(R.drawable.ic_x);
@@ -490,28 +460,22 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
         );
         paramsIv.leftMargin = Math.round(8*dm.density);
 
-        rootLinearLayout.addView(dynamicLinearLayout, paramsLl);
+        rootLinearLayout.addView(firstEt, paramsEt1);
         rootLinearLayout.addView(deleteBtn, paramsIv);
 
         mLlDynamicArea.addView(rootLinearLayout, paramsRoot);
 
         mRootLayoutID.add(rootLinearLayout.getId());
-        mLayoutID.add(dynamicLinearLayout.getId());
         mFirstEtID.add(firstEt.getId());
-        mSecondEtID.add(secondEt.getId());
         mDeleteBtnID.add(deleteBtn.getId());
 
         deleteBtn.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
                 mRootLayoutID.remove(Integer.valueOf(rootLinearLayout.getId()));
-                mLayoutID.remove(Integer.valueOf(dynamicLinearLayout.getId()));
                 mFirstEtID.remove(Integer.valueOf(firstEt.getId()));
-                mSecondEtID.remove(Integer.valueOf(secondEt.getId()));
                 mDeleteBtnID.remove(Integer.valueOf(deleteBtn.getId()));
-                dynamicLinearLayout.removeView(firstEt);
-                dynamicLinearLayout.removeView(secondEt);
-                rootLinearLayout.removeView(dynamicLinearLayout);
+                rootLinearLayout.removeView(firstEt);
                 rootLinearLayout.removeView(deleteBtn);
                 mLlDynamicArea.removeView(rootLinearLayout);
             }
