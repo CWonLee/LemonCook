@@ -1,5 +1,6 @@
 package com.makers.lemoncook.src.myPage;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +26,10 @@ public class MyPageActivity extends BaseActivity implements MyPageActivityView {
     MyPageRecyclerViewAdapter mMyPageRecyclerViewAdapter;
     ArrayList<ResponseGetMyPage.Result.RecipeInfo> mData = new ArrayList<>();
     ImageView mIvBack;
+    int mPage = 1;
+    boolean mNewPage = true;
+    LinearLayoutManager mRvLinearLayoutManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +43,9 @@ public class MyPageActivity extends BaseActivity implements MyPageActivityView {
         mRecyclerView = findViewById(R.id.my_page_rv);
         mIvBack = findViewById(R.id.my_page_iv_back);
 
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        mRvLinearLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mRvLinearLayoutManager);
         mMyPageRecyclerViewAdapter = new MyPageRecyclerViewAdapter(mData, this);
         mRecyclerView.setAdapter(mMyPageRecyclerViewAdapter);
 
@@ -50,12 +57,28 @@ public class MyPageActivity extends BaseActivity implements MyPageActivityView {
         });
 
         getMyPage();
+
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int totalItemCount = mRvLinearLayoutManager.getItemCount();
+                int lastVisible = mRvLinearLayoutManager.findLastCompletelyVisibleItemPosition();
+
+                if (lastVisible >= totalItemCount - 1) {
+                    if (mNewPage) {
+                        mPage++;
+                        getMyPage();
+                    }
+                }
+            }
+        });
     }
 
     public void getMyPage() {
         showProgressDialog();
         MyPageService myPageService = new MyPageService(this);
-        myPageService.getMyPage();
+        myPageService.getMyPage(mPage);
     }
 
     @Override

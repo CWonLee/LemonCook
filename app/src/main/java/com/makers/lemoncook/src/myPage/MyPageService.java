@@ -17,9 +17,9 @@ public class MyPageService {
         this.mMyPageActivityView = myPageActivityView;
     }
 
-    void getMyPage() {
+    void getMyPage(int page) {
         final MyPageRetrofitInterface myPageRetrofitInterface = getRetrofit().create(MyPageRetrofitInterface.class);
-        myPageRetrofitInterface.getMyPage().enqueue(new Callback<ResponseGetMyPage>() {
+        myPageRetrofitInterface.getMyPage(page).enqueue(new Callback<ResponseGetMyPage>() {
             @Override
             public void onResponse(Call<ResponseGetMyPage> call, Response<ResponseGetMyPage> response) {
                 final ResponseGetMyPage responseGetMyPage = response.body();

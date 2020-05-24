@@ -49,7 +49,7 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
     VerticalTextView mTvIngredientTitle;
     RecyclerView mRvImage;
     NewRecipeImageRecyclerViewAdapter mNewRecipeImageRecyclerViewAdapter;
-    Button mBtnStart, mBtnAddHashTag;
+    Button mBtnStart, mBtnAddHashTag, mBtnCategory1, mBtnCategory2, mBtnCategory3, mBtnCategory4, mBtnCategory5, mBtnCategory6;
     TextView mTvMainImage;
     ImageView mIvMainPlusImage, mIvMainImage;
     String mMainUri;
@@ -66,6 +66,7 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
     ArrayList<Integer> mHashTagId = new ArrayList<>();
     final static int PICKER_REQUEST_CODE = 30;
     final static int PICKER_MAIN_REQUEST_CODE = 31;
+    int mCategory = -1;
 
     public NewRecipeFragment() {
         // Required empty public constructor
@@ -92,6 +93,12 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
         mBtnAddHashTag = view.findViewById(R.id.new_recipe_btn_add_hash_tag);
         mEtHashTag = view.findViewById(R.id.new_recipe_et_hash_tag);
         mFlowLayout = view.findViewById(R.id.new_recipe_flowLayout);
+        mBtnCategory1 = view.findViewById(R.id.new_recipe_btn_category1);
+        mBtnCategory2 = view.findViewById(R.id.new_recipe_btn_category2);
+        mBtnCategory3 = view.findViewById(R.id.new_recipe_btn_category3);
+        mBtnCategory4 = view.findViewById(R.id.new_recipe_btn_category4);
+        mBtnCategory5 = view.findViewById(R.id.new_recipe_btn_category5);
+        mBtnCategory6 = view.findViewById(R.id.new_recipe_btn_category6);
 
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -209,6 +216,127 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
                         }
                     }
                 }
+            }
+        });
+
+        mBtnCategory1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBtnCategory1.setBackgroundResource(R.drawable.round_category_empty);
+                mBtnCategory2.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory3.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory4.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory5.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory6.setBackgroundResource(R.drawable.round_category_fill);
+
+                mBtnCategory1.setTextColor(getResources().getColor(R.color.colorWhite));
+                mBtnCategory2.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory3.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory4.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory5.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory6.setTextColor(getResources().getColor(R.color.colorLemon));
+
+                mCategory = 1;
+            }
+        });
+        mBtnCategory2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBtnCategory1.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory2.setBackgroundResource(R.drawable.round_category_empty);
+                mBtnCategory3.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory4.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory5.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory6.setBackgroundResource(R.drawable.round_category_fill);
+
+                mBtnCategory1.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory2.setTextColor(getResources().getColor(R.color.colorWhite));
+                mBtnCategory3.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory4.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory5.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory6.setTextColor(getResources().getColor(R.color.colorLemon));
+
+                mCategory = 2;
+            }
+        });
+        mBtnCategory3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBtnCategory1.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory2.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory3.setBackgroundResource(R.drawable.round_category_empty);
+                mBtnCategory4.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory5.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory6.setBackgroundResource(R.drawable.round_category_fill);
+
+                mBtnCategory1.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory2.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory3.setTextColor(getResources().getColor(R.color.colorWhite));
+                mBtnCategory4.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory5.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory6.setTextColor(getResources().getColor(R.color.colorLemon));
+
+                mCategory = 3;
+            }
+        });
+        mBtnCategory4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBtnCategory1.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory2.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory3.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory4.setBackgroundResource(R.drawable.round_category_empty);
+                mBtnCategory5.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory6.setBackgroundResource(R.drawable.round_category_fill);
+
+                mBtnCategory1.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory2.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory3.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory4.setTextColor(getResources().getColor(R.color.colorWhite));
+                mBtnCategory5.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory6.setTextColor(getResources().getColor(R.color.colorLemon));
+
+                mCategory = 4;
+            }
+        });
+        mBtnCategory5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBtnCategory1.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory2.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory3.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory4.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory5.setBackgroundResource(R.drawable.round_category_empty);
+                mBtnCategory6.setBackgroundResource(R.drawable.round_category_fill);
+
+                mBtnCategory1.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory2.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory3.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory4.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory5.setTextColor(getResources().getColor(R.color.colorWhite));
+                mBtnCategory6.setTextColor(getResources().getColor(R.color.colorLemon));
+
+                mCategory = 5;
+            }
+        });
+        mBtnCategory6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBtnCategory1.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory2.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory3.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory4.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory5.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory6.setBackgroundResource(R.drawable.round_category_empty);
+
+                mBtnCategory1.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory2.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory3.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory4.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory5.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory6.setTextColor(getResources().getColor(R.color.colorWhite));
+
+                mCategory = 6;
             }
         });
 
