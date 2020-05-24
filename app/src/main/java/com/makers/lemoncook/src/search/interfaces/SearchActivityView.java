@@ -5,7 +5,7 @@ import com.makers.lemoncook.src.search.models.ResponseSearch;
 import java.util.ArrayList;
 
 public interface SearchActivityView {
-    void searchSuccess(boolean isSuccess, int code, String message, ArrayList<ResponseSearch.Result> result);
+    void searchSuccess(boolean isSuccess, int code, String message, ArrayList<ResponseSearch.Result> result, boolean clearData);
 
     void searchFailure();
 }

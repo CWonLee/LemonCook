@@ -1,6 +1,8 @@
 package com.makers.lemoncook.src.search;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -8,6 +10,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -29,7 +32,11 @@ public class SearchActivity extends BaseActivity implements SearchActivityView {
     ImageView mIvBack;
     String mOrder = "인기순";
     String mFilter;
+    int mPage = 1;
+    boolean mNewPage = true;
     VerticalTextView mVtPopularOrder, mVtNewOrder;
+    LinearLayoutManager mRvLinearLayoutManager;
+    NestedScrollView mNestedScrollView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,15 +48,50 @@ public class SearchActivity extends BaseActivity implements SearchActivityView {
         mIvBack = findViewById(R.id.search_iv_back);
         mVtPopularOrder = findViewById(R.id.search_vt_popular_order);
         mVtNewOrder = findViewById(R.id.search_vt_new_order);
+        mNestedScrollView = findViewById(R.id.search_nested_scroll_view);
 
         mRecyclerView.setNestedScrollingEnabled(false);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRvLinearLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mRvLinearLayoutManager);
         mSearchRecyclerViewAdapter = new SearchRecyclerViewAdapter(mData);
         mRecyclerView.setAdapter(mSearchRecyclerViewAdapter);
 
+        mNestedScrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                View view = mNestedScrollView.getChildAt(mNestedScrollView.getChildCount() - 1);
+
+                int diff = (view.getBottom() - (mNestedScrollView.getHeight() + mNestedScrollView.getScrollY()));
+
+                if (diff == 0) {
+                    System.out.println("마지막페이지");
+                    if (mNewPage) {
+                        mPage++;
+                        getSearch(mEtSearchBar.getText().toString(), false);
+                    }
+                }
+            }
+        });
+        /*
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                int totalItemCount = mRvLinearLayoutManager.getItemCount();
+                int lastVisible = mRvLinearLayoutManager.findLastCompletelyVisibleItemPosition();
+
+                if (lastVisible >= totalItemCount - 1) {
+
+                }
+            }
+        });
+
+         */
+
         mFilter = getIntent().getStringExtra("filter");
 
-        getSearch("");
+        getSearch("", true);
 
         mEtSearchBar.addTextChangedListener(new TextWatcher() {
             @Override
@@ -64,7 +106,9 @@ public class SearchActivity extends BaseActivity implements SearchActivityView {
 
             @Override
             public void afterTextChanged(Editable s) {
-                getSearch(s.toString());
+                mPage = 1;
+                mNewPage = true;
+                getSearch(s.toString(), true);
             }
         });
 
@@ -75,7 +119,9 @@ public class SearchActivity extends BaseActivity implements SearchActivityView {
                     mVtPopularOrder.setTextColor(getResources().getColor(R.color.colorLoginEtBlack));
                     mVtNewOrder.setTextColor(getResources().getColor(R.color.colorLoginGray));
                     mOrder = "인기순";
-                    getSearch(mEtSearchBar.getText().toString());
+                    mPage = 1;
+                    mNewPage = true;
+                    getSearch(mEtSearchBar.getText().toString(), true);
                 }
             }
         });
@@ -86,7 +132,9 @@ public class SearchActivity extends BaseActivity implements SearchActivityView {
                     mVtPopularOrder.setTextColor(getResources().getColor(R.color.colorLoginGray));
                     mVtNewOrder.setTextColor(getResources().getColor(R.color.colorLoginEtBlack));
                     mOrder = "최신순";
-                    getSearch(mEtSearchBar.getText().toString());
+                    mPage = 1;
+                    mNewPage = true;
+                    getSearch(mEtSearchBar.getText().toString(), true);
                 }
             }
         });
@@ -99,23 +147,27 @@ public class SearchActivity extends BaseActivity implements SearchActivityView {
         });
     }
 
-    public void getSearch(String search) {
-        System.out.println(search);
+    public void getSearch(String search, boolean clearData) {
         SearchService searchService = new SearchService(this);
-        searchService.getSearch(search, mFilter, mOrder);
+        System.out.println("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ");
+        System.out.println(search + " " + mFilter + " " + mOrder + " " + clearData);
+        searchService.getSearch(search, mFilter, mOrder, mPage, clearData);
     }
 
     @Override
-    public void searchSuccess(boolean isSuccess, int code, String message, ArrayList<ResponseSearch.Result> result) {
+    public void searchSuccess(boolean isSuccess, int code, String message, ArrayList<ResponseSearch.Result> result, boolean clearData) {
+        System.out.println(isSuccess + " " + code + " " + message);
+        System.out.println(mPage + " " + mNewPage);
         if (isSuccess && code == 200) {
-            mData.clear();
+            if (clearData) {
+                mData.clear();
+            }
+            if (result.size() < 10) {
+                mNewPage = false;
+            }
             for (int i = 0; i < result.size(); i++) {
                 mData.add(result.get(i));
             }
-            mSearchRecyclerViewAdapter.notifyDataSetChanged();
-        }
-        else {
-            mData.clear();
             mSearchRecyclerViewAdapter.notifyDataSetChanged();
         }
     }

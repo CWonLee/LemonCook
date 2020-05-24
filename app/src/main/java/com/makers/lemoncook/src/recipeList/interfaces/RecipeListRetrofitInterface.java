@@ -14,7 +14,8 @@ public interface RecipeListRetrofitInterface {
     Call<ResponseGetRecipe> getRecipe(
             @Query("category") String category,
             @Query("filter") String filter,
-            @Query("sort") String sort
+            @Query("sort") String sort,
+            @Query("page") int page
     );
 
     @DELETE("/recipes/{recipeNo}")

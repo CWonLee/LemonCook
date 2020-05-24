@@ -12,6 +12,7 @@ public interface SearchRetrofitInterface {
     Call<ResponseSearch> getSearch(
             @Query("search") String search,
             @Query("filter") String filter,
-            @Query("sort") String sort
+            @Query("sort") String sort,
+            @Query("page") int page
     );
 }

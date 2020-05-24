@@ -1,5 +1,6 @@
 package com.makers.lemoncook.src.recipeList;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,7 +26,10 @@ public class RecipeListActivity extends BaseActivity implements RecipeListActivi
     TextView mTvTitle, mTvOrderNew, mTvOrderName;
     ImageView mIvBack, mIvSearch;
     RecipeListRecyclerViewAdapter mRecipeListRecyclerViewAdapter;
+    LinearLayoutManager mRvLinearLayoutManager;
     int mOrder = 1;
+    int mPage = 1;
+    boolean mNewPage = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,21 +56,44 @@ public class RecipeListActivity extends BaseActivity implements RecipeListActivi
             }
         });
 
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRvLinearLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mRvLinearLayoutManager);
         mRecipeListRecyclerViewAdapter = new RecipeListRecyclerViewAdapter(mData, this);
         mRecyclerView.setAdapter(mRecipeListRecyclerViewAdapter);
 
-        getRecipe("최신순");
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int totalItemCount = mRvLinearLayoutManager.getItemCount();
+                int lastVisible = mRvLinearLayoutManager.findLastCompletelyVisibleItemPosition();
+
+                if (lastVisible >= totalItemCount - 1) {
+                    if (mNewPage) {
+                        mPage++;
+                        if (mOrder == 1) {
+                            getRecipe("최신순", false);
+                        }
+                        else {
+                            getRecipe("인기순", false);
+                        }
+                    }
+                }
+            }
+        });
+
+        getRecipe("최신순", true);
 
         mTvOrderNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mOrder == 2) {
                     mOrder = 1;
+                    mPage = 1;
+                    mNewPage = true;
                     mTvOrderNew.setTextColor(getResources().getColor(R.color.colorLoginEtBlack));
                     mTvOrderName.setTextColor(getResources().getColor(R.color.colorLoginGray));
-
-                    getRecipe("최신순");
+                    getRecipe("최신순", true);
                 }
             }
         });
@@ -75,10 +102,11 @@ public class RecipeListActivity extends BaseActivity implements RecipeListActivi
             public void onSingleClick(View v) {
                 if (mOrder == 1) {
                     mOrder = 2;
+                    mPage = 1;
+                    mNewPage = true;
                     mTvOrderNew.setTextColor(getResources().getColor(R.color.colorLoginGray));
                     mTvOrderName.setTextColor(getResources().getColor(R.color.colorLoginEtBlack));
-
-                    getRecipe("인기순");
+                    getRecipe("인기순", true);
                 }
             }
         });
@@ -93,22 +121,28 @@ public class RecipeListActivity extends BaseActivity implements RecipeListActivi
         });
     }
 
-    public void getRecipe(String order) {
+    public void getRecipe(String order, boolean clearData) {
         showProgressDialog();
         RecipeListService recipeListService = new RecipeListService(this);
-        recipeListService.getRecipe(getIntent().getStringExtra("category"), getIntent().getStringExtra("filter"), order);
+        recipeListService.getRecipe(getIntent().getStringExtra("category"), getIntent().getStringExtra("filter"), order, mPage, clearData);
     }
 
     @Override
-    public void getRecipeSuccess(boolean isSuccess, int code, String message, ArrayList<ResponseGetRecipe.Result> result) {
+    public void getRecipeSuccess(boolean isSuccess, int code, String message, ArrayList<ResponseGetRecipe.Result> result, boolean clearData) {
         hideProgressDialog();
-        if (isSuccess && code == 200) {
+        if (clearData) {
             mData.clear();
+        }
+        if (isSuccess && code == 200) {
+            if (result.size() < 10) {
+                mNewPage = false;
+            }
             for (int i = 0; i < result.size(); i++) {
                 mData.add(result.get(i));
             }
-
             mRecipeListRecyclerViewAdapter.notifyDataSetChanged();
+        }
+        else if (code == 301) {
         }
         else {
             showCustomToast(message);

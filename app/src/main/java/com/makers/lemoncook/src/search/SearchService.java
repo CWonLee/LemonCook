@@ -17,13 +17,13 @@ public class SearchService {
         this.mSearchActivityView = searchActivityView;
     }
 
-    void getSearch(String search, String filter, String sort) {
+    void getSearch(String search, String filter, String sort, int page, final boolean clearData) {
         final SearchRetrofitInterface searchRetrofitInterface = getRetrofit().create(SearchRetrofitInterface.class);
-        searchRetrofitInterface.getSearch(search, filter, sort).enqueue(new Callback<ResponseSearch>() {
+        searchRetrofitInterface.getSearch(search, filter, sort, page).enqueue(new Callback<ResponseSearch>() {
             @Override
             public void onResponse(Call<ResponseSearch> call, Response<ResponseSearch> response) {
                 final ResponseSearch responseSearch = response.body();
-                mSearchActivityView.searchSuccess(responseSearch.isSuccess(), responseSearch.getCode(), responseSearch.getMessage(), responseSearch.getResult());
+                mSearchActivityView.searchSuccess(responseSearch.isSuccess(), responseSearch.getCode(), responseSearch.getMessage(), responseSearch.getResult(), clearData);
             }
 
             @Override

@@ -18,13 +18,13 @@ public class RecipeListService {
         this.mRecipeListActivityView = recipeListActivityView;
     }
 
-    void getRecipe(String category, String filter, String sort) {
+    void getRecipe(String category, String filter, String sort, int page, final boolean clearData) {
         final RecipeListRetrofitInterface recipeListRetrofitInterface = getRetrofit().create(RecipeListRetrofitInterface.class);
-        recipeListRetrofitInterface.getRecipe(category, filter, sort).enqueue(new Callback<ResponseGetRecipe>() {
+        recipeListRetrofitInterface.getRecipe(category, filter, sort, page).enqueue(new Callback<ResponseGetRecipe>() {
             @Override
             public void onResponse(Call<ResponseGetRecipe> call, Response<ResponseGetRecipe> response) {
                 final ResponseGetRecipe responseGetRecipe = response.body();
-                mRecipeListActivityView.getRecipeSuccess(responseGetRecipe.isSuccess(), responseGetRecipe.getCode(), responseGetRecipe.getMessage(), responseGetRecipe.getResult());
+                mRecipeListActivityView.getRecipeSuccess(responseGetRecipe.isSuccess(), responseGetRecipe.getCode(), responseGetRecipe.getMessage(), responseGetRecipe.getResult(), clearData);
             }
 
             @Override
