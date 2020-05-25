@@ -6,6 +6,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 
 import com.makers.lemoncook.R;
 import com.makers.lemoncook.src.BaseActivity;
+import com.makers.lemoncook.src.login.LoginActivity;
 import com.makers.lemoncook.src.myPage.adpaters.MyPageRecyclerViewAdapter;
 import com.makers.lemoncook.src.myPage.interfaces.MyPageActivityView;
 import com.makers.lemoncook.src.myPage.models.ResponseGetMyPage;
@@ -20,10 +23,13 @@ import com.makers.lemoncook.src.myPage.models.ResponseGetMyPage;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+import static com.makers.lemoncook.src.ApplicationClass.sSharedPreferences;
+
 public class MyPageActivity extends BaseActivity implements MyPageActivityView {
 
     TextView mTvUserName, mTvMyRecipeCnt, mTvGetRecipeCnt, mTvZzimCnt, mTvMyRecipe, mTvGetRecipe, mTvZzim;
     RecyclerView mRecyclerView;
+    ImageView mIvSetting;
     MyPageRecyclerViewAdapter mMyPageRecyclerViewAdapter;
     ArrayList<ResponseGetMyPage.Result.RecipeInfo> mData = new ArrayList<>();
     ImageView mIvBack;
@@ -50,6 +56,7 @@ public class MyPageActivity extends BaseActivity implements MyPageActivityView {
         mClMyRecipe = findViewById(R.id.my_page_cl_my_recipe);
         mClGetRecipe = findViewById(R.id.my_page_cl_get_recipe);
         mClZzim = findViewById(R.id.my_page_cl_zzim);
+        mIvSetting = findViewById(R.id.my_page_iv_setting);
 
 
         mRvLinearLayoutManager = new LinearLayoutManager(this);
@@ -133,10 +140,23 @@ public class MyPageActivity extends BaseActivity implements MyPageActivityView {
                 }
             }
         });
+
+        mIvSetting.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                SharedPreferences.Editor editor = sSharedPreferences.edit();
+                editor.clear();
+                editor.commit();
+
+                Intent intent = new Intent(MyPageActivity.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
     }
 
     public void getMyPage(boolean clearData) {
-        showProgressDialog();
         MyPageService myPageService = new MyPageService(this);
         myPageService.getMyPage(mPage, mTab, clearData);
     }
@@ -146,7 +166,6 @@ public class MyPageActivity extends BaseActivity implements MyPageActivityView {
         if (clearData) {
             mData.clear();
         }
-        hideProgressDialog();
         if (isSuccess && code == 200) {
             for (int i = 0; i < result.getRecipeInfo().size(); i++) {
                 mData.add(result.getRecipeInfo().get(i));

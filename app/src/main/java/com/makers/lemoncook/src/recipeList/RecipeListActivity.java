@@ -122,14 +122,12 @@ public class RecipeListActivity extends BaseActivity implements RecipeListActivi
     }
 
     public void getRecipe(String order, boolean clearData) {
-        showProgressDialog();
         RecipeListService recipeListService = new RecipeListService(this);
         recipeListService.getRecipe(getIntent().getStringExtra("category"), getIntent().getStringExtra("filter"), order, mPage, clearData);
     }
 
     @Override
     public void getRecipeSuccess(boolean isSuccess, int code, String message, ArrayList<ResponseGetRecipe.Result> result, boolean clearData) {
-        hideProgressDialog();
         if (clearData) {
             mData.clear();
         }
