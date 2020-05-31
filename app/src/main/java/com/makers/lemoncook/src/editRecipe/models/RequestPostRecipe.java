@@ -2,6 +2,7 @@ package com.makers.lemoncook.src.editRecipe.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class RequestPostRecipe {
@@ -29,7 +30,7 @@ public class RequestPostRecipe {
     @SerializedName("cookingOrder")
     private ArrayList<CookingOrder> cookingOrder;
 
-    public class CookingOrder {
+    public static class CookingOrder {
         @SerializedName("cookingOrder")
         private int cookingOrder;
 
@@ -38,5 +39,49 @@ public class RequestPostRecipe {
 
         @SerializedName("content")
         private String content;
+
+        public void setCookingOrder(int cookingOrder) {
+            this.cookingOrder = cookingOrder;
+        }
+
+        public void setCookingOrderImage(String cookingOrderImage) {
+            this.cookingOrderImage = cookingOrderImage;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
+    }
+
+    public void setCategoryNo(int categoryNo) {
+        this.categoryNo = categoryNo;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setHashTag(String hashTag) {
+        this.hashTag = hashTag;
+    }
+
+    public void setIngredient(String ingredient) {
+        this.ingredient = ingredient;
+    }
+
+    public void setServing(String serving) {
+        this.serving = serving;
+    }
+
+    public void setCookingOrder(ArrayList<CookingOrder> cookingOrder) {
+        this.cookingOrder = cookingOrder;
     }
 }

@@ -6,12 +6,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -22,21 +27,35 @@ import com.makers.lemoncook.src.editRecipe.adapters.EditRecipeViewPagerAdapter;
 import com.makers.lemoncook.src.editRecipe.fragments.EditRecipeFragment;
 import com.makers.lemoncook.src.editRecipe.interfaces.EditRecipeActivityView;
 import com.makers.lemoncook.src.editRecipe.interfaces.EditRecipeRecyclerViewAdapterInterface;
+import com.makers.lemoncook.src.editRecipe.models.RequestPostRecipe;
+import com.makers.lemoncook.src.editRecipe.models.ResponseUpload;
+import com.makers.lemoncook.src.main.MainActivity;
 import com.opensooq.supernova.gligar.GligarPicker;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import id.zelory.compressor.Compressor;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class EditRecipeActivity extends BaseActivity implements EditRecipeActivityView {
 
     ArrayList<Uri> mUri = new ArrayList<>();
     ArrayList<String> mStringUri = new ArrayList<>();
     ArrayList<EditRecipeFragment> mFragments = new ArrayList<>();
-    String mMainUri;
+    ArrayList<String> mContent = new ArrayList<>();
+    int mCategory = -1;
+    String mMainUri, mTitle, mFoodName, mHashTag, mMaterial;
     RecyclerView mRecyclerView;
     ViewPager mViewPager;
     ImageView mIvBack, mIvPlus;
     int mCurNum = 0;
+    Button mBtnComplete;
     EditRecipeRecyclerViewAdapter mEditRecipeRecyclerViewAdapter;
     EditRecipeViewPagerAdapter mEditRecipeViewPagerAdapter;
     EditRecipeRecyclerViewAdapterInterface mEditRecipeRecyclerViewAdapterInterface;
@@ -51,6 +70,7 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
         mViewPager = findViewById(R.id.edit_recipe_vp);
         mRecyclerView = findViewById(R.id.edit_recipe_rv);
         mIvPlus = findViewById(R.id.edit_recipe_iv_add_image);
+        mBtnComplete = findViewById(R.id.edit_recipe_btn_complete);
 
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -99,11 +119,51 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
                 }
             }
         });
+
+        mBtnComplete.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                if (mProgressDialog == null) {
+                    mProgressDialog = new ProgressDialog(EditRecipeActivity.this);
+                    mProgressDialog.setMessage(getString(R.string.loading));
+                    mProgressDialog.setIndeterminate(true);
+                }
+                mProgressDialog.setCanceledOnTouchOutside(false);
+                mProgressDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialog) {
+                        if (mFragments.isEmpty()) {
+                            showCustomToast("레시피 과정을 추가해주세요");
+                        }
+                        else {
+                            boolean emptyContent = false;
+                            for (int i = 0; i < mFragments.size(); i++) {
+                                if (mFragments.get(i).getContent().equals("")) {
+                                    hideProgressDialog();
+                                    showCustomToast("누락된 입력값이 있습니다");
+                                    emptyContent = true;
+                                    break;
+                                }
+                            }
+                            if (!emptyContent) {
+                                uploadImage();
+                            }
+                        }
+                    }
+                });
+                mProgressDialog.show();
+            }
+        });
     }
 
     void Init() {
         mMainUri = getIntent().getStringExtra("mMainUri");
         mStringUri = getIntent().getStringArrayListExtra("mStringUri");
+        mCategory = getIntent().getIntExtra("category", -1);
+        mTitle = getIntent().getStringExtra("title");
+        mFoodName = getIntent().getStringExtra("foodName");
+        mHashTag = getIntent().getStringExtra("hashTag");
+        mMaterial = getIntent().getStringExtra("material");
         for (int i = 0; i < mStringUri.size(); i++) {
             mUri.add(Uri.parse(mStringUri.get(i)));
             EditRecipeFragment editRecipeFragment = new EditRecipeFragment(mUri.size(), mUri.get(i));
@@ -127,6 +187,66 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
     }
 
     @Override
+    public void postRecipeSuccess(boolean isSuccess, int code, String message) {
+        hideProgressDialog();
+        if (isSuccess && code == 200) {
+            showCustomToast(message);
+            Intent intent = new Intent(EditRecipeActivity.this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+        else {
+            showCustomToast(message);
+        }
+    }
+
+    @Override
+    public void postRecipeFailure() {
+        hideProgressDialog();
+        showCustomToast(getResources().getString(R.string.network_error));
+    }
+
+    public void uploadImage() {
+        ArrayList<MultipartBody.Part> files = new ArrayList<>();
+        for (int i = 0; i < mUri.size(); i++) {
+            File file = null;
+            try {
+                file = new Compressor(this).setQuality(30).compressToFile(new File(mUri.get(i).getPath()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+            files.add(MultipartBody.Part.createFormData("cookingOrderImage", file.getName(), requestBody));
+        }
+        EditRecipeService editRecipeService = new EditRecipeService(this);
+        File mainFile = null;
+        try {
+            mainFile = new Compressor(this).setQuality(30).compressToFile(new File(Uri.parse(mMainUri).getPath()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        RequestBody mainRequestBody = RequestBody.create(MediaType.parse("multipart/form-data"), mainFile);
+        editRecipeService.uploadImage(MultipartBody.Part.createFormData("image", mainFile.getName(), mainRequestBody), files);
+    }
+
+    @Override
+    public void uploadSuccess(boolean isSuccess, int code, String message, ResponseUpload.Result result) {
+        if (isSuccess && code == 200) {
+            postRecipe(result);
+        }
+        else {
+            showCustomToast(message);
+        }
+    }
+
+    @Override
+    public void uploadFailure() {
+        hideProgressDialog();
+        showCustomToast(getResources().getString(R.string.network_error));
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != this.RESULT_OK) {
@@ -145,6 +265,72 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
                 mEditRecipeViewPagerAdapter.notifyDataSetChanged();
                 break;
             }
+        }
+    }
+
+    public void postRecipe(ResponseUpload.Result result) {
+        EditRecipeService editRecipeService = new EditRecipeService(this);
+        RequestPostRecipe requestPostRecipe = new RequestPostRecipe();
+        requestPostRecipe.setTitle(mTitle);
+        requestPostRecipe.setCategoryNo(mCategory);
+        requestPostRecipe.setName(mFoodName);
+        requestPostRecipe.setHashTag(mHashTag);
+        requestPostRecipe.setIngredient(mMaterial);
+        requestPostRecipe.setServing("1인분");
+        requestPostRecipe.setImage(result.getImage().getImageUrl());
+        ArrayList<RequestPostRecipe.CookingOrder> cookingOrders = new ArrayList<>();
+        for (int i = 0; i < mFragments.size(); i++) {
+            RequestPostRecipe.CookingOrder cookingOrder = new RequestPostRecipe.CookingOrder();
+            cookingOrder.setContent(mFragments.get(i).getContent());
+            cookingOrder.setCookingOrder(i + 1);
+            cookingOrder.setCookingOrderImage(result.getCookingOrderImage().get(i).getImageUrl());
+            cookingOrders.add(cookingOrder);
+        }
+
+        editRecipeService.postRecipe(requestPostRecipe);
+    }
+
+    public File saveBitmapToFile(File file){
+        try {
+
+            // BitmapFactory options to downsize the image
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            o.inSampleSize = 6;
+            // factor of downsizing the image
+
+            FileInputStream inputStream = new FileInputStream(file);
+            //Bitmap selectedBitmap = null;
+            BitmapFactory.decodeStream(inputStream, null, o);
+            inputStream.close();
+
+            // The new size we want to scale to
+            final int REQUIRED_SIZE=75;
+
+            // Find the correct scale value. It should be the power of 2.
+            int scale = 1;
+            while(o.outWidth / scale / 2 >= REQUIRED_SIZE &&
+                    o.outHeight / scale / 2 >= REQUIRED_SIZE) {
+                scale *= 2;
+            }
+
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            inputStream = new FileInputStream(file);
+
+            Bitmap selectedBitmap = BitmapFactory.decodeStream(inputStream, null, o2);
+            inputStream.close();
+
+            // here i override the original image file
+            file.createNewFile();
+            FileOutputStream outputStream = new FileOutputStream(file);
+
+            selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 100 , outputStream);
+
+            return file;
+        } catch (Exception e) {
+            System.out.println(".......");
+            return null;
         }
     }
 }

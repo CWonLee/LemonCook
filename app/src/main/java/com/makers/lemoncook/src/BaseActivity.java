@@ -3,6 +3,7 @@ package com.makers.lemoncook.src;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.SystemClock;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -26,7 +27,7 @@ public class BaseActivity extends AppCompatActivity {
             mProgressDialog.setMessage(getString(R.string.loading));
             mProgressDialog.setIndeterminate(true);
         }
-
+        mProgressDialog.setCanceledOnTouchOutside(false);
         mProgressDialog.show();
     }
 
@@ -49,7 +50,7 @@ public class BaseActivity extends AppCompatActivity {
 
     public abstract class OnSingleClickListener implements View.OnClickListener {
         //중복클릭시간차이
-        private static final long MIN_CLICK_INTERVAL=600;
+        private static final long MIN_CLICK_INTERVAL=1000;
 
         //마지막으로 클릭한 시간
         private long mLastClickTime;

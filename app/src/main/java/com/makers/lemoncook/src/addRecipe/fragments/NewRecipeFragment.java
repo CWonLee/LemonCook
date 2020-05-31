@@ -52,8 +52,8 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
     Button mBtnStart, mBtnAddHashTag, mBtnCategory1, mBtnCategory2, mBtnCategory3, mBtnCategory4, mBtnCategory5, mBtnCategory6;
     TextView mTvMainImage;
     ImageView mIvMainPlusImage, mIvMainImage;
-    String mMainUri;
-    EditText mEtHashTag;
+    String mMainUri = "";
+    EditText mEtHashTag, mEtTitle, mEtFoodName;
     FlowLayout mFlowLayout;
     private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
     ArrayList<Integer> mRootLayoutID = new ArrayList<>();
@@ -97,6 +97,8 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
         mBtnCategory4 = view.findViewById(R.id.new_recipe_btn_category4);
         mBtnCategory5 = view.findViewById(R.id.new_recipe_btn_category5);
         mBtnCategory6 = view.findViewById(R.id.new_recipe_btn_category6);
+        mEtTitle = view.findViewById(R.id.new_recipe_et_little_title);
+        mEtFoodName = view.findViewById(R.id.new_recipe_et_food_name);
 
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -152,10 +154,88 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
         mBtnStart.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
-                Intent intent = new Intent(getActivity(), EditRecipeActivity.class);
-                intent.putExtra("mStringUri", mStringUri);
-                intent.putExtra("mMainUri", mMainUri);
-                startActivity(intent);
+                if (mCategory == -1) {
+                    showCustomToast("카테고리를 선택해주세요");
+                }
+                else {
+                    if (mEtTitle.getText().toString().equals("")) {
+                        showCustomToast("소제목을 입력해주세요");
+                    }
+                    else {
+                        if (mEtFoodName.getText().toString().equals("")) {
+                            showCustomToast("음식명을 입력해주세요");
+                        }
+                        else {
+                            if (mHashTagId.size() == 0) {
+                                showCustomToast("해시태그를 추가해주세요");
+                            }
+                            else {
+                                if (mMainUri.equals("")) {
+                                    showCustomToast("메인사진을 선택해주세요");
+                                }
+                                else {
+                                    boolean boolComma = true;
+                                    boolean boolExist = false;
+                                    for (int i = 0; i < mFirstEtID.size(); i++) {
+                                        EditText editText = getActivity().findViewById(Integer.valueOf(mFirstEtID.get(i)));
+                                        String str = editText.getText().toString();
+                                        if (!str.equals("")) {
+                                            boolExist = true;
+                                            for (int j = 0; j < str.length(); j++) {
+                                                if (str.charAt(j) == ',') {
+                                                    boolComma = false;
+                                                    showCustomToast("재료에 ','는 입력할 수 없습니다");
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        if (boolComma == false) break;
+                                    }
+                                    if (boolComma == true && boolExist == true) {
+                                        String hashTag = "";
+                                        String material = "";
+                                        boolean hashFirst = true;
+                                        boolean mateFirst = true;
+                                        for (int i = 0; i < mHashTagId.size(); i++) {
+                                            TextView textView = getActivity().findViewById(mHashTagId.get(i));
+                                            if (hashFirst) {
+                                                hashTag = hashTag + textView.getText().toString();
+                                                hashFirst = false;
+                                            }
+                                            else {
+                                                hashTag = hashTag + " " + textView.getText().toString();
+                                            }
+                                        }
+                                        for (int i = 0; i < mFirstEtID.size(); i++) {
+                                            EditText editText = getActivity().findViewById(mFirstEtID.get(i));
+                                            if (editText.getText().toString().equals("")) {
+                                                if (mateFirst) {
+                                                    material = material + editText.getText().toString();
+                                                    mateFirst = false;
+                                                }
+                                                else {
+                                                    material = material + ", " + editText.getText().toString();
+                                                }
+                                            }
+                                        }
+                                        Intent intent = new Intent(getActivity(), EditRecipeActivity.class);
+                                        intent.putExtra("category", mCategory);
+                                        intent.putExtra("title", mEtTitle.getText().toString());
+                                        intent.putExtra("foodName", mEtFoodName.getText().toString());
+                                        intent.putExtra("hashTag", hashTag);
+                                        intent.putExtra("material", material);
+                                        intent.putExtra("mStringUri", mStringUri);
+                                        intent.putExtra("mMainUri", mMainUri);
+                                        startActivity(intent);
+                                    }
+                                    else if (boolExist == false) {
+                                        showCustomToast("재료를 입력해주세요");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         });
         mBtnAddHashTag.setOnClickListener(new View.OnClickListener() {
