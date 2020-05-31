@@ -19,10 +19,11 @@
             android:background="@drawable/round_swipe_left_background"/>
 
         <View
+            android:id="@+id/item_recipe_list_back_swipe"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/round_swipe_right_background"/>
+            android:background="@drawable/round_swipe_right_background_gray"/>
 
     </LinearLayout>
 
@@ -32,10 +33,11 @@
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/item_recipe_list_forward_swipe"
             android:tag="Right"
             android:layout_width="50dp"
             android:layout_height="match_parent"
-            android:background="@drawable/round_swipe_right_background">
+            android:background="@drawable/round_swipe_right_background_gray">
 
             <ImageView
                 android:id="@+id/item_recipe_list_iv_right"

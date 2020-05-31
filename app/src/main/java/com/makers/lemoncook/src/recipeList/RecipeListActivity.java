@@ -178,4 +178,32 @@ public class RecipeListActivity extends BaseActivity implements RecipeListActivi
         RecipeListService recipeListService = new RecipeListService(this);
         recipeListService.deleteRecipe(Integer.toString(recipeNo), idx);
     }
+
+    public void postZZim(int idx) {
+
+    }
+
+    public void deleteZZim(int idx) {
+
+    }
+
+    @Override
+    public void postZZimSuccess(boolean isSuccess, int code, String message) {
+
+    }
+
+    @Override
+    public void postZZimFailure() {
+
+    }
+
+    @Override
+    public void deleteZZimSuccess(boolean isSuccess, int code, String message) {
+
+    }
+
+    @Override
+    public void deleteZZimFailure() {
+
+    }
 }
