@@ -58,7 +58,7 @@ public class RecipeListActivity extends BaseActivity implements RecipeListActivi
 
         mRvLinearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mRvLinearLayoutManager);
-        mRecipeListRecyclerViewAdapter = new RecipeListRecyclerViewAdapter(mData, this);
+        mRecipeListRecyclerViewAdapter = new RecipeListRecyclerViewAdapter(mData, this, this);
         mRecyclerView.setAdapter(mRecipeListRecyclerViewAdapter);
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {

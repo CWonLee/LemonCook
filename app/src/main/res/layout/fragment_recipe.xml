@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".src.recipe.fragments.RecipeFragment">
+
+    <ImageView
+        android:id="@+id/recipe_fm_iv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_lemon"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="7dp"/>
+
+        <TextView
+            android:id="@+id/recipe_fm_tv_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:padding="10dp"
+            android:textSize="15sp"
+            android:textColor="@color/colorWhite"
+            android:background="#4D121212"
+            android:gravity="start"/>
+
+        <TextView
+            android:id="@+id/recipe_fm_tv_num"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:textColor="@color/colorWhite"
+            android:textSize="20dp"
+            android:gravity="center"
+            android:background="@color/colorLemon"
+            app:layout_constraintBottom_toTopOf="@+id/recipe_fm_tv_content"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

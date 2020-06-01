@@ -208,7 +208,7 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
                                         }
                                         for (int i = 0; i < mFirstEtID.size(); i++) {
                                             EditText editText = getActivity().findViewById(mFirstEtID.get(i));
-                                            if (editText.getText().toString().equals("")) {
+                                            if (!editText.getText().toString().equals("")) {
                                                 if (mateFirst) {
                                                     material = material + editText.getText().toString();
                                                     mateFirst = false;
@@ -223,6 +223,7 @@ public class NewRecipeFragment extends Fragment implements NewRecipeFragmentView
                                         intent.putExtra("title", mEtTitle.getText().toString());
                                         intent.putExtra("foodName", mEtFoodName.getText().toString());
                                         intent.putExtra("hashTag", hashTag);
+                                        System.out.println("인텐트 전" + material);
                                         intent.putExtra("material", material);
                                         intent.putExtra("mStringUri", mStringUri);
                                         intent.putExtra("mMainUri", mMainUri);

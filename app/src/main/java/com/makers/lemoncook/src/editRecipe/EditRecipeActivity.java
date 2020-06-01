@@ -212,7 +212,7 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
         for (int i = 0; i < mUri.size(); i++) {
             File file = null;
             try {
-                file = new Compressor(this).setQuality(30).compressToFile(new File(mUri.get(i).getPath()));
+                file = new Compressor(this).setQuality(70).compressToFile(new File(mUri.get(i).getPath()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -222,9 +222,13 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
         EditRecipeService editRecipeService = new EditRecipeService(this);
         File mainFile = null;
         try {
-            mainFile = new Compressor(this).setQuality(30).compressToFile(new File(Uri.parse(mMainUri).getPath()));
+            mainFile = new Compressor(this).setQuality(70).compressToFile(new File(Uri.parse(mMainUri).getPath()));
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        System.out.println("들어간값");
+        for (int i = 0; i < files.size(); i++) {
+            System.out.println(files.get(i));
         }
         RequestBody mainRequestBody = RequestBody.create(MediaType.parse("multipart/form-data"), mainFile);
         editRecipeService.uploadImage(MultipartBody.Part.createFormData("image", mainFile.getName(), mainRequestBody), files);
@@ -233,6 +237,10 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
     @Override
     public void uploadSuccess(boolean isSuccess, int code, String message, ResponseUpload.Result result) {
         if (isSuccess && code == 200) {
+            System.out.println("나온값");
+            for (int i = 0; i < result.getCookingOrderImage().size(); i++) {
+                System.out.println(result.getCookingOrderImage().get(i).getImageUrl());
+            }
             postRecipe(result);
         }
         else {
@@ -276,6 +284,7 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
         requestPostRecipe.setName(mFoodName);
         requestPostRecipe.setHashTag(mHashTag);
         requestPostRecipe.setIngredient(mMaterial);
+        System.out.println("재료 : " + mMaterial);
         requestPostRecipe.setServing("1인분");
         requestPostRecipe.setImage(result.getImage().getImageUrl());
         ArrayList<RequestPostRecipe.CookingOrder> cookingOrders = new ArrayList<>();
@@ -286,51 +295,8 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
             cookingOrder.setCookingOrderImage(result.getCookingOrderImage().get(i).getImageUrl());
             cookingOrders.add(cookingOrder);
         }
+        requestPostRecipe.setCookingOrder(cookingOrders);
 
         editRecipeService.postRecipe(requestPostRecipe);
-    }
-
-    public File saveBitmapToFile(File file){
-        try {
-
-            // BitmapFactory options to downsize the image
-            BitmapFactory.Options o = new BitmapFactory.Options();
-            o.inJustDecodeBounds = true;
-            o.inSampleSize = 6;
-            // factor of downsizing the image
-
-            FileInputStream inputStream = new FileInputStream(file);
-            //Bitmap selectedBitmap = null;
-            BitmapFactory.decodeStream(inputStream, null, o);
-            inputStream.close();
-
-            // The new size we want to scale to
-            final int REQUIRED_SIZE=75;
-
-            // Find the correct scale value. It should be the power of 2.
-            int scale = 1;
-            while(o.outWidth / scale / 2 >= REQUIRED_SIZE &&
-                    o.outHeight / scale / 2 >= REQUIRED_SIZE) {
-                scale *= 2;
-            }
-
-            BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize = scale;
-            inputStream = new FileInputStream(file);
-
-            Bitmap selectedBitmap = BitmapFactory.decodeStream(inputStream, null, o2);
-            inputStream.close();
-
-            // here i override the original image file
-            file.createNewFile();
-            FileOutputStream outputStream = new FileOutputStream(file);
-
-            selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 100 , outputStream);
-
-            return file;
-        } catch (Exception e) {
-            System.out.println(".......");
-            return null;
-        }
     }
 }

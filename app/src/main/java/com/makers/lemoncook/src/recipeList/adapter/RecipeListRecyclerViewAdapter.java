@@ -1,6 +1,7 @@
 package com.makers.lemoncook.src.recipeList.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.daimajia.swipe.SwipeLayout;
 import com.makers.lemoncook.R;
+import com.makers.lemoncook.src.recipe.RecipeActivity;
 import com.makers.lemoncook.src.recipeList.interfaces.RecipeListActivityView;
 import com.makers.lemoncook.src.recipeList.models.ResponseGetRecipe;
 
@@ -23,10 +25,12 @@ import java.util.ArrayList;
 public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<RecipeListRecyclerViewAdapter.ViewHolder> {
     private ArrayList<ResponseGetRecipe.Result> mData;
     private RecipeListActivityView mRecipeListActivityView;
+    private Context mContext;
 
-    public RecipeListRecyclerViewAdapter(ArrayList<ResponseGetRecipe.Result> arrayList, RecipeListActivityView recipeListActivityView) {
+    public RecipeListRecyclerViewAdapter(ArrayList<ResponseGetRecipe.Result> arrayList, RecipeListActivityView recipeListActivityView, Context context) {
         this.mData = arrayList;
         this.mRecipeListActivityView = recipeListActivityView;
+        this.mContext = context;
     }
 
     @NonNull
@@ -61,6 +65,14 @@ public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<RecipeLi
                 mRecipeListActivityView.deleteRecipe(mData.get(position).getRecipeNo(), position);
             }
         });
+        holder.mClItem.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                Intent intent = new Intent(mContext, RecipeActivity.class);
+                intent.putExtra("recipeNo", mData.get(position).getRecipeNo());
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -73,7 +85,7 @@ public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<RecipeLi
         ImageView mImageView;
         SwipeLayout mSwipeLayout;
         TextView mTvTitle, mTvName, mTvHashTag, mTvDate;
-        ConstraintLayout mClDelete;
+        ConstraintLayout mClDelete, mClItem;
 
         public ViewHolder(@NonNull final View itemView) {
             super(itemView);
@@ -85,6 +97,7 @@ public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<RecipeLi
             mTvHashTag = itemView.findViewById(R.id.item_recipe_list_tv_hash_tag);
             mTvDate = itemView.findViewById(R.id.item_recipe_list_tv_date);
             mClDelete = itemView.findViewById(R.id.item_recipe_list_cl_delete);
+            mClItem = itemView.findViewById(R.id.item_recipe_cl_item);
         }
     }
 
