@@ -24,7 +24,7 @@ public class LoginService {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 final LoginResponse loginResponse = response.body();
-                mLoginActivityView.loginSuccess(loginResponse.getUserInfo(), loginResponse.getJwt(), loginResponse.isSuccess(), loginResponse.getCode(), loginResponse.getMessage());
+                mLoginActivityView.loginSuccess(loginResponse.isSuccess(), loginResponse.getCode(), loginResponse.getMessage(), loginResponse.getJwt());
             }
 
             @Override

@@ -1,7 +1,12 @@
 package com.makers.lemoncook.src.splash;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -9,6 +14,9 @@ import com.makers.lemoncook.R;
 import com.makers.lemoncook.src.BaseActivity;
 import com.makers.lemoncook.src.login.LoginActivity;
 import com.makers.lemoncook.src.main.MainActivity;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import static com.makers.lemoncook.src.ApplicationClass.X_ACCESS_TOKEN;
 import static com.makers.lemoncook.src.ApplicationClass.sSharedPreferences;
@@ -27,17 +35,8 @@ public class SplashActivity extends BaseActivity {
         mIvNextButton.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
-                String jwt = sSharedPreferences.getString(X_ACCESS_TOKEN, null);
-                System.out.println("jwt : " + jwt);
-
-                if (jwt == null) {
-                    startActivity(new Intent(getApplication(), LoginActivity.class));
-                    SplashActivity.this.finish();
-                }
-                else {
-                    startActivity(new Intent(getApplication(), MainActivity.class));
-                    SplashActivity.this.finish();
-                }
+                startActivity(new Intent(getApplication(), LoginActivity.class));
+                SplashActivity.this.finish();
             }
         });
     }

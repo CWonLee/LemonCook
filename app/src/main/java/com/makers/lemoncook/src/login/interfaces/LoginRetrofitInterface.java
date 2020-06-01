@@ -8,6 +8,6 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 public interface LoginRetrofitInterface {
-    @POST("/signin")
+    @POST("/signin/kakao")
     Call<LoginResponse> postLogin(@Body LoginRequest params);
 }

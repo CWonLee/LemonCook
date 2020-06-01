@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.kakao.auth.KakaoSDK;
 import com.makers.lemoncook.config.XAccessTokenInterceptor;
 
 import java.text.SimpleDateFormat;
@@ -16,6 +17,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApplicationClass extends Application {
+    private static ApplicationClass instance;
+
     public static MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=uft-8");
     public static MediaType MEDIA_TYPE_JPEG = MediaType.parse("image/jpeg");
 
@@ -38,13 +41,22 @@ public class ApplicationClass extends Application {
     // Retrofit 인스턴스
     public static Retrofit retrofit;
 
+    public static ApplicationClass getGlobalApplicationContext() {
+        if (instance == null) {
+            throw new IllegalStateException("This Application does not inherit com.kakao.GlobalApplication");
+        }
+        return instance;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
 
         if (sSharedPreferences == null) {
             sSharedPreferences = getApplicationContext().getSharedPreferences(TAG, Context.MODE_PRIVATE);
         }
+        KakaoSDK.init(new KakaoSDKAdapter());
     }
 
     public static Retrofit getRetrofit() {

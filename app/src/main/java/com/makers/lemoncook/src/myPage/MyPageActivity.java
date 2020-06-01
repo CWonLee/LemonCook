@@ -19,6 +19,7 @@ import com.makers.lemoncook.src.login.LoginActivity;
 import com.makers.lemoncook.src.myPage.adpaters.MyPageRecyclerViewAdapter;
 import com.makers.lemoncook.src.myPage.interfaces.MyPageActivityView;
 import com.makers.lemoncook.src.myPage.models.ResponseGetMyPage;
+import com.makers.lemoncook.src.setting.SettingActivity;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ public class MyPageActivity extends BaseActivity implements MyPageActivityView {
     boolean mNewPage = true;
     LinearLayoutManager mRvLinearLayoutManager;
     ConstraintLayout mClMyRecipe, mClGetRecipe, mClZzim;
-    String mTab = "register";
+    String mTab = "register", mUserName = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,13 +145,8 @@ public class MyPageActivity extends BaseActivity implements MyPageActivityView {
         mIvSetting.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
-                SharedPreferences.Editor editor = sSharedPreferences.edit();
-                editor.clear();
-                editor.commit();
-
-                Intent intent = new Intent(MyPageActivity.this, LoginActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                Intent intent = new Intent(MyPageActivity.this, SettingActivity.class);
+                intent.putExtra("name", mUserName);
                 startActivity(intent);
             }
         });
@@ -171,6 +167,9 @@ public class MyPageActivity extends BaseActivity implements MyPageActivityView {
                 mData.add(result.getRecipeInfo().get(i));
             }
             mMyPageRecyclerViewAdapter.notifyDataSetChanged();
+            if (mUserName.equals("")) {
+                mUserName = result.getNickname();
+            }
             mTvUserName.setText(result.getNickname());
             mTvMyRecipeCnt.setText(Integer.toString(result.getRegisterRecipe()));
             mTvGetRecipeCnt.setText("0");

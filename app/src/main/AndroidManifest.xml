@@ -22,7 +22,13 @@
         android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="n">
-        <activity android:name=".src.recipe.RecipeActivity"></activity>
+        <activity android:name=".src.setting.SettingActivity"></activity>
+
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="@string/kakao_app_key" />
+
+        <activity android:name=".src.recipe.RecipeActivity" />
         <activity android:name=".src.search.SearchActivity" />
         <activity android:name=".src.myPage.MyPageActivity" />
         <activity android:name=".src.editRecipe.EditRecipeActivity" />

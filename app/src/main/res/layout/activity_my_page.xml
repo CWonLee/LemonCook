@@ -73,15 +73,6 @@
                 android:layout_gravity="center_vertical"
                 android:textSize="21sp"
                 android:textColor="@color/colorSplashTitleBlack"/>
-
-            <ImageView
-                android:id="@+id/my_page_iv_pen"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:src="@drawable/ic_pen"
-                android:layout_gravity="center_vertical"/>
-
         </LinearLayout>
 
         <LinearLayout
