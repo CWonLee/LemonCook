@@ -22,6 +22,9 @@ public class ResponseGetRecipe {
         @SerializedName("recipeNo")
         private int recipeNo;
 
+        @SerializedName("userNo")
+        private int userNo;
+
         @SerializedName("recipeImage")
         private String recipeImage;
 
@@ -42,6 +45,10 @@ public class ResponseGetRecipe {
 
         public int getRecipeNo() {
             return recipeNo;
+        }
+
+        public int getUserNo() {
+            return userNo;
         }
 
         public String getRecipeImage() {

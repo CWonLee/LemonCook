@@ -53,7 +53,7 @@ public class SearchActivity extends BaseActivity implements SearchActivityView {
         mRecyclerView.setNestedScrollingEnabled(false);
         mRvLinearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mRvLinearLayoutManager);
-        mSearchRecyclerViewAdapter = new SearchRecyclerViewAdapter(mData);
+        mSearchRecyclerViewAdapter = new SearchRecyclerViewAdapter(mData, this);
         mRecyclerView.setAdapter(mSearchRecyclerViewAdapter);
 
         mNestedScrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {

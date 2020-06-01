@@ -178,9 +178,14 @@ public class RecipeListActivity extends BaseActivity implements RecipeListActivi
 
     @Override
     public void deleteRecipe(int recipeNo, int idx) {
-        showProgressDialog();
-        RecipeListService recipeListService = new RecipeListService(this);
-        recipeListService.deleteRecipe(Integer.toString(recipeNo), idx);
+        if (!getIntent().getStringExtra("filter").equals("My Recipe")) {
+            showCustomToast("스타레시피는 삭제하실 수 없습니다");
+        }
+        else {
+            showProgressDialog();
+            RecipeListService recipeListService = new RecipeListService(this);
+            recipeListService.deleteRecipe(Integer.toString(recipeNo), idx);
+        }
     }
 
     @Override
@@ -224,7 +229,7 @@ public class RecipeListActivity extends BaseActivity implements RecipeListActivi
         hideProgressDialog();
         if (isSuccess && code == 200) {
             showCustomToast(message);
-            mZZim.remove(idx);
+            mZZim.set(idx, 0);
 
             mRecipeListRecyclerViewAdapter.notifyDataSetChanged();
         }

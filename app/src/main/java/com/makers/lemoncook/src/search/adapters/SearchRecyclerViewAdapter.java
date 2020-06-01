@@ -1,6 +1,7 @@
 package com.makers.lemoncook.src.search.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,10 +10,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.makers.lemoncook.R;
+import com.makers.lemoncook.src.recipe.RecipeActivity;
 import com.makers.lemoncook.src.search.interfaces.SearchActivityView;
 import com.makers.lemoncook.src.search.models.ResponseSearch;
 
@@ -20,9 +23,11 @@ import java.util.ArrayList;
 
 public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecyclerViewAdapter.ViewHolder> {
     private ArrayList<ResponseSearch.Result> mData;
+    private Context mContext;
 
-    public SearchRecyclerViewAdapter(ArrayList<ResponseSearch.Result> arrayList) {
+    public SearchRecyclerViewAdapter(ArrayList<ResponseSearch.Result> arrayList, Context context) {
         this.mData = arrayList;
+        this.mContext = context;
     }
 
     @NonNull
@@ -46,6 +51,14 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
         holder.mTvName.setText(mData.get(position).getRecipeName());
         holder.mTvHashTag.setText(mData.get(position).getRecipeHashTag());
         holder.mTvDate.setText(mData.get(position).getRecipeCreatedAt());
+        holder.mClItem.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                Intent intent = new Intent(mContext, RecipeActivity.class);
+                intent.putExtra("recipeNo", mData.get(position).getRecipeNo());
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -57,6 +70,7 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
 
         ImageView mImageView;
         TextView mTvTitle, mTvName, mTvHashTag, mTvDate;
+        ConstraintLayout mClItem;
 
         public ViewHolder(@NonNull final View itemView) {
             super(itemView);
@@ -66,6 +80,7 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<SearchRecycl
             mTvName = itemView.findViewById(R.id.item_search_tv_name);
             mTvHashTag = itemView.findViewById(R.id.item_search_tv_hash_tag);
             mTvDate = itemView.findViewById(R.id.item_search_tv_date);
+            mClItem = itemView.findViewById(R.id.item_search_cl_item);
         }
     }
 
