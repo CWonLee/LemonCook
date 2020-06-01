@@ -7,27 +7,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.makers.lemoncook.R;
-import com.makers.lemoncook.src.addRecipe.fragments.interfaces.NewRecipeFragmentView;
-import com.squareup.picasso.Picasso;
+import com.makers.lemoncook.src.addRecipe.interfaces.AddRecipeActivityView;
 
 import java.io.File;
 import java.util.ArrayList;
 
 public class NewRecipeImageRecyclerViewAdapter extends RecyclerView.Adapter<NewRecipeImageRecyclerViewAdapter.ViewHolder> {
     private ArrayList<Uri> mData;
-    private NewRecipeFragmentView mNewRecipeFragmentView;
+    private AddRecipeActivityView mAddRecipeActivityView;
     private Context mContext;
 
-    public NewRecipeImageRecyclerViewAdapter(ArrayList<Uri> arrayList, NewRecipeFragmentView newRecipeFragmentView, Context context) {
+    public NewRecipeImageRecyclerViewAdapter(ArrayList<Uri> arrayList, AddRecipeActivityView addRecipeActivityView, Context context) {
         mData = arrayList;
-        this.mNewRecipeFragmentView = newRecipeFragmentView;
+        this.mAddRecipeActivityView = addRecipeActivityView;
         this.mContext = context;
     }
 
@@ -67,7 +65,7 @@ public class NewRecipeImageRecyclerViewAdapter extends RecyclerView.Adapter<NewR
                 @Override
                 public void onSingleClick(View v) {
                     int pos = getAdapterPosition();
-                    mNewRecipeFragmentView.removeImage(pos);
+                    mAddRecipeActivityView.removeImage(pos);
                 }
             });
         }
