@@ -10,4 +10,12 @@ public interface RecipeActivityView {
     void getInterface(RecipeRecyclerViewInterface recipeRecyclerViewInterface);
 
     void change(int idx);
+
+    void postZZimSuccess(boolean isSuccess, int code, String message);
+
+    void postZZimFailure();
+
+    void deleteZZimSuccess(boolean isSuccess, int code, String message);
+
+    void deleteZZimFailure();
 }

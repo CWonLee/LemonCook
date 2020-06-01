@@ -15,6 +15,7 @@ import com.makers.lemoncook.src.recipe.adapters.RecipeRecyclerViewAdapter;
 import com.makers.lemoncook.src.recipe.adapters.RecipeViewPagerAdapter;
 import com.makers.lemoncook.src.recipe.interfaces.RecipeActivityView;
 import com.makers.lemoncook.src.recipe.interfaces.RecipeRecyclerViewInterface;
+import com.makers.lemoncook.src.recipe.models.RequestZZim;
 import com.makers.lemoncook.src.recipe.models.ResponseRecipe;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
     ArrayList<Integer> mFragmentNo = new ArrayList<>();
     ArrayList<ArrayList<String>> mMaterial = new ArrayList<>();
     int mStartRecipeIdx = 1;
+    int mZZim;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +76,18 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
                 finish();
             }
         });
+
+        mIvZZim.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                if (mZZim == 0) {
+                    postZZim(mResult.getRecipeNo());
+                }
+                else {
+                    deleteZZim(mResult.getRecipeNo());
+                }
+            }
+        });
     }
 
     void Init() {
@@ -89,6 +103,7 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
         hideProgressDialog();
         if (isSuccess && code == 200) {
             mResult = result;
+            mZZim = result.getIsSave();
             if (result.getIsSave() == 1) {
                 mIvZZim.setImageResource(R.drawable.ic_lemon_fill);
             }
@@ -149,5 +164,57 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
     @Override
     public void change(int idx) {
         mViewPager.setCurrentItem(idx);
+    }
+
+    public void postZZim(int recipeNo) {
+        showProgressDialog();
+        RecipeService recipeService = new RecipeService(this);
+        RequestZZim requestZZim = new RequestZZim();
+        requestZZim.setRecipeNo(recipeNo);
+        recipeService.postZZim(requestZZim);
+    }
+
+    public void deleteZZim(int recipeNo) {
+        showProgressDialog();
+        RecipeService recipeService = new RecipeService(this);
+        recipeService.deleteZZim(recipeNo);
+    }
+
+    @Override
+    public void postZZimSuccess(boolean isSuccess, int code, String message) {
+        hideProgressDialog();
+        if (isSuccess && code == 200) {
+            showCustomToast(message);
+            mIvZZim.setImageResource(R.drawable.ic_lemon_fill);
+            mZZim = 1;
+        }
+        else {
+            showCustomToast(message);
+        }
+    }
+
+    @Override
+    public void postZZimFailure() {
+        hideProgressDialog();
+        showCustomToast(getResources().getString(R.string.network_error));
+    }
+
+    @Override
+    public void deleteZZimSuccess(boolean isSuccess, int code, String message) {
+        hideProgressDialog();
+        if (isSuccess && code == 200) {
+            showCustomToast(message);
+            mIvZZim.setImageResource(R.drawable.ic_lemon_emty);
+            mZZim = 0;
+        }
+        else {
+            showCustomToast(message);
+        }
+    }
+
+    @Override
+    public void deleteZZimFailure() {
+        hideProgressDialog();
+        showCustomToast(getResources().getString(R.string.network_error));
     }
 }
