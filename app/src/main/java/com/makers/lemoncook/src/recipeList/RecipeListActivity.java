@@ -14,6 +14,7 @@ import com.makers.lemoncook.R;
 import com.makers.lemoncook.src.BaseActivity;
 import com.makers.lemoncook.src.recipeList.adapter.RecipeListRecyclerViewAdapter;
 import com.makers.lemoncook.src.recipeList.interfaces.RecipeListActivityView;
+import com.makers.lemoncook.src.recipeList.models.RequestPostZZim;
 import com.makers.lemoncook.src.recipeList.models.ResponseGetRecipe;
 import com.makers.lemoncook.src.search.SearchActivity;
 
@@ -23,6 +24,7 @@ public class RecipeListActivity extends BaseActivity implements RecipeListActivi
 
     RecyclerView mRecyclerView;
     ArrayList<ResponseGetRecipe.Result> mData = new ArrayList<>();
+    ArrayList<Integer> mZZim = new ArrayList<>();
     TextView mTvTitle, mTvOrderNew, mTvOrderName;
     ImageView mIvBack, mIvSearch;
     RecipeListRecyclerViewAdapter mRecipeListRecyclerViewAdapter;
@@ -58,7 +60,7 @@ public class RecipeListActivity extends BaseActivity implements RecipeListActivi
 
         mRvLinearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mRvLinearLayoutManager);
-        mRecipeListRecyclerViewAdapter = new RecipeListRecyclerViewAdapter(mData, this, this);
+        mRecipeListRecyclerViewAdapter = new RecipeListRecyclerViewAdapter(mData, this, this, mZZim);
         mRecyclerView.setAdapter(mRecipeListRecyclerViewAdapter);
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -137,6 +139,7 @@ public class RecipeListActivity extends BaseActivity implements RecipeListActivi
             }
             for (int i = 0; i < result.size(); i++) {
                 mData.add(result.get(i));
+                mZZim.add(result.get(i).getIsSave());
             }
             mRecipeListRecyclerViewAdapter.notifyDataSetChanged();
         }
@@ -158,6 +161,7 @@ public class RecipeListActivity extends BaseActivity implements RecipeListActivi
         hideProgressDialog();
         if (isSuccess && code == 200) {
             mData.remove(idx);
+            mZZim.remove(idx);
             mRecipeListRecyclerViewAdapter.notifyDataSetChanged();
             showCustomToast(message);
         }
@@ -179,31 +183,59 @@ public class RecipeListActivity extends BaseActivity implements RecipeListActivi
         recipeListService.deleteRecipe(Integer.toString(recipeNo), idx);
     }
 
-    public void postZZim(int idx) {
-
-    }
-
-    public void deleteZZim(int idx) {
-
+    @Override
+    public void postZZim(int recipeNo, int idx) {
+        showProgressDialog();
+        RecipeListService recipeListService = new RecipeListService(this);
+        RequestPostZZim requestPostZZim = new RequestPostZZim();
+        requestPostZZim.setRecipeNo(recipeNo);
+        recipeListService.postZZim(requestPostZZim, idx);
     }
 
     @Override
-    public void postZZimSuccess(boolean isSuccess, int code, String message) {
+    public void deleteZZim(int recipeNo, int idx) {
+        showProgressDialog();
+        RecipeListService recipeListService = new RecipeListService(this);
+        recipeListService.deleteZZim(recipeNo, idx);
+    }
 
+    @Override
+    public void postZZimSuccess(boolean isSuccess, int code, String message, int idx) {
+        hideProgressDialog();
+        if (isSuccess && code == 200) {
+            showCustomToast(message);
+            mZZim.set(idx, 1);
+
+            mRecipeListRecyclerViewAdapter.notifyDataSetChanged();
+        }
+        else {
+            showCustomToast(message);
+        }
     }
 
     @Override
     public void postZZimFailure() {
-
+        hideProgressDialog();
+        showCustomToast(getResources().getString(R.string.network_error));
     }
 
     @Override
-    public void deleteZZimSuccess(boolean isSuccess, int code, String message) {
+    public void deleteZZimSuccess(boolean isSuccess, int code, String message, int idx) {
+        hideProgressDialog();
+        if (isSuccess && code == 200) {
+            showCustomToast(message);
+            mZZim.remove(idx);
 
+            mRecipeListRecyclerViewAdapter.notifyDataSetChanged();
+        }
+        else {
+            showCustomToast(message);
+        }
     }
 
     @Override
     public void deleteZZimFailure() {
-
+        hideProgressDialog();
+        showCustomToast(getResources().getString(R.string.network_error));
     }
 }

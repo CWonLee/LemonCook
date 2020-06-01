@@ -15,11 +15,15 @@ public interface RecipeListActivityView {
 
     void deleteRecipe(int recipeNo, int idx);
 
-    void postZZimSuccess(boolean isSuccess, int code, String message);
+    void postZZim(int recipeNo, int idx);
+
+    void deleteZZim(int recipeNo, int idx);
+
+    void postZZimSuccess(boolean isSuccess, int code, String message, int idx);
 
     void postZZimFailure();
 
-    void deleteZZimSuccess(boolean isSuccess, int code, String message);
+    void deleteZZimSuccess(boolean isSuccess, int code, String message, int idx);
 
     void deleteZZimFailure();
 }

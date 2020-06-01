@@ -72,22 +72,6 @@ public class SearchActivity extends BaseActivity implements SearchActivityView {
                 }
             }
         });
-        /*
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                int totalItemCount = mRvLinearLayoutManager.getItemCount();
-                int lastVisible = mRvLinearLayoutManager.findLastCompletelyVisibleItemPosition();
-
-                if (lastVisible >= totalItemCount - 1) {
-
-                }
-            }
-        });
-
-         */
 
         mFilter = getIntent().getStringExtra("filter");
 
@@ -149,15 +133,11 @@ public class SearchActivity extends BaseActivity implements SearchActivityView {
 
     public void getSearch(String search, boolean clearData) {
         SearchService searchService = new SearchService(this);
-        System.out.println("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ");
-        System.out.println(search + " " + mFilter + " " + mOrder + " " + clearData);
         searchService.getSearch(search, mFilter, mOrder, mPage, clearData);
     }
 
     @Override
     public void searchSuccess(boolean isSuccess, int code, String message, ArrayList<ResponseSearch.Result> result, boolean clearData) {
-        System.out.println(isSuccess + " " + code + " " + message);
-        System.out.println(mPage + " " + mNewPage);
         if (isSuccess && code == 200) {
             if (clearData) {
                 mData.clear();

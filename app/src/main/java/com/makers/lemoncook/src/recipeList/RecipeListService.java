@@ -55,13 +55,13 @@ public class RecipeListService {
         });
     }
 
-    void postZZim(RequestPostZZim requestPostZZim) {
+    void postZZim(RequestPostZZim requestPostZZim, final int idx) {
         final RecipeListRetrofitInterface recipeListRetrofitInterface = getRetrofit().create(RecipeListRetrofitInterface.class);
         recipeListRetrofitInterface.postZZim(requestPostZZim).enqueue(new Callback<ResponsePostZZim>() {
             @Override
             public void onResponse(Call<ResponsePostZZim> call, Response<ResponsePostZZim> response) {
                 final ResponsePostZZim responsePostZZim = response.body();
-                mRecipeListActivityView.postZZimSuccess(responsePostZZim.isSuccess(), responsePostZZim.getCode(), responsePostZZim.getMessage());
+                mRecipeListActivityView.postZZimSuccess(responsePostZZim.isSuccess(), responsePostZZim.getCode(), responsePostZZim.getMessage(), idx);
             }
 
             @Override
@@ -72,13 +72,13 @@ public class RecipeListService {
         });
     }
 
-    void deleteZZim(final int idx) {
+    void deleteZZim(final int recipeNo, final int idx) {
         final RecipeListRetrofitInterface recipeListRetrofitInterface = getRetrofit().create(RecipeListRetrofitInterface.class);
-        recipeListRetrofitInterface.deleteZZim(idx).enqueue(new Callback<ResponseDeleteZZim>() {
+        recipeListRetrofitInterface.deleteZZim(recipeNo).enqueue(new Callback<ResponseDeleteZZim>() {
             @Override
             public void onResponse(Call<ResponseDeleteZZim> call, Response<ResponseDeleteZZim> response) {
                 final ResponseDeleteZZim responseDeleteZZim = response.body();
-                mRecipeListActivityView.deleteZZimSuccess(responseDeleteZZim.isSuccess(), responseDeleteZZim.getCode(), responseDeleteZZim.getMessage());
+                mRecipeListActivityView.deleteZZimSuccess(responseDeleteZZim.isSuccess(), responseDeleteZZim.getCode(), responseDeleteZZim.getMessage(), idx);
             }
 
             @Override

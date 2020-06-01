@@ -24,13 +24,15 @@ import java.util.ArrayList;
 
 public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<RecipeListRecyclerViewAdapter.ViewHolder> {
     private ArrayList<ResponseGetRecipe.Result> mData;
+    private ArrayList<Integer> mZZim;
     private RecipeListActivityView mRecipeListActivityView;
     private Context mContext;
 
-    public RecipeListRecyclerViewAdapter(ArrayList<ResponseGetRecipe.Result> arrayList, RecipeListActivityView recipeListActivityView, Context context) {
+    public RecipeListRecyclerViewAdapter(ArrayList<ResponseGetRecipe.Result> arrayList, RecipeListActivityView recipeListActivityView, Context context, ArrayList<Integer> zzim) {
         this.mData = arrayList;
         this.mRecipeListActivityView = recipeListActivityView;
         this.mContext = context;
+        this.mZZim = zzim;
     }
 
     @NonNull
@@ -50,7 +52,14 @@ public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<RecipeLi
         holder.mSwipeLayout.setShowMode(SwipeLayout.ShowMode.LayDown);
         holder.mSwipeLayout.addDrag(SwipeLayout.DragEdge.Right,holder.mSwipeLayout.findViewWithTag("Right"));
         holder.mSwipeLayout.addDrag(SwipeLayout.DragEdge.Left,holder.mSwipeLayout.findViewWithTag("Left"));
-
+        if (mZZim.get(position) == 0) {
+            holder.mClForward.setBackgroundResource(R.drawable.round_swipe_right_background_gray);
+            holder.mBackView.setBackgroundResource(R.drawable.round_swipe_right_background_gray);
+        }
+        else {
+            holder.mClForward.setBackgroundResource(R.drawable.round_swipe_right_background);
+            holder.mBackView.setBackgroundResource(R.drawable.round_swipe_right_background);
+        }
         holder.mImageView.setClipToOutline(true);
         holder.mImageView.setBackgroundResource(R.drawable.round_image_view);
         Glide.with(holder.itemView.getContext()).load(mData.get(position).getRecipeImage()).into(holder.mImageView);
@@ -59,6 +68,17 @@ public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<RecipeLi
         holder.mTvHashTag.setText(mData.get(position).getRecipeHashTag());
         holder.mTvDate.setText(mData.get(position).getRecipeCreatedAt());
 
+        holder.mClForward.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                if (mZZim.get(position) == 0) {
+                    mRecipeListActivityView.postZZim(mData.get(position).getRecipeNo(), position);
+                }
+                else {
+                    mRecipeListActivityView.deleteZZim(mData.get(position).getRecipeNo(), position);
+                }
+            }
+        });
         holder.mClDelete.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
@@ -73,6 +93,7 @@ public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<RecipeLi
                 mContext.startActivity(intent);
             }
         });
+
     }
 
     @Override
@@ -85,7 +106,8 @@ public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<RecipeLi
         ImageView mImageView;
         SwipeLayout mSwipeLayout;
         TextView mTvTitle, mTvName, mTvHashTag, mTvDate;
-        ConstraintLayout mClDelete, mClItem;
+        ConstraintLayout mClDelete, mClItem, mClForward;
+        View mBackView;
 
         public ViewHolder(@NonNull final View itemView) {
             super(itemView);
@@ -98,6 +120,8 @@ public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<RecipeLi
             mTvDate = itemView.findViewById(R.id.item_recipe_list_tv_date);
             mClDelete = itemView.findViewById(R.id.item_recipe_list_cl_delete);
             mClItem = itemView.findViewById(R.id.item_recipe_cl_item);
+            mClForward = itemView.findViewById(R.id.item_recipe_list_forward_swipe);
+            mBackView = itemView.findViewById(R.id.item_recipe_list_back_swipe);
         }
     }
 

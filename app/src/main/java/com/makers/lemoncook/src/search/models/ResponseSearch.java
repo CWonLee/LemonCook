@@ -36,6 +36,9 @@ public class ResponseSearch {
         @SerializedName("recipeCreatedAt")
         private String recipeCreatedAt;
 
+        @SerializedName("isSave")
+        private int isSave;
+
         public int getRecipeNo() {
             return recipeNo;
         }
@@ -58,6 +61,10 @@ public class ResponseSearch {
 
         public String getRecipeCreatedAt() {
             return recipeCreatedAt;
+        }
+
+        public int getIsSave() {
+            return isSave;
         }
     }
 
