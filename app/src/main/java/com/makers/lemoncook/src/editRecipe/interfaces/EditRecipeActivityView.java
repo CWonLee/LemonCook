@@ -14,4 +14,6 @@ public interface EditRecipeActivityView {
     void uploadSuccess(boolean isSuccess, int code, String message, ResponseUpload.Result result);
 
     void uploadFailure();
+
+    void deleteImg();
 }

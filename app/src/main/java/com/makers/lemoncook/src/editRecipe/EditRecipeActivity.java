@@ -79,7 +79,7 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
         mEditRecipeRecyclerViewAdapter = new EditRecipeRecyclerViewAdapter(mUri, this, this);
         mRecyclerView.setAdapter(mEditRecipeRecyclerViewAdapter);
 
-        mEditRecipeViewPagerAdapter = new EditRecipeViewPagerAdapter(getSupportFragmentManager(), 0, this, mUri, mFragments);
+        mEditRecipeViewPagerAdapter = new EditRecipeViewPagerAdapter(getSupportFragmentManager(), 0, mFragments);
         mViewPager.setAdapter(mEditRecipeViewPagerAdapter);
         mViewPager.setOffscreenPageLimit(15);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -166,7 +166,7 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
         mMaterial = getIntent().getStringExtra("material");
         for (int i = 0; i < mStringUri.size(); i++) {
             mUri.add(Uri.parse(mStringUri.get(i)));
-            EditRecipeFragment editRecipeFragment = new EditRecipeFragment(mUri.size(), mUri.get(i));
+            EditRecipeFragment editRecipeFragment = new EditRecipeFragment(mUri.size(), mUri.get(i), this);
             mFragments.add(editRecipeFragment);
         }
 
@@ -180,7 +180,6 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
 
         mViewPager.setCurrentItem(idx);
     }
-
     @Override
     public void getInterface(EditRecipeRecyclerViewAdapterInterface editRecipeRecyclerViewAdapterInterface) {
         mEditRecipeRecyclerViewAdapterInterface = editRecipeRecyclerViewAdapterInterface;
@@ -255,6 +254,35 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
     }
 
     @Override
+    public void deleteImg() {
+        int deleteIdx = mViewPager.getCurrentItem();
+
+        if (deleteIdx == mFragments.size() - 1) {
+            mUri.remove(deleteIdx);
+            mFragments.remove(deleteIdx);
+
+            for (int i = 0; i < mFragments.size(); i++) {
+                mFragments.get(i).changeNum(i + 1);
+            }
+
+            mEditRecipeRecyclerViewAdapter.notifyDataSetChanged();
+            mEditRecipeViewPagerAdapter.notifyDataSetChanged();
+            mEditRecipeRecyclerViewAdapterInterface.changeCurNum(mFragments.size() - 1);
+        }
+        else {
+            mUri.remove(deleteIdx);
+            mFragments.remove(deleteIdx);
+
+            for (int i = 0; i < mFragments.size(); i++) {
+                mFragments.get(i).changeNum(i + 1);
+            }
+
+            mEditRecipeRecyclerViewAdapter.notifyDataSetChanged();
+            mEditRecipeViewPagerAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != this.RESULT_OK) {
@@ -265,7 +293,7 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
                 String pathsList[]= data.getExtras().getStringArray(GligarPicker.IMAGES_RESULT); // return list of selected images paths.
                 for (int i = pathsList.length - 1; i >= 0; i--) {
                     mUri.add(Uri.parse(pathsList[i]));
-                    EditRecipeFragment editRecipeFragment = new EditRecipeFragment(mUri.size(), mUri.get(mUri.size() - 1));
+                    EditRecipeFragment editRecipeFragment = new EditRecipeFragment(mUri.size(), mUri.get(mUri.size() - 1), this);
                     mFragments.add(editRecipeFragment);
                 }
 
