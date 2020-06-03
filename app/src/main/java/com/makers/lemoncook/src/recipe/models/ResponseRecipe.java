@@ -2,6 +2,7 @@ package com.makers.lemoncook.src.recipe.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class ResponseRecipe {
@@ -17,12 +18,15 @@ public class ResponseRecipe {
     @SerializedName("message")
     private String message;
 
-    public static class Result {
+    public static class Result implements Serializable {
         @SerializedName("recipeNo")
         private int recipeNo;
 
         @SerializedName("userNo")
         private int userNo;
+
+        @SerializedName("categoryNo")
+        private int categoryNo;
 
         @SerializedName("image")
         private String image;
@@ -48,7 +52,7 @@ public class ResponseRecipe {
         @SerializedName("cookingOrder")
         private ArrayList<CookingOrder> cookingOrder;
 
-        public class Ingredient {
+        public class Ingredient implements Serializable {
             @SerializedName("ingredient")
             private String ingredient;
 
@@ -86,6 +90,10 @@ public class ResponseRecipe {
 
         public int getUserNo() {
             return userNo;
+        }
+
+        public int getCategoryNo() {
+            return categoryNo;
         }
 
         public String getImage() {

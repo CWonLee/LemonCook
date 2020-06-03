@@ -28,12 +28,14 @@ public class EditRecipeFragment extends Fragment implements EditRecipeFragmentIn
     ImageView mImageView, mIvDelete;
     TextView mTvNumber;
     EditText mEtContent;
+    private String mContent;
     private EditRecipeActivityView mEditRecipeActivityView;
 
-    public EditRecipeFragment(int number, Uri uri, EditRecipeActivityView editRecipeActivityView) {
+    public EditRecipeFragment(int number, Uri uri, EditRecipeActivityView editRecipeActivityView, String content) {
         this.mNumber = number;
         this.mUri = uri;
         this.mEditRecipeActivityView = editRecipeActivityView;
+        this.mContent = content;
     }
 
     @Override
@@ -46,7 +48,9 @@ public class EditRecipeFragment extends Fragment implements EditRecipeFragmentIn
         mEtContent = view.findViewById(R.id.fm_edit_recipe_et_content);
         mIvDelete = view.findViewById(R.id.fm_edit_recipe_iv_delete_btn);
 
-        Glide.with(getContext()).load(new File(mUri.getPath())).into(mImageView);
+        mEtContent.setText(mContent);
+        Glide.with(getContext()).load(mUri.toString()).into(mImageView);
+        //Glide.with(getContext()).load(new File(mUri.getPath())).into(mImageView);
         mTvNumber.setText(String.valueOf(mNumber));
 
         mIvDelete.setOnClickListener(new OnSingleClickListener() {

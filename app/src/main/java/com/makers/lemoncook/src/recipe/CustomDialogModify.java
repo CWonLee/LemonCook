@@ -11,7 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.makers.lemoncook.R;
 
-public class CustomDialogDelete extends Dialog {
+public class CustomDialogModify extends Dialog {
     private ConstraintLayout mPositiveButton, mNegativeButton;
     private View.OnClickListener mPositiveListener, mNegativeListener;
 
@@ -25,18 +25,18 @@ public class CustomDialogDelete extends Dialog {
         layoutParams.dimAmount = 0.88f;
         getWindow().setAttributes(layoutParams);
 
-        setContentView(R.layout.custom_dialog_delete);
+        setContentView(R.layout.custom_dialog_modify);
 
         //셋팅
-        mPositiveButton=findViewById(R.id.custom_dialog_delete_cl_positive);
-        mNegativeButton=findViewById(R.id.custom_dialog_delete_cl_negative);
+        mPositiveButton=findViewById(R.id.custom_dialog_modify_cl_positive);
+        mNegativeButton=findViewById(R.id.custom_dialog_modify_cl_negative);
 
         //클릭 리스너 셋팅 (클릭버튼이 동작하도록 만들어줌.)
         mPositiveButton.setOnClickListener(mPositiveListener);
         mNegativeButton.setOnClickListener(mNegativeListener);
     }
 
-    public CustomDialogDelete(@NonNull Context context, View.OnClickListener positiveListener, View.OnClickListener negativeListener) {
+    public CustomDialogModify(@NonNull Context context, View.OnClickListener positiveListener, View.OnClickListener negativeListener) {
         super(context);
         this.mPositiveListener = positiveListener;
         this.mNegativeListener = negativeListener;

@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.makers.lemoncook.R;
 import com.makers.lemoncook.src.BaseActivity;
 import com.makers.lemoncook.src.main.MainActivity;
+import com.makers.lemoncook.src.modifyRecipe.ModifyActivity;
 import com.makers.lemoncook.src.recipe.adapters.RecipeRecyclerViewAdapter;
 import com.makers.lemoncook.src.recipe.adapters.RecipeViewPagerAdapter;
 import com.makers.lemoncook.src.recipe.interfaces.RecipeActivityView;
@@ -39,6 +40,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -46,6 +50,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import retrofit2.http.Url;
 
 public class RecipeActivity extends BaseActivity implements RecipeActivityView {
 
@@ -59,8 +65,9 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
     ArrayList<String> mUrl = new ArrayList<>();
     ArrayList<Integer> mFragmentNo = new ArrayList<>();
     ArrayList<ArrayList<String>> mMaterial = new ArrayList<>();
-    ConstraintLayout mClSaveBtn, mClCapture, mClDelete;
+    ConstraintLayout mClSaveBtn, mClCapture, mClDelete, mClModify;
     CustomDialogDelete mCustomDialogDelete;
+    CustomDialogModify mCustomDialogModify;
     int mStartRecipeIdx = 1;
     int mZZim;
 
@@ -76,6 +83,7 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
         mClSaveBtn = findViewById(R.id.recipe_cl_save_img);
         mClCapture = findViewById(R.id.recipe_cl_capture);
         mClDelete = findViewById(R.id.recipe_cl_delete);
+        mClModify = findViewById(R.id.recipe_cl_modify);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(RecyclerView.HORIZONTAL);
@@ -139,6 +147,19 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
                 else {
                     mCustomDialogDelete = new CustomDialogDelete(RecipeActivity.this, positiveListener, negativeListener);
                     mCustomDialogDelete.show();
+                }
+            }
+        });
+
+        mClModify.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                if (mResult.getUserNo() == 0) {
+                    showCustomToast("스타레시피는 수정할 수 없습니다");
+                }
+                else {
+                    mCustomDialogModify = new CustomDialogModify(RecipeActivity.this, modifyPositiveListener, modifyNegativeListener);
+                    mCustomDialogModify.show();
                 }
             }
         });
@@ -346,6 +367,39 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
     private View.OnClickListener negativeListener = new View.OnClickListener() {
         public void onClick(View v) {
             mCustomDialogDelete.dismiss();
+        }
+    };
+
+    private View.OnClickListener modifyPositiveListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            Intent intent = new Intent(RecipeActivity.this, ModifyActivity.class);
+            intent.putExtra("recipeNo", mResult.getRecipeNo());
+            intent.putExtra("category", mResult.getCategoryNo());
+            intent.putExtra("title", mResult.getTitle());
+            intent.putExtra("name", mResult.getName());
+            intent.putExtra("hashTag", mResult.getHashTag());
+            intent.putExtra("mainImg", mResult.getImage());
+            intent.putExtra("material", mResult.getIngredient());
+            HashMap<String, String> map = new HashMap<>();
+            ArrayList<String> img = new ArrayList<>();
+            ArrayList<String> content = new ArrayList<>();
+            for (int i = 0; i < mResult.getCookingOrder().size(); i++) {
+                img.add(mResult.getCookingOrder().get(i).getCookingOrderImage());
+                content.add(mResult.getCookingOrder().get(i).getContent());
+                map.put(mResult.getCookingOrder().get(i).getCookingOrderImage(), mResult.getCookingOrder().get(i).getContent());
+            }
+            intent.putExtra("cookingOrder", map);
+            intent.putExtra("img", img);
+            intent.putExtra("content", content);
+            startActivity(intent);
+
+            mCustomDialogModify.dismiss();
+        }
+    };
+
+    private View.OnClickListener modifyNegativeListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            mCustomDialogModify.dismiss();
         }
     };
 }

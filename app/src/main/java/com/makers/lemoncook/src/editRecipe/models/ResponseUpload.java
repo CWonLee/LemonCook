@@ -17,7 +17,7 @@ public class ResponseUpload {
     @SerializedName("result")
     private Result result;
 
-    public class Result {
+    public static class Result {
         @SerializedName("image")
         private ImageClass image;
 

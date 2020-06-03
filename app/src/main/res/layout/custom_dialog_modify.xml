@@ -30,7 +30,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginBottom="50dp"
-            android:text="레시피를 삭제 하시겠습니까?"
+            android:text="레시피를 수정하시겠습니까?"
             android:textSize="16sp"
             android:textColor="@color/colorBlack"/>
 
@@ -48,7 +48,7 @@
         android:layout_weight="1">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/custom_dialog_delete_cl_positive"
+            android:id="@+id/custom_dialog_modify_cl_positive"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1">
@@ -62,12 +62,12 @@
                 app:layout_constraintRight_toRightOf="parent"
                 android:textColor="@color/colorBlack"
                 android:textSize="16sp"
-                android:text="삭제"/>
+                android:text="수정"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/custom_dialog_delete_cl_negative"
+            android:id="@+id/custom_dialog_modify_cl_negative"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1">

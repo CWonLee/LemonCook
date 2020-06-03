@@ -49,7 +49,8 @@ public class EditRecipeRecyclerViewAdapter extends RecyclerView.Adapter<EditReci
     @Override
     public void onBindViewHolder(@NonNull EditRecipeRecyclerViewAdapter.ViewHolder holder, final int position) {
         //Glide.with(mContext).load(mData.get(position)).centerCrop().into(holder.mImageView);
-        Glide.with(mContext).load(new File(mData.get(position).getPath())).into(holder.mImageView);
+        //Glide.with(mContext).load(new File(mData.get(position).getPath())).into(holder.mImageView);
+        Glide.with(mContext).load(mData.get(position).toString()).into(holder.mImageView);
         holder.mImageView.setBackgroundResource(R.drawable.radius_2dp);
         if (position == mCurNum) {
             holder.mCl.setBackgroundResource(R.drawable.radius_2dp_lemon);

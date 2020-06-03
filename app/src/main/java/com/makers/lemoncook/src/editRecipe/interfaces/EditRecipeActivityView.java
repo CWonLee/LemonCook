@@ -16,4 +16,8 @@ public interface EditRecipeActivityView {
     void uploadFailure();
 
     void deleteImg();
+
+    void modifyRecipeSuccess(boolean isSuccess, int code, String message);
+
+    void modifyRecipeFailure();
 }

@@ -27,6 +27,7 @@ import com.makers.lemoncook.src.editRecipe.adapters.EditRecipeViewPagerAdapter;
 import com.makers.lemoncook.src.editRecipe.fragments.EditRecipeFragment;
 import com.makers.lemoncook.src.editRecipe.interfaces.EditRecipeActivityView;
 import com.makers.lemoncook.src.editRecipe.interfaces.EditRecipeRecyclerViewAdapterInterface;
+import com.makers.lemoncook.src.editRecipe.models.RequestModifyRecipe;
 import com.makers.lemoncook.src.editRecipe.models.RequestPostRecipe;
 import com.makers.lemoncook.src.editRecipe.models.ResponseUpload;
 import com.makers.lemoncook.src.main.MainActivity;
@@ -37,6 +38,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import id.zelory.compressor.Compressor;
 import okhttp3.MediaType;
@@ -49,6 +52,7 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
     ArrayList<String> mStringUri = new ArrayList<>();
     ArrayList<EditRecipeFragment> mFragments = new ArrayList<>();
     ArrayList<String> mContent = new ArrayList<>();
+    ArrayList<Boolean> mIsUri = new ArrayList<>();
     int mCategory = -1;
     String mMainUri, mTitle, mFoodName, mHashTag, mMaterial;
     RecyclerView mRecyclerView;
@@ -60,6 +64,9 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
     EditRecipeViewPagerAdapter mEditRecipeViewPagerAdapter;
     EditRecipeRecyclerViewAdapterInterface mEditRecipeRecyclerViewAdapterInterface;
     final static int PICKER_REQUEST_CODE = 30;
+    int mNewMainImage = -1;
+    int mRecipeNo;
+    int mModifyState = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,21 +164,53 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
     }
 
     void Init() {
-        mMainUri = getIntent().getStringExtra("mMainUri");
-        mStringUri = getIntent().getStringArrayListExtra("mStringUri");
-        mCategory = getIntent().getIntExtra("category", -1);
-        mTitle = getIntent().getStringExtra("title");
-        mFoodName = getIntent().getStringExtra("foodName");
-        mHashTag = getIntent().getStringExtra("hashTag");
-        mMaterial = getIntent().getStringExtra("material");
-        for (int i = 0; i < mStringUri.size(); i++) {
-            mUri.add(Uri.parse(mStringUri.get(i)));
-            EditRecipeFragment editRecipeFragment = new EditRecipeFragment(mUri.size(), mUri.get(i), this);
-            mFragments.add(editRecipeFragment);
-        }
+        if (getIntent().getIntExtra("isModify", 0) == 1) {
+            mMainUri = getIntent().getStringExtra("mMainUri");
+            mStringUri = getIntent().getStringArrayListExtra("mStringUri");
+            mCategory = getIntent().getIntExtra("category", -1);
+            mTitle = getIntent().getStringExtra("title");
+            mFoodName = getIntent().getStringExtra("foodName");
+            mHashTag = getIntent().getStringExtra("hashTag");
+            mMaterial = getIntent().getStringExtra("material");
+            mRecipeNo = getIntent().getIntExtra("recipeNo", -1);
+            mNewMainImage = getIntent().getIntExtra("isNewMainImage", -1);
+            HashMap<String,String> hashMap = (HashMap<String, String>)getIntent().getSerializableExtra("hashMap");
+            for (int i = 0; i < mStringUri.size(); i++) {
+                mUri.add(Uri.parse(mStringUri.get(i)));
+                EditRecipeFragment editRecipeFragment = new EditRecipeFragment(mUri.size(), mUri.get(i), this, hashMap.get(mStringUri.get(i)));
+                mFragments.add(editRecipeFragment);
+            }
+            for (int i = 0; i < getIntent().getIntegerArrayListExtra("isUri").size(); i++) {
+                if (getIntent().getIntegerArrayListExtra("isUri").get(i) == 0) {
+                    mIsUri.add(false);
+                }
+                else {
+                    mIsUri.add(true);
+                }
+            }
 
-        mEditRecipeViewPagerAdapter.notifyDataSetChanged();
-        mEditRecipeRecyclerViewAdapter.notifyDataSetChanged();
+            mEditRecipeViewPagerAdapter.notifyDataSetChanged();
+            mEditRecipeRecyclerViewAdapter.notifyDataSetChanged();
+        }
+        else {
+            mMainUri = getIntent().getStringExtra("mMainUri");
+            mStringUri = getIntent().getStringArrayListExtra("mStringUri");
+            mCategory = getIntent().getIntExtra("category", -1);
+            mTitle = getIntent().getStringExtra("title");
+            mFoodName = getIntent().getStringExtra("foodName");
+            mHashTag = getIntent().getStringExtra("hashTag");
+            mMaterial = getIntent().getStringExtra("material");
+            mNewMainImage = 1;
+            for (int i = 0; i < mStringUri.size(); i++) {
+                mUri.add(Uri.parse(mStringUri.get(i)));
+                mIsUri.add(true);
+                EditRecipeFragment editRecipeFragment = new EditRecipeFragment(mUri.size(), mUri.get(i), this, "");
+                mFragments.add(editRecipeFragment);
+            }
+
+            mEditRecipeViewPagerAdapter.notifyDataSetChanged();
+            mEditRecipeRecyclerViewAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -207,40 +246,86 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
     }
 
     public void uploadImage() {
-        ArrayList<MultipartBody.Part> files = new ArrayList<>();
-        for (int i = 0; i < mUri.size(); i++) {
-            File file = null;
+        boolean recipeImg = false;
+        for (int i = 0; i < mIsUri.size(); i++) {
+            if (mIsUri.get(i) == true) {
+                recipeImg = true;
+                break;
+            }
+        }
+        if (mNewMainImage == 1 && recipeImg) {  // state = 1
+            mModifyState = 1;
+            File mainFile = null;
             try {
-                file = new Compressor(this).setQuality(70).compressToFile(new File(mUri.get(i).getPath()));
+                mainFile = new Compressor(this).setQuality(70).compressToFile(new File(Uri.parse(mMainUri).getPath()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-            files.add(MultipartBody.Part.createFormData("cookingOrderImage", file.getName(), requestBody));
+            RequestBody mainRequestBody = RequestBody.create(MediaType.parse("multipart/form-data"), mainFile);
+            MultipartBody.Part mainMultiPart = MultipartBody.Part.createFormData("image", mainFile.getName(), mainRequestBody);
+
+            ArrayList<MultipartBody.Part> files = new ArrayList<>();
+            for (int i = 0; i < mUri.size(); i++) {
+                if (mIsUri.get(i) == false) continue;
+                File file = null;
+                try {
+                    file = new Compressor(this).setQuality(70).compressToFile(new File(mUri.get(i).getPath()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                files.add(MultipartBody.Part.createFormData("cookingOrderImage", file.getName(), requestBody));
+            }
+            EditRecipeService editRecipeService = new EditRecipeService(this);
+            editRecipeService.uploadImage(mainMultiPart, files);
         }
-        EditRecipeService editRecipeService = new EditRecipeService(this);
-        File mainFile = null;
-        try {
-            mainFile = new Compressor(this).setQuality(70).compressToFile(new File(Uri.parse(mMainUri).getPath()));
-        } catch (IOException e) {
-            e.printStackTrace();
+        else if (mNewMainImage == 1 && !recipeImg) { // state = 2
+            mModifyState = 2;
+            File mainFile = null;
+            try {
+                mainFile = new Compressor(this).setQuality(70).compressToFile(new File(Uri.parse(mMainUri).getPath()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            RequestBody mainRequestBody = RequestBody.create(MediaType.parse("multipart/form-data"), mainFile);
+            MultipartBody.Part mainMultiPart = MultipartBody.Part.createFormData("image", mainFile.getName(), mainRequestBody);
+
+            EditRecipeService editRecipeService = new EditRecipeService(this);
+            editRecipeService.uploadImage(mainMultiPart, null);
         }
-        System.out.println("들어간값");
-        for (int i = 0; i < files.size(); i++) {
-            System.out.println(files.get(i));
+        else if (mNewMainImage == 0 && recipeImg) { // state = 3
+            mModifyState = 3;
+            ArrayList<MultipartBody.Part> files = new ArrayList<>();
+            for (int i = 0; i < mUri.size(); i++) {
+                if (mIsUri.get(i) == false) continue;
+                File file = null;
+                try {
+                    file = new Compressor(this).setQuality(70).compressToFile(new File(mUri.get(i).getPath()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                files.add(MultipartBody.Part.createFormData("cookingOrderImage", file.getName(), requestBody));
+            }
+            EditRecipeService editRecipeService = new EditRecipeService(this);
+            editRecipeService.uploadImage(null, files);
         }
-        RequestBody mainRequestBody = RequestBody.create(MediaType.parse("multipart/form-data"), mainFile);
-        editRecipeService.uploadImage(MultipartBody.Part.createFormData("image", mainFile.getName(), mainRequestBody), files);
+        else { // state = 4
+            mModifyState = 4;
+            ResponseUpload.Result result = new ResponseUpload.Result();
+            modifyRecipe(result);
+        }
     }
 
     @Override
     public void uploadSuccess(boolean isSuccess, int code, String message, ResponseUpload.Result result) {
         if (isSuccess && code == 200) {
-            System.out.println("나온값");
-            for (int i = 0; i < result.getCookingOrderImage().size(); i++) {
-                System.out.println(result.getCookingOrderImage().get(i).getImageUrl());
+            if (getIntent().getIntExtra("isModify", 0) == 1) {
+                modifyRecipe(result);
             }
-            postRecipe(result);
+            else {
+                postRecipe(result);
+            }
         }
         else {
             showCustomToast(message);
@@ -260,6 +345,7 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
         if (deleteIdx == mFragments.size() - 1) {
             mUri.remove(deleteIdx);
             mFragments.remove(deleteIdx);
+            mIsUri.remove(deleteIdx);
 
             for (int i = 0; i < mFragments.size(); i++) {
                 mFragments.get(i).changeNum(i + 1);
@@ -272,6 +358,7 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
         else {
             mUri.remove(deleteIdx);
             mFragments.remove(deleteIdx);
+            mIsUri.remove(deleteIdx);
 
             for (int i = 0; i < mFragments.size(); i++) {
                 mFragments.get(i).changeNum(i + 1);
@@ -280,6 +367,27 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
             mEditRecipeRecyclerViewAdapter.notifyDataSetChanged();
             mEditRecipeViewPagerAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void modifyRecipeSuccess(boolean isSuccess, int code, String message) {
+        hideProgressDialog();
+        if (isSuccess && code == 200) {
+            showCustomToast(message);
+            Intent intent = new Intent(EditRecipeActivity.this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+        else {
+            showCustomToast(message);
+        }
+    }
+
+    @Override
+    public void modifyRecipeFailure() {
+        hideProgressDialog();
+        showCustomToast(getResources().getString(R.string.network_error));
     }
 
     @Override
@@ -293,7 +401,8 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
                 String pathsList[]= data.getExtras().getStringArray(GligarPicker.IMAGES_RESULT); // return list of selected images paths.
                 for (int i = pathsList.length - 1; i >= 0; i--) {
                     mUri.add(Uri.parse(pathsList[i]));
-                    EditRecipeFragment editRecipeFragment = new EditRecipeFragment(mUri.size(), mUri.get(mUri.size() - 1), this);
+                    mIsUri.add(true);
+                    EditRecipeFragment editRecipeFragment = new EditRecipeFragment(mUri.size(), mUri.get(mUri.size() - 1), this, "");
                     mFragments.add(editRecipeFragment);
                 }
 
@@ -312,7 +421,6 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
         requestPostRecipe.setName(mFoodName);
         requestPostRecipe.setHashTag(mHashTag);
         requestPostRecipe.setIngredient(mMaterial);
-        System.out.println("재료 : " + mMaterial);
         requestPostRecipe.setServing("1인분");
         requestPostRecipe.setImage(result.getImage().getImageUrl());
         ArrayList<RequestPostRecipe.CookingOrder> cookingOrders = new ArrayList<>();
@@ -326,5 +434,46 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
         requestPostRecipe.setCookingOrder(cookingOrders);
 
         editRecipeService.postRecipe(requestPostRecipe);
+    }
+
+    public void modifyRecipe(ResponseUpload.Result result) {
+        EditRecipeService editRecipeService = new EditRecipeService(this);
+        RequestModifyRecipe requestModifyRecipe = new RequestModifyRecipe();
+        requestModifyRecipe.setTitle(mTitle);
+        requestModifyRecipe.setCategoryNo(mCategory);
+        requestModifyRecipe.setName(mFoodName);
+        requestModifyRecipe.setHashTag(mHashTag);
+        requestModifyRecipe.setIngredient(mMaterial);
+        requestModifyRecipe.setServing("1인분");
+        if (mModifyState == 1) {
+            requestModifyRecipe.setImage(result.getImage().getImageUrl());
+        }
+        else if (mModifyState == 2) {
+            requestModifyRecipe.setImage(result.getImage().getImageUrl());
+        }
+        else if (mModifyState == 3) {
+            requestModifyRecipe.setImage(mMainUri);
+        }
+        else {
+            requestModifyRecipe.setImage(mMainUri);
+        }
+        ArrayList<RequestModifyRecipe.CookingOrder> cookingOrders = new ArrayList<>();
+        int uriCnt = 0;
+        for (int i = 0; i < mIsUri.size(); i++) {
+            RequestModifyRecipe.CookingOrder cookingOrder = new RequestModifyRecipe.CookingOrder();
+            cookingOrder.setContent(mFragments.get(i).getContent());
+            cookingOrder.setCookingOrder(i + 1);
+            if (mIsUri.get(i)) {
+                cookingOrder.setCookingOrderImage(result.getCookingOrderImage().get(uriCnt).getImageUrl());
+                uriCnt++;
+            }
+            else {
+                cookingOrder.setCookingOrderImage(mStringUri.get(i));
+            }
+            cookingOrders.add(cookingOrder);
+        }
+        requestModifyRecipe.setCookingOrder(cookingOrders);
+
+        editRecipeService.modifyRecipe(mRecipeNo, requestModifyRecipe);
     }
 }
