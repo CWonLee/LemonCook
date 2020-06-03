@@ -1,6 +1,7 @@
 package com.makers.lemoncook.src.recipe.interfaces;
 
 import com.makers.lemoncook.src.recipe.models.RequestZZim;
+import com.makers.lemoncook.src.recipe.models.ResponseDeleteRecipe;
 import com.makers.lemoncook.src.recipe.models.ResponseDeleteZZim;
 import com.makers.lemoncook.src.recipe.models.ResponseRecipe;
 import com.makers.lemoncook.src.recipe.models.ResponseZZim;
@@ -25,5 +26,10 @@ public interface RecipeRetrofitInterface {
     @DELETE("/saveList")
     Call<ResponseDeleteZZim> deleteZZim(
             @Query("recipeNo") int recipeNo
+    );
+
+    @DELETE("/recipes/{recipeNo}")
+    Call<ResponseDeleteRecipe> deleteRecipe(
+            @Path("recipeNo") String recipeNo
     );
 }

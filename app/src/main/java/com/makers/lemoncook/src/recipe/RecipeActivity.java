@@ -59,7 +59,8 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
     ArrayList<String> mUrl = new ArrayList<>();
     ArrayList<Integer> mFragmentNo = new ArrayList<>();
     ArrayList<ArrayList<String>> mMaterial = new ArrayList<>();
-    ConstraintLayout mClSaveBtn, mClCapture;
+    ConstraintLayout mClSaveBtn, mClCapture, mClDelete;
+    CustomDialogDelete mCustomDialogDelete;
     int mStartRecipeIdx = 1;
     int mZZim;
 
@@ -74,6 +75,7 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
         mViewPager = findViewById(R.id.recipe_vp);
         mClSaveBtn = findViewById(R.id.recipe_cl_save_img);
         mClCapture = findViewById(R.id.recipe_cl_capture);
+        mClDelete = findViewById(R.id.recipe_cl_delete);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(RecyclerView.HORIZONTAL);
@@ -124,6 +126,19 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
                     saveViewImage(RecipeActivity.this, mClCapture);
                 } catch (IOException e) {
                     e.printStackTrace();
+                }
+            }
+        });
+
+        mClDelete.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                if (mResult.getUserNo() == 0) {
+                    showCustomToast("스타레시피는 삭제할 수 없습니다");
+                }
+                else {
+                    mCustomDialogDelete = new CustomDialogDelete(RecipeActivity.this, positiveListener, negativeListener);
+                    mCustomDialogDelete.show();
                 }
             }
         });
@@ -256,6 +271,33 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
         showCustomToast(getResources().getString(R.string.network_error));
     }
 
+    public void deleteRecipe() {
+        showProgressDialog();
+        RecipeService recipeService = new RecipeService(this);
+        recipeService.deleteRecipe(Integer.toString(mResult.getRecipeNo()));
+    }
+
+    @Override
+    public void deleteRecipeSuccess(boolean isSuccess, int code, String message) {
+        hideProgressDialog();
+        if (isSuccess && code == 200) {
+            showCustomToast(message);
+            Intent intent = new Intent(RecipeActivity.this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+        else {
+            showCustomToast(message);
+        }
+    }
+
+    @Override
+    public void deleteRecipeFailure() {
+        hideProgressDialog();
+        showCustomToast(getResources().getString(R.string.network_error));
+    }
+
     public void saveViewImage(Context context, View v) throws IOException {
         Bitmap b = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(b);
@@ -293,4 +335,17 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
         mediaScanIntent.setData(contentUri);
         context.sendBroadcast(mediaScanIntent);
     }
+
+    private View.OnClickListener positiveListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            deleteRecipe();
+            mCustomDialogDelete.dismiss();
+        }
+    };
+
+    private View.OnClickListener negativeListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            mCustomDialogDelete.dismiss();
+        }
+    };
 }

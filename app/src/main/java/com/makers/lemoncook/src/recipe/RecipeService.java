@@ -3,6 +3,7 @@ package com.makers.lemoncook.src.recipe;
 import com.makers.lemoncook.src.recipe.interfaces.RecipeActivityView;
 import com.makers.lemoncook.src.recipe.interfaces.RecipeRetrofitInterface;
 import com.makers.lemoncook.src.recipe.models.RequestZZim;
+import com.makers.lemoncook.src.recipe.models.ResponseDeleteRecipe;
 import com.makers.lemoncook.src.recipe.models.ResponseDeleteZZim;
 import com.makers.lemoncook.src.recipe.models.ResponseRecipe;
 import com.makers.lemoncook.src.recipe.models.ResponseZZim;
@@ -67,6 +68,23 @@ public class RecipeService {
             public void onFailure(Call<ResponseDeleteZZim> call, Throwable t) {
                 t.printStackTrace();
                 mRecipeActivityView.deleteZZimFailure();
+            }
+        });
+    }
+
+    void deleteRecipe(String recipeNo) {
+        final RecipeRetrofitInterface recipeRetrofitInterface = getRetrofit().create(RecipeRetrofitInterface.class);
+        recipeRetrofitInterface.deleteRecipe(recipeNo).enqueue(new Callback<ResponseDeleteRecipe>() {
+            @Override
+            public void onResponse(Call<ResponseDeleteRecipe> call, Response<ResponseDeleteRecipe> response) {
+                final ResponseDeleteRecipe responseDeleteRecipe = response.body();
+                mRecipeActivityView.deleteRecipeSuccess(responseDeleteRecipe.isSuccess(), responseDeleteRecipe.getCode(), responseDeleteRecipe.getMessage());
+            }
+
+            @Override
+            public void onFailure(Call<ResponseDeleteRecipe> call, Throwable t) {
+                t.printStackTrace();
+                mRecipeActivityView.deleteRecipeFailure();
             }
         });
     }

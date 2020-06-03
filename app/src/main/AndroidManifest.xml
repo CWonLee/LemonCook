@@ -28,22 +28,30 @@
             android:name="com.kakao.sdk.AppKey"
             android:value="@string/kakao_app_key" />
 
-        <activity android:name=".src.recipe.RecipeActivity" />
-        <activity android:name=".src.search.SearchActivity" />
-        <activity android:name=".src.myPage.MyPageActivity" />
-        <activity android:name=".src.editRecipe.EditRecipeActivity" />
-        <activity android:name=".src.addRecipe.AddRecipeActivity" />
-        <activity android:name=".src.recipeList.RecipeListActivity" />
-        <activity android:name=".src.splash.SplashActivity">
+        <activity android:name=".src.recipe.RecipeActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".src.search.SearchActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".src.myPage.MyPageActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".src.editRecipe.EditRecipeActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".src.addRecipe.AddRecipeActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".src.recipeList.RecipeListActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".src.splash.SplashActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".src.join.JoinActivity" />
-        <activity android:name=".src.login.LoginActivity" />
-        <activity android:name=".src.main.MainActivity" />
+        <activity android:name=".src.login.LoginActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".src.main.MainActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

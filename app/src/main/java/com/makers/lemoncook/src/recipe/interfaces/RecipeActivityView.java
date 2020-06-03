@@ -18,4 +18,8 @@ public interface RecipeActivityView {
     void deleteZZimSuccess(boolean isSuccess, int code, String message);
 
     void deleteZZimFailure();
+
+    void deleteRecipeSuccess(boolean isSuccess, int code, String message);
+
+    void deleteRecipeFailure();
 }
