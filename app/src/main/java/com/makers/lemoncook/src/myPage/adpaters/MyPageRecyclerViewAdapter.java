@@ -23,6 +23,7 @@ import java.util.ArrayList;
 public class MyPageRecyclerViewAdapter extends RecyclerView.Adapter<MyPageRecyclerViewAdapter.ViewHolder> {
     private ArrayList<ResponseGetMyPage.Result.RecipeInfo> mData;
     private Context mContext;
+    private String mTab;
 
     public MyPageRecyclerViewAdapter(ArrayList<ResponseGetMyPage.Result.RecipeInfo> arrayList, Context context) {
         this.mData = arrayList;
@@ -55,6 +56,7 @@ public class MyPageRecyclerViewAdapter extends RecyclerView.Adapter<MyPageRecycl
             public void onSingleClick(View v) {
                 Intent intent = new Intent(mContext, RecipeActivity.class);
                 intent.putExtra("recipeNo", mData.get(position).getRecipeNo());
+                intent.putExtra("tab", mTab);
                 mContext.startActivity(intent);
             }
         });
@@ -81,6 +83,10 @@ public class MyPageRecyclerViewAdapter extends RecyclerView.Adapter<MyPageRecycl
             mTvDate = itemView.findViewById(R.id.item_my_page_tv_date);
             mClItem = itemView.findViewById(R.id.item_my_page_cl_item);
         }
+    }
+
+    public void setTab(String tab) {
+        mTab = tab;
     }
 
     public abstract class OnSingleClickListener implements View.OnClickListener {

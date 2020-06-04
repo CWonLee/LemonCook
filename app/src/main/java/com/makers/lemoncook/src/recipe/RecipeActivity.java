@@ -86,6 +86,8 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe);
 
+        System.out.println(getIntent().getStringExtra("tab"));
+
         mIvBackBtn = findViewById(R.id.recipe_iv_back_btn);
         mIvZZim = findViewById(R.id.recipe_iv_lemon);
         mRecyclerView = findViewById(R.id.recipe_rv);

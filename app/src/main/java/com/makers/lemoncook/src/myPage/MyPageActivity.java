@@ -63,6 +63,7 @@ public class MyPageActivity extends BaseActivity implements MyPageActivityView {
         mRvLinearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mRvLinearLayoutManager);
         mMyPageRecyclerViewAdapter = new MyPageRecyclerViewAdapter(mData, this);
+        mMyPageRecyclerViewAdapter.setTab(mTab);
         mRecyclerView.setAdapter(mMyPageRecyclerViewAdapter);
 
         mIvBack.setOnClickListener(new OnSingleClickListener() {
@@ -96,6 +97,7 @@ public class MyPageActivity extends BaseActivity implements MyPageActivityView {
                 if (!mTab.equals("register")) {
                     mTab = "register";
                     mPage = 1;
+                    mMyPageRecyclerViewAdapter.setTab(mTab);
                     mNewPage = true;
                     mTvMyRecipe.setTextColor(getResources().getColor(R.color.colorSplashTitleBlack));
                     mTvMyRecipeCnt.setTextColor(getResources().getColor(R.color.colorSplashTitleBlack));
@@ -113,6 +115,7 @@ public class MyPageActivity extends BaseActivity implements MyPageActivityView {
                 if (!mTab.equals("share")) {
                     mTab = "share";
                     mPage = 1;
+                    mMyPageRecyclerViewAdapter.setTab(mTab);
                     mNewPage = true;
                     mTvMyRecipe.setTextColor(getResources().getColor(R.color.colorLoginGray));
                     mTvMyRecipeCnt.setTextColor(getResources().getColor(R.color.colorLoginGray));
@@ -130,6 +133,7 @@ public class MyPageActivity extends BaseActivity implements MyPageActivityView {
                 if (!mTab.equals("savelist")) {
                     mTab = "savelist";
                     mPage = 1;
+                    mMyPageRecyclerViewAdapter.setTab(mTab);
                     mNewPage = true;
                     mTvMyRecipe.setTextColor(getResources().getColor(R.color.colorLoginGray));
                     mTvMyRecipeCnt.setTextColor(getResources().getColor(R.color.colorLoginGray));
@@ -172,7 +176,7 @@ public class MyPageActivity extends BaseActivity implements MyPageActivityView {
             }
             mTvUserName.setText(result.getNickname());
             mTvMyRecipeCnt.setText(Integer.toString(result.getRegisterRecipe()));
-            mTvGetRecipeCnt.setText("0");
+            mTvGetRecipeCnt.setText(Integer.toString(result.getSharedRecipe()));
             mTvZzimCnt.setText(Integer.toString(result.getSaveListCnt()));
         }
         else {
