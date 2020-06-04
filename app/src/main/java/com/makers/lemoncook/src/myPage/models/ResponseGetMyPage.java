@@ -28,8 +28,8 @@ public class ResponseGetMyPage {
         @SerializedName("registerRecipe")
         private int registerRecipe;
 
-        @SerializedName("sharedRecipe")
-        private int sharedRecipe;
+        @SerializedName("shareRecipe")
+        private int shareRecipe;
 
         @SerializedName("saveListCnt")
         private int saveListCnt;
@@ -93,8 +93,8 @@ public class ResponseGetMyPage {
             return registerRecipe;
         }
 
-        public int getSharedRecipe() {
-            return sharedRecipe;
+        public int getShareRecipe() {
+            return shareRecipe;
         }
 
         public int getSaveListCnt() {

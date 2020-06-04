@@ -176,7 +176,8 @@ public class MyPageActivity extends BaseActivity implements MyPageActivityView {
             }
             mTvUserName.setText(result.getNickname());
             mTvMyRecipeCnt.setText(Integer.toString(result.getRegisterRecipe()));
-            mTvGetRecipeCnt.setText(Integer.toString(result.getSharedRecipe()));
+            System.out.println(result.getShareRecipe());
+            mTvGetRecipeCnt.setText(Integer.toString(result.getShareRecipe()));
             mTvZzimCnt.setText(Integer.toString(result.getSaveListCnt()));
         }
         else {
