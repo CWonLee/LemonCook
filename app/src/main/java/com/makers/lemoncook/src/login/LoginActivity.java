@@ -26,31 +26,25 @@ import com.makers.lemoncook.R;
 import com.makers.lemoncook.src.BaseActivity;
 import com.makers.lemoncook.src.login.interfaces.LoginActivityView;
 import com.makers.lemoncook.src.login.models.LoginRequest;
+import com.makers.lemoncook.src.login.models.RequestShare;
 import com.makers.lemoncook.src.main.MainActivity;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static com.makers.lemoncook.src.ApplicationClass.X_ACCESS_TOKEN;
 import static com.makers.lemoncook.src.ApplicationClass.sSharedPreferences;
 
 public class LoginActivity extends BaseActivity implements LoginActivityView {
 
+    CustomDialogGetRecipe mCustomDialogGetRecipe;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        /*
-        UserManagement.getInstance().requestLogout(new LogoutResponseCallback() {
-            @Override
-            public void onCompleteLogout() {
 
-            }
-        });
-
-         */
-
-        // 세션 콜백 등록
         Session.getCurrentSession().addCallback(sessionCallback);
         Session.getCurrentSession().checkAndImplicitOpen(); //자동 로그인
     }
@@ -59,15 +53,26 @@ public class LoginActivity extends BaseActivity implements LoginActivityView {
     public void loginSuccess(boolean isSuccess, int code, String message, String jwt) {
         hideProgressDialog();
         if (isSuccess && code == 200) {
-            SharedPreferences.Editor editor = sSharedPreferences.edit();
-            editor.putString(X_ACCESS_TOKEN, jwt);
-            System.out.println("jwt = " + jwt);
-            editor.commit();
+            if (getIntent().getData() != null) {
+                SharedPreferences.Editor editor = sSharedPreferences.edit();
+                editor.putString(X_ACCESS_TOKEN, jwt);
+                System.out.println("jwt = " + jwt);
+                editor.commit();
 
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+                mCustomDialogGetRecipe = new CustomDialogGetRecipe(this, getRecipePositiveListener, getRecipeNegativeListener);
+                mCustomDialogGetRecipe.show();
+            }
+            else {
+                SharedPreferences.Editor editor = sSharedPreferences.edit();
+                editor.putString(X_ACCESS_TOKEN, jwt);
+                System.out.println("jwt = " + jwt);
+                editor.commit();
+
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
         }
         else {
             showCustomToast(message);
@@ -78,6 +83,27 @@ public class LoginActivity extends BaseActivity implements LoginActivityView {
     public void loginFailure() {
         hideProgressDialog();
         showCustomToast(getResources().getString(R.string.network_error));
+    }
+
+    @Override
+    public void shareSuccess(boolean isSuccess, int code, String message) {
+        hideProgressDialog();
+        showCustomToast(message);
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    @Override
+    public void shareFailure() {
+        hideProgressDialog();
+        showCustomToast(getResources().getString(R.string.network_error));
+
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     public void login(String accessToken) {
@@ -121,4 +147,34 @@ public class LoginActivity extends BaseActivity implements LoginActivityView {
         // 세션 콜백 삭제
         Session.getCurrentSession().removeCallback(sessionCallback);
     }
+
+    public void postShare(int recipeNo) {
+        showProgressDialog();
+        LoginService loginService = new LoginService(this);
+        RequestShare requestShare = new RequestShare();
+        requestShare.setRecipeNo(recipeNo);
+        loginService.postShare(requestShare);
+    }
+
+    private View.OnClickListener getRecipePositiveListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            int recipeNo = Integer.parseInt(Objects.requireNonNull(getIntent().getData()).getQueryParameter("recipeNo"));
+            System.out.println("레시피번호가 안뜬다고?");
+            System.out.println("recipeNo = " + recipeNo);
+            postShare(recipeNo);
+
+            mCustomDialogGetRecipe.dismiss();
+        }
+    };
+
+    private View.OnClickListener getRecipeNegativeListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+
+            mCustomDialogGetRecipe.dismiss();
+        }
+    };
 }

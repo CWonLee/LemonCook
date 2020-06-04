@@ -4,6 +4,8 @@ import com.makers.lemoncook.src.login.interfaces.LoginActivityView;
 import com.makers.lemoncook.src.login.interfaces.LoginRetrofitInterface;
 import com.makers.lemoncook.src.login.models.LoginRequest;
 import com.makers.lemoncook.src.login.models.LoginResponse;
+import com.makers.lemoncook.src.login.models.RequestShare;
+import com.makers.lemoncook.src.login.models.ResponseShare;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -31,6 +33,23 @@ public class LoginService {
             public void onFailure(Call<LoginResponse> call, Throwable t) {
                 t.printStackTrace();
                 mLoginActivityView.loginFailure();
+            }
+        });
+    }
+
+    void postShare(RequestShare requestShare) {
+        final LoginRetrofitInterface loginRetrofitInterface = getRetrofit().create(LoginRetrofitInterface.class);
+        loginRetrofitInterface.postShare(requestShare).enqueue(new Callback<ResponseShare>() {
+            @Override
+            public void onResponse(Call<ResponseShare> call, Response<ResponseShare> response) {
+                final ResponseShare responseShare = response.body();
+                mLoginActivityView.shareSuccess(responseShare.isSuccess(), responseShare.getCode(), responseShare.getMessage());
+            }
+
+            @Override
+            public void onFailure(Call<ResponseShare> call, Throwable t) {
+                t.printStackTrace();
+                mLoginActivityView.shareFailure();
             }
         });
     }

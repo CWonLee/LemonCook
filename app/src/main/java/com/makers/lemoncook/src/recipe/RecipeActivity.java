@@ -22,9 +22,18 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.kakao.kakaolink.v2.KakaoLinkResponse;
+import com.kakao.kakaolink.v2.KakaoLinkService;
+import com.kakao.message.template.ButtonObject;
+import com.kakao.message.template.ContentObject;
+import com.kakao.message.template.FeedTemplate;
+import com.kakao.message.template.LinkObject;
+import com.kakao.network.ErrorResult;
+import com.kakao.network.callback.ResponseCallback;
 import com.makers.lemoncook.R;
 import com.makers.lemoncook.src.BaseActivity;
 import com.makers.lemoncook.src.main.MainActivity;
@@ -65,9 +74,10 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
     ArrayList<String> mUrl = new ArrayList<>();
     ArrayList<Integer> mFragmentNo = new ArrayList<>();
     ArrayList<ArrayList<String>> mMaterial = new ArrayList<>();
-    ConstraintLayout mClSaveBtn, mClCapture, mClDelete, mClModify;
+    ConstraintLayout mClSaveBtn, mClCapture, mClDelete, mClModify, mClShared;
     CustomDialogDelete mCustomDialogDelete;
     CustomDialogModify mCustomDialogModify;
+    CustomDialogShared mCustomDialogShared;
     int mStartRecipeIdx = 1;
     int mZZim;
 
@@ -84,6 +94,7 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
         mClCapture = findViewById(R.id.recipe_cl_capture);
         mClDelete = findViewById(R.id.recipe_cl_delete);
         mClModify = findViewById(R.id.recipe_cl_modify);
+        mClShared = findViewById(R.id.recipe_cl_share);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(RecyclerView.HORIZONTAL);
@@ -160,6 +171,19 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
                 else {
                     mCustomDialogModify = new CustomDialogModify(RecipeActivity.this, modifyPositiveListener, modifyNegativeListener);
                     mCustomDialogModify.show();
+                }
+            }
+        });
+
+        mClShared.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                if (mResult.getUserNo() == 0) {
+                    showCustomToast("스타레시피는 공유할 수 없습니다");
+                }
+                else {
+                    mCustomDialogShared = new CustomDialogShared(RecipeActivity.this, sharedPositiveListener, sharedNegativeListener);
+                    mCustomDialogShared.show();
                 }
             }
         });
@@ -400,6 +424,55 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
     private View.OnClickListener modifyNegativeListener = new View.OnClickListener() {
         public void onClick(View v) {
             mCustomDialogModify.dismiss();
+        }
+    };
+
+    private View.OnClickListener sharedPositiveListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            System.out.println("공유하기");
+            FeedTemplate params = FeedTemplate
+                    .newBuilder(ContentObject.newBuilder(mResult.getTitle() + " " + mResult.getName(),
+                            mResult.getImage(),
+                            LinkObject.newBuilder()
+                                    .setMobileWebUrl("https://play.google.com")
+                                    .setWebUrl("https://play.google.com")
+                                    .setAndroidExecutionParams("recipeNo=" + mResult.getRecipeNo())
+                                    .setIosExecutionParams("recipeNo=" + mResult.getRecipeNo())
+                                    .build()
+                    )
+                            .build())
+                    .addButton(new ButtonObject("레시피 받기", LinkObject.newBuilder()
+                            .setMobileWebUrl("https://play.google.com")
+                            .setWebUrl("https://play.google.com")
+                            .setAndroidExecutionParams("recipeNo=" + mResult.getRecipeNo())
+                            .setIosExecutionParams("recipeNo=" + mResult.getRecipeNo())
+                            .build()))
+                    .build();
+
+            // 콜백으로 링크 잘갔는지 확인
+            Map<String, String> serverCallbackArgs = new HashMap<>();
+            serverCallbackArgs.put("user_id", "${current_user_id}");
+            serverCallbackArgs.put("product_id", "${shared_product_id}");
+
+            KakaoLinkService.getInstance().sendDefault(RecipeActivity.this, params, serverCallbackArgs, new ResponseCallback<KakaoLinkResponse>() {
+                @Override
+                public void onFailure(ErrorResult errorResult) {
+                    showCustomToast("공유를 실패했습니다");
+                }
+
+                @Override
+                public void onSuccess(KakaoLinkResponse result) {
+
+                }
+            });
+
+            mCustomDialogShared.dismiss();
+        }
+    };
+
+    private View.OnClickListener sharedNegativeListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            mCustomDialogShared.dismiss();
         }
     };
 }
