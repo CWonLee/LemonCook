@@ -30,7 +30,6 @@ public class EditRecipeRecyclerViewAdapter extends RecyclerView.Adapter<EditReci
         mData = arrayList;
         this.mEditRecipeActivityView = editRecipeActivityView;
         this.mContext = context;
-
         mEditRecipeActivityView.getInterface(this);
     }
 

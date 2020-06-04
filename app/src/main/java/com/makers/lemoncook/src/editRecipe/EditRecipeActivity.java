@@ -1,7 +1,6 @@
 package com.makers.lemoncook.src.editRecipe;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
@@ -9,24 +8,20 @@ import androidx.viewpager.widget.ViewPager;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.makers.lemoncook.R;
 import com.makers.lemoncook.src.BaseActivity;
 import com.makers.lemoncook.src.editRecipe.adapters.EditRecipeRecyclerViewAdapter;
 import com.makers.lemoncook.src.editRecipe.adapters.EditRecipeViewPagerAdapter;
-import com.makers.lemoncook.src.editRecipe.fragments.EditRecipeFragment;
 import com.makers.lemoncook.src.editRecipe.interfaces.EditRecipeActivityView;
 import com.makers.lemoncook.src.editRecipe.interfaces.EditRecipeRecyclerViewAdapterInterface;
+import com.makers.lemoncook.src.editRecipe.models.EditRecipeViewpagerItem;
 import com.makers.lemoncook.src.editRecipe.models.RequestModifyRecipe;
 import com.makers.lemoncook.src.editRecipe.models.RequestPostRecipe;
 import com.makers.lemoncook.src.editRecipe.models.ResponseUpload;
@@ -34,12 +29,9 @@ import com.makers.lemoncook.src.main.MainActivity;
 import com.opensooq.supernova.gligar.GligarPicker;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import id.zelory.compressor.Compressor;
 import okhttp3.MediaType;
@@ -50,8 +42,6 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
 
     ArrayList<Uri> mUri = new ArrayList<>();
     ArrayList<String> mStringUri = new ArrayList<>();
-    ArrayList<EditRecipeFragment> mFragments = new ArrayList<>();
-    ArrayList<String> mContent = new ArrayList<>();
     ArrayList<Boolean> mIsUri = new ArrayList<>();
     int mCategory = -1;
     String mMainUri, mTitle, mFoodName, mHashTag, mMaterial;
@@ -86,26 +76,21 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
         mEditRecipeRecyclerViewAdapter = new EditRecipeRecyclerViewAdapter(mUri, this, this);
         mRecyclerView.setAdapter(mEditRecipeRecyclerViewAdapter);
 
-        mEditRecipeViewPagerAdapter = new EditRecipeViewPagerAdapter(getSupportFragmentManager(), 0, mFragments);
+        mEditRecipeViewPagerAdapter = new EditRecipeViewPagerAdapter(this,this);
         mViewPager.setAdapter(mEditRecipeViewPagerAdapter);
         mViewPager.setOffscreenPageLimit(15);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
-
             @Override
             public void onPageSelected(int position) {
-                mEditRecipeRecyclerViewAdapterInterface.changeCurNum(position);
+                 mEditRecipeRecyclerViewAdapterInterface.changeCurNum(position);
             }
-
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
-
         Init();
 
         mIvBack.setOnClickListener(new OnSingleClickListener() {
@@ -114,7 +99,6 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
                 finish();
             }
         });
-
         mIvPlus.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
@@ -139,20 +123,14 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
                 mProgressDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                     @Override
                     public void onShow(DialogInterface dialog) {
-                        if (mFragments.isEmpty()) {
+                        if (mEditRecipeRecyclerViewAdapter.getItemCount() <= 0) {
                             showCustomToast("레시피 과정을 추가해주세요");
                         }
                         else {
-                            boolean emptyContent = false;
-                            for (int i = 0; i < mFragments.size(); i++) {
-                                if (mFragments.get(i).getContent().equals("")) {
-                                    hideProgressDialog();
-                                    showCustomToast("누락된 입력값이 있습니다");
-                                    emptyContent = true;
-                                    break;
-                                }
-                            }
-                            if (!emptyContent) {
+                            if(!mEditRecipeViewPagerAdapter.isContentValid()){
+                                hideProgressDialog();
+                                showCustomToast("누락된 입력값이 있습니다");
+                            }else{
                                 uploadImage();
                             }
                         }
@@ -177,8 +155,11 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
             HashMap<String,String> hashMap = (HashMap<String, String>)getIntent().getSerializableExtra("hashMap");
             for (int i = 0; i < mStringUri.size(); i++) {
                 mUri.add(Uri.parse(mStringUri.get(i)));
-                EditRecipeFragment editRecipeFragment = new EditRecipeFragment(mUri.size(), mUri.get(i), this, hashMap.get(mStringUri.get(i)));
-                mFragments.add(editRecipeFragment);
+                EditRecipeViewpagerItem editRecipeViewpagerItem = new EditRecipeViewpagerItem();
+                editRecipeViewpagerItem.setmContent(hashMap.get(mStringUri.get(i)));
+                editRecipeViewpagerItem.setmNumber(mUri.size());
+                editRecipeViewpagerItem.setmUri(mUri.get(i));
+                mEditRecipeViewPagerAdapter.addItem(editRecipeViewpagerItem);
             }
             for (int i = 0; i < getIntent().getIntegerArrayListExtra("isUri").size(); i++) {
                 if (getIntent().getIntegerArrayListExtra("isUri").get(i) == 0) {
@@ -188,7 +169,6 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
                     mIsUri.add(true);
                 }
             }
-
             mEditRecipeViewPagerAdapter.notifyDataSetChanged();
             mEditRecipeRecyclerViewAdapter.notifyDataSetChanged();
         }
@@ -204,10 +184,12 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
             for (int i = 0; i < mStringUri.size(); i++) {
                 mUri.add(Uri.parse(mStringUri.get(i)));
                 mIsUri.add(true);
-                EditRecipeFragment editRecipeFragment = new EditRecipeFragment(mUri.size(), mUri.get(i), this, "");
-                mFragments.add(editRecipeFragment);
+                EditRecipeViewpagerItem editRecipeViewpagerItem = new EditRecipeViewpagerItem();
+                editRecipeViewpagerItem.setmContent("");
+                editRecipeViewpagerItem.setmNumber(mUri.size());
+                editRecipeViewpagerItem.setmUri(mUri.get(i));
+                mEditRecipeViewPagerAdapter.addItem(editRecipeViewpagerItem);
             }
-
             mEditRecipeViewPagerAdapter.notifyDataSetChanged();
             mEditRecipeRecyclerViewAdapter.notifyDataSetChanged();
         }
@@ -216,7 +198,6 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
     @Override
     public void change(int idx) {
         mCurNum = idx;
-
         mViewPager.setCurrentItem(idx);
     }
     @Override
@@ -341,32 +322,16 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
     @Override
     public void deleteImg() {
         int deleteIdx = mViewPager.getCurrentItem();
-
-        if (deleteIdx == mFragments.size() - 1) {
-            mUri.remove(deleteIdx);
-            mFragments.remove(deleteIdx);
-            mIsUri.remove(deleteIdx);
-
-            for (int i = 0; i < mFragments.size(); i++) {
-                mFragments.get(i).changeNum(i + 1);
-            }
-
-            mEditRecipeRecyclerViewAdapter.notifyDataSetChanged();
-            mEditRecipeViewPagerAdapter.notifyDataSetChanged();
-            mEditRecipeRecyclerViewAdapterInterface.changeCurNum(mFragments.size() - 1);
+        Log.e("deleteImg","deleteIdx : " + deleteIdx);
+        mEditRecipeViewPagerAdapter.removeItem(deleteIdx);
+        mUri.remove(deleteIdx);
+        mIsUri.remove(deleteIdx);
+        for (int i = deleteIdx; i < mEditRecipeViewPagerAdapter.getCount(); i++) {
+            EditRecipeViewpagerItem editRecipeViewpagerItem = mEditRecipeViewPagerAdapter.getEditRecipeViewpagerItemByIdx(i);
+            editRecipeViewpagerItem.setmNumber(i+1);
         }
-        else {
-            mUri.remove(deleteIdx);
-            mFragments.remove(deleteIdx);
-            mIsUri.remove(deleteIdx);
-
-            for (int i = 0; i < mFragments.size(); i++) {
-                mFragments.get(i).changeNum(i + 1);
-            }
-
-            mEditRecipeRecyclerViewAdapter.notifyDataSetChanged();
-            mEditRecipeViewPagerAdapter.notifyDataSetChanged();
-        }
+        mEditRecipeRecyclerViewAdapter.notifyDataSetChanged();
+        mEditRecipeViewPagerAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -402,10 +367,12 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
                 for (int i = pathsList.length - 1; i >= 0; i--) {
                     mUri.add(Uri.parse(pathsList[i]));
                     mIsUri.add(true);
-                    EditRecipeFragment editRecipeFragment = new EditRecipeFragment(mUri.size(), mUri.get(mUri.size() - 1), this, "");
-                    mFragments.add(editRecipeFragment);
+                    EditRecipeViewpagerItem editRecipeViewpagerItem = new EditRecipeViewpagerItem();
+                    editRecipeViewpagerItem.setmContent("");
+                    editRecipeViewpagerItem.setmNumber(mUri.size());
+                    editRecipeViewpagerItem.setmUri(mUri.get(mUri.size() - 1));
+                    mEditRecipeViewPagerAdapter.addItem(editRecipeViewpagerItem);
                 }
-
                 mEditRecipeRecyclerViewAdapter.notifyDataSetChanged();
                 mEditRecipeViewPagerAdapter.notifyDataSetChanged();
                 break;
@@ -424,15 +391,16 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
         requestPostRecipe.setServing("1인분");
         requestPostRecipe.setImage(result.getImage().getImageUrl());
         ArrayList<RequestPostRecipe.CookingOrder> cookingOrders = new ArrayList<>();
-        for (int i = 0; i < mFragments.size(); i++) {
+
+        for (int i = 0; i < mEditRecipeViewPagerAdapter.getCount(); i++) {
             RequestPostRecipe.CookingOrder cookingOrder = new RequestPostRecipe.CookingOrder();
-            cookingOrder.setContent(mFragments.get(i).getContent());
+            EditRecipeViewpagerItem editRecipeViewpagerItem = mEditRecipeViewPagerAdapter.getEditRecipeViewpagerItemByIdx(i);
+            cookingOrder.setContent(editRecipeViewpagerItem.getmContent());
             cookingOrder.setCookingOrder(i + 1);
             cookingOrder.setCookingOrderImage(result.getCookingOrderImage().get(i).getImageUrl());
             cookingOrders.add(cookingOrder);
         }
         requestPostRecipe.setCookingOrder(cookingOrders);
-
         editRecipeService.postRecipe(requestPostRecipe);
     }
 
@@ -461,7 +429,7 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
         int uriCnt = 0;
         for (int i = 0; i < mIsUri.size(); i++) {
             RequestModifyRecipe.CookingOrder cookingOrder = new RequestModifyRecipe.CookingOrder();
-            cookingOrder.setContent(mFragments.get(i).getContent());
+            cookingOrder.setContent(mEditRecipeViewPagerAdapter.getEditRecipeViewpagerItemByIdx(i).getmContent());
             cookingOrder.setCookingOrder(i + 1);
             if (mIsUri.get(i)) {
                 cookingOrder.setCookingOrderImage(result.getCookingOrderImage().get(uriCnt).getImageUrl());
