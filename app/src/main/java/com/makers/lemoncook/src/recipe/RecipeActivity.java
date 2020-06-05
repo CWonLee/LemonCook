@@ -146,6 +146,7 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
                 try {
                     saveViewImage(RecipeActivity.this, mClCapture);
                 } catch (IOException e) {
+                    showCustomToast("이미지 저장에 실패했습니다");
                     e.printStackTrace();
                 }
             }
@@ -355,6 +356,7 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
 
     public void createDirectoryAndSaveFile(Bitmap imageToSave, String fileName, Context context) throws IOException {
         String root = Environment.getExternalStorageDirectory().toString();
+
         File myDir = new File(root + "/lemonCook");
         myDir.mkdir();
         String fname = fileName;

@@ -114,29 +114,17 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
         mBtnComplete.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
-                if (mProgressDialog == null) {
-                    mProgressDialog = new ProgressDialog(EditRecipeActivity.this);
-                    mProgressDialog.setMessage(getString(R.string.loading));
-                    mProgressDialog.setIndeterminate(true);
+                if (mEditRecipeRecyclerViewAdapter.getItemCount() <= 0) {
+                    showCustomToast("레시피 과정을 추가해주세요");
                 }
-                mProgressDialog.setCanceledOnTouchOutside(false);
-                mProgressDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                    @Override
-                    public void onShow(DialogInterface dialog) {
-                        if (mEditRecipeRecyclerViewAdapter.getItemCount() <= 0) {
-                            showCustomToast("레시피 과정을 추가해주세요");
-                        }
-                        else {
-                            if(!mEditRecipeViewPagerAdapter.isContentValid()){
-                                hideProgressDialog();
-                                showCustomToast("누락된 입력값이 있습니다");
-                            }else{
-                                uploadImage();
-                            }
-                        }
+                else {
+                    if(!mEditRecipeViewPagerAdapter.isContentValid()){
+                        hideProgressDialog();
+                        showCustomToast("누락된 입력값이 있습니다");
+                    }else{
+                        uploadImage();
                     }
-                });
-                mProgressDialog.show();
+                }
             }
         });
     }
@@ -227,6 +215,7 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
     }
 
     public void uploadImage() {
+        showProgressDialog();
         boolean recipeImg = false;
         for (int i = 0; i < mIsUri.size(); i++) {
             if (mIsUri.get(i) == true) {
