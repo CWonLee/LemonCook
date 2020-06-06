@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.daimajia.swipe.SwipeLayout;
 import com.makers.lemoncook.R;
 import com.makers.lemoncook.src.recipe.RecipeActivity;
+import com.makers.lemoncook.src.recipeList.CustomDialogDelete;
 import com.makers.lemoncook.src.recipeList.interfaces.RecipeListActivityView;
 import com.makers.lemoncook.src.recipeList.models.ResponseGetRecipe;
 
@@ -27,6 +28,8 @@ public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<RecipeLi
     private ArrayList<Integer> mZZim;
     private RecipeListActivityView mRecipeListActivityView;
     private Context mContext;
+    CustomDialogDelete mCustomDialogDelete;
+    int mRecipeNo, mIdx;
 
     public RecipeListRecyclerViewAdapter(ArrayList<ResponseGetRecipe.Result> arrayList, RecipeListActivityView recipeListActivityView, Context context, ArrayList<Integer> zzim) {
         this.mData = arrayList;
@@ -82,7 +85,10 @@ public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<RecipeLi
         holder.mClDelete.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
-                mRecipeListActivityView.deleteRecipe(mData.get(position).getRecipeNo(), position);
+                mRecipeNo = mData.get(position).getRecipeNo();
+                mIdx = position;
+                mCustomDialogDelete = new CustomDialogDelete(mContext, positiveListener, negativeListener);
+                mCustomDialogDelete.show();
             }
         });
         holder.mClItem.setOnClickListener(new OnSingleClickListener() {
@@ -150,4 +156,17 @@ public class RecipeListRecyclerViewAdapter extends RecyclerView.Adapter<RecipeLi
             onSingleClick(v);
         }
     }
+
+    private View.OnClickListener positiveListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            mRecipeListActivityView.deleteRecipe(mRecipeNo, mIdx);
+            mCustomDialogDelete.dismiss();
+        }
+    };
+
+    private View.OnClickListener negativeListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            mCustomDialogDelete.dismiss();
+        }
+    };
 }

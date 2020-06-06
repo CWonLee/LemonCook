@@ -94,16 +94,6 @@
                         android:textStyle="bold"/>
 
                     <ImageView
-                        android:id="@+id/search_iv_recommend_next"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_next_small"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginBottom="14dp"/>
-
-                    <ImageView
                         android:id="@+id/search_iv_recommend_img"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
