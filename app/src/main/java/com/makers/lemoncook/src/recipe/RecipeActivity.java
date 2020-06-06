@@ -17,10 +17,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -137,8 +140,7 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
             public void onSingleClick(View v) {
                 if (mZZim == 0) {
                     postZZim(mResult.getRecipeNo());
-                }
-                else {
+                } else {
                     deleteZZim(mResult.getRecipeNo());
                 }
             }
@@ -161,17 +163,14 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
             public void onSingleClick(View v) {
                 if (mResult.getUserNo() == 0) {
                     showCustomToast("스타레시피는 삭제할 수 없습니다");
-                }
-                else {
+                } else {
                     if (getIntent().getStringExtra("tab") == null) {
                         mCustomDialogDelete = new CustomDialogDelete(RecipeActivity.this, positiveListener, negativeListener);
                         mCustomDialogDelete.show();
-                    }
-                    else if (getIntent().getStringExtra("tab").equals("share")) {
+                    } else if (getIntent().getStringExtra("tab").equals("share")) {
                         mCustomDialogDeleteShare = new CustomDialogDeleteShare(RecipeActivity.this, deleteSharePositiveListener, deleteShareNegativeListener);
                         mCustomDialogDeleteShare.show();
-                    }
-                    else {
+                    } else {
                         mCustomDialogDelete = new CustomDialogDelete(RecipeActivity.this, positiveListener, negativeListener);
                         mCustomDialogDelete.show();
                     }
@@ -184,16 +183,13 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
             public void onSingleClick(View v) {
                 if (mResult.getUserNo() == 0) {
                     showCustomToast("스타레시피는 수정할 수 없습니다");
-                }
-                else {
+                } else {
                     if (getIntent().getStringExtra("tab") == null) {
                         mCustomDialogModify = new CustomDialogModify(RecipeActivity.this, modifyPositiveListener, modifyNegativeListener);
                         mCustomDialogModify.show();
-                    }
-                    else if (getIntent().getStringExtra("tab").equals("share")) {
+                    } else if (getIntent().getStringExtra("tab").equals("share")) {
                         showCustomToast("공유된 레시피는 수정할 수 없습니다");
-                    }
-                    else {
+                    } else {
                         mCustomDialogModify = new CustomDialogModify(RecipeActivity.this, modifyPositiveListener, modifyNegativeListener);
                         mCustomDialogModify.show();
                     }
@@ -206,8 +202,7 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
             public void onSingleClick(View v) {
                 if (mResult.getUserNo() == 0) {
                     showCustomToast("스타레시피는 공유할 수 없습니다");
-                }
-                else {
+                } else {
                     mCustomDialogShared = new CustomDialogShared(RecipeActivity.this, sharedPositiveListener, sharedNegativeListener);
                     mCustomDialogShared.show();
                 }
@@ -231,8 +226,7 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
             mZZim = result.getIsSave();
             if (result.getIsSave() == 1) {
                 mIvZZim.setImageResource(R.drawable.ic_lemon_fill);
-            }
-            else {
+            } else {
                 mIvZZim.setImageResource(R.drawable.ic_lemon_emty);
             }
             mUrl.add(result.getImage());
@@ -246,8 +240,7 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
                     mStartRecipeIdx++;
                     mMaterial.add(temp2);
                     temp.clear();
-                }
-                else if (i % 6 != 5 && i == result.getIngredient().size() - 1) {
+                } else if (i % 6 != 5 && i == result.getIngredient().size() - 1) {
                     ArrayList<String> temp2 = new ArrayList<>();
                     temp2.addAll(temp);
                     mStartRecipeIdx++;
@@ -268,8 +261,7 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
 
             mRecipeViewPagerAdapter = new RecipeViewPagerAdapter(getSupportFragmentManager(), 0, mUrl, mFragmentNo, mStartRecipeIdx, mResult, mMaterial);
             mViewPager.setAdapter(mRecipeViewPagerAdapter);
-        }
-        else {
+        } else {
             showCustomToast(message);
         }
     }
@@ -311,8 +303,7 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
             showCustomToast(message);
             mIvZZim.setImageResource(R.drawable.ic_lemon_fill);
             mZZim = 1;
-        }
-        else {
+        } else {
             showCustomToast(message);
         }
     }
@@ -330,8 +321,7 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
             showCustomToast(message);
             mIvZZim.setImageResource(R.drawable.ic_lemon_emty);
             mZZim = 0;
-        }
-        else {
+        } else {
             showCustomToast(message);
         }
     }
@@ -363,8 +353,7 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-        }
-        else {
+        } else {
             showCustomToast(message);
         }
     }
@@ -384,8 +373,7 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-        }
-        else {
+        } else {
             showCustomToast(message);
         }
     }
@@ -404,28 +392,51 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
         createDirectoryAndSaveFile(b, fileName, context);
     }
 
-    public void createDirectoryAndSaveFile(Bitmap imageToSave, String fileName, Context context) throws IOException {
-        String root = Environment.getExternalStorageDirectory().toString();
 
-        File myDir = new File(root + "/lemonCook");
-        myDir.mkdir();
-        String fname = fileName;
-        File file = new File(myDir, fname);
-        if (file.exists())
-            file.delete();
-        file.createNewFile();
-        try {
-            FileOutputStream out = new FileOutputStream(file);
-            imageToSave.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            out.flush();
-            out.close();
-            addPicToGallery(context, file.getPath());
-            showCustomToast("이미지를 저장했습니다");
-        } catch (Exception e) {
-            showCustomToast("이미지 저장에 실패했습니다");
-            e.printStackTrace();
+    public boolean isStoragePermissionGranted() {
+        String TAG = "Storage Permission";
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (this.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG, "Permission is granted");
+                return true;
+            } else {
+                Log.v(TAG, "Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG, "Permission is granted");
+            return true;
         }
     }
+
+    public void createDirectoryAndSaveFile(Bitmap imageToSave, String fileName, Context context) throws IOException {
+        String TAG = "DirectoryAndSaveFile";
+        Log.e(TAG, "fileanme:" + fileName);
+        if (isStoragePermissionGranted()) {
+            String root = Environment.getExternalStorageDirectory().toString();
+            File myDir = new File(root + "/lemonCook");
+            if (!myDir.exists()) {
+                myDir.mkdirs();
+            }
+            File file = new File(myDir, fileName);
+            if (file.exists())
+                file.delete();
+            try {
+                FileOutputStream out = new FileOutputStream(file);
+                imageToSave.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                out.flush();
+                out.close();
+                Toast.makeText(context, "저장 성공", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(context, "저장 실패", Toast.LENGTH_SHORT).show();
+            }
+            MediaScannerConnection.scanFile(this, new String[]{file.toString()}, new String[]{file.getName()}, null);
+        }
+    }
+
 
     public static void addPicToGallery(Context context, String photoPath) {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);

@@ -43,7 +43,7 @@ public class NewRecipeImageRecyclerViewAdapter extends RecyclerView.Adapter<NewR
 
     @Override
     public void onBindViewHolder(@NonNull NewRecipeImageRecyclerViewAdapter.ViewHolder holder, int position) {
-        Glide.with(mContext).load(mData.get(position)).into(holder.mImageView);
+        Glide.with(mContext).load(mData.get(position).toString()).centerCrop().into(holder.mImageView);
         //Glide.with(mContext).load(mData.get(position)).centerCrop().into(holder.mImageView);
     }
 
@@ -61,9 +61,9 @@ public class NewRecipeImageRecyclerViewAdapter extends RecyclerView.Adapter<NewR
 
             mImageView = itemView.findViewById(R.id.item_new_recipe_image_rv_iv);
 
-            mImageView.setOnClickListener(new OnSingleClickListener() {
+            mImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onSingleClick(View v) {
+                public void onClick(View v) {
                     int pos = getAdapterPosition();
                     mAddRecipeActivityView.removeImage(pos);
                 }
