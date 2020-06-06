@@ -41,8 +41,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ModifyActivity extends BaseActivity implements ModifyActivityView {
 
-    LinearLayout mLlExpandableContent, mLlDynamicArea;
-    ConstraintLayout mClExpandableBtn, mClDynamicPlusBtn, mClPlusRecipeImg, mClMainImage;
+    LinearLayout mLlDynamicArea;
+    ConstraintLayout mClDynamicPlusBtn, mClPlusRecipeImg, mClMainImage;
     boolean expandable = true;
     VerticalTextView mTvIngredientTitle;
     RecyclerView mRvImage;
@@ -74,8 +74,6 @@ public class ModifyActivity extends BaseActivity implements ModifyActivityView {
         mClMainImage = findViewById(R.id.modify_cl_main_image);
         mRvImage = findViewById(R.id.modify_rv_recipe_image);
         mClPlusRecipeImg = findViewById(R.id.modify_cl_plus_recipe_image);
-        mLlExpandableContent = findViewById(R.id.modify_ll_expandable);
-        mClExpandableBtn = findViewById(R.id.modify_cl_expandable_btn);
         mTvIngredientTitle = findViewById(R.id.modify_vt_ingredient);
         mLlDynamicArea = findViewById(R.id.modify_ll_dynamic_area);
         mClDynamicPlusBtn = findViewById(R.id.modify_cl_dynamic_plus_btn);
@@ -120,24 +118,6 @@ public class ModifyActivity extends BaseActivity implements ModifyActivityView {
             @Override
             public void onSingleClick(View v) {
                 finish();
-            }
-        });
-
-        mClExpandableBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (expandable){
-                    expandable = false;
-                    mClExpandableBtn.setBackground(getResources().getDrawable(R.drawable.round_recommend_tap_gray));
-                    mTvIngredientTitle.setVisibility(View.GONE);
-                    collapse(mLlExpandableContent);
-                }
-                else{
-                    expandable = true;
-                    mClExpandableBtn.setBackground(getResources().getDrawable(R.drawable.round_recommend_tap));
-                    mTvIngredientTitle.setVisibility(View.VISIBLE);
-                    expand(mLlExpandableContent);
-                }
             }
         });
 

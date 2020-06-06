@@ -507,75 +507,15 @@
                     android:textColor="@color/colorMainGray"
                     android:textSize="12sp"/>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/new_recipe_cl_expandable_btn"
-                    android:layout_width="match_parent"
-                    android:layout_height="31dp"
-                    android:background="@drawable/round_recommend_tap"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginLeft="50dp"
-                    android:layout_marginRight="24dp">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/newRecipeRecommend"
-                            android:textColor="@color/colorWhite"
-                            android:textSize="13sp"></TextView>
-
-                    </LinearLayout>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <LinearLayout
-                    android:id="@+id/new_recipe_ll_expandable"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/round_recommend_content"
-                    app:layout_constraintTop_toBottomOf="@+id/new_recipe_cl_expandable_btn"
-                    android:layout_marginLeft="50dp"
-                    android:layout_marginRight="24dp">
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/new_recipe_rv_recommend"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                    <Button
-                        android:layout_width="match_parent"
-                        android:layout_height="34dp"
-                        android:background="@drawable/round_all_put_btn"
-                        android:layout_marginTop="15dp"
-                        android:layout_marginBottom="12dp"
-                        android:text="@string/newRecipeAllPut"
-                        android:textColor="@color/colorSplashTextBlack"
-                        android:textSize="13sp"
-                        android:layout_marginLeft="17dp"
-                        android:layout_marginRight="17dp"/>
-
-                </LinearLayout>
-
                 <LinearLayout
                     android:id="@+id/new_recipe_ll_dynamic_area"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@+id/new_recipe_ll_expandable"
+                    app:layout_constraintTop_toTopOf="parent"
                     android:orientation="vertical"
                     android:layout_marginLeft="50dp"
                     android:layout_marginRight="24dp"
-                    android:layout_marginTop="4dp"/>
+                    android:layout_marginTop="10dp"/>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/new_recipe_cl_dynamic_plus_btn"

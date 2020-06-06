@@ -40,8 +40,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class AddRecipeActivity extends BaseActivity implements AddRecipeActivityView {
 
     TextView mTvNewRecipe, mTvLoadRecipe;
-    LinearLayout mLlExpandableContent, mLlDynamicArea;
-    ConstraintLayout mClExpandableBtn, mClDynamicPlusBtn, mClPlusRecipeImg, mClMainImage;
+    LinearLayout mLlDynamicArea;
+    ConstraintLayout mClDynamicPlusBtn, mClPlusRecipeImg, mClMainImage;
     boolean expandable = true;
     VerticalTextView mTvIngredientTitle;
     RecyclerView mRvImage;
@@ -78,8 +78,6 @@ public class AddRecipeActivity extends BaseActivity implements AddRecipeActivity
         mClMainImage = findViewById(R.id.new_recipe_cl_main_image);
         mRvImage = findViewById(R.id.new_recipe_rv_recipe_image);
         mClPlusRecipeImg = findViewById(R.id.new_recipe_cl_plus_recipe_image);
-        mLlExpandableContent = findViewById(R.id.new_recipe_ll_expandable);
-        mClExpandableBtn = findViewById(R.id.new_recipe_cl_expandable_btn);
         mTvIngredientTitle = findViewById(R.id.new_recipe_vt_ingredient);
         mLlDynamicArea = findViewById(R.id.new_recipe_ll_dynamic_area);
         mClDynamicPlusBtn = findViewById(R.id.new_recipe_cl_dynamic_plus_btn);
@@ -122,24 +120,6 @@ public class AddRecipeActivity extends BaseActivity implements AddRecipeActivity
             @Override
             public void onSingleClick(View v) {
                 finish();
-            }
-        });
-
-        mClExpandableBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (expandable){
-                    expandable = false;
-                    mClExpandableBtn.setBackground(getResources().getDrawable(R.drawable.round_recommend_tap_gray));
-                    mTvIngredientTitle.setVisibility(View.GONE);
-                    collapse(mLlExpandableContent);
-                }
-                else{
-                    expandable = true;
-                    mClExpandableBtn.setBackground(getResources().getDrawable(R.drawable.round_recommend_tap));
-                    mTvIngredientTitle.setVisibility(View.VISIBLE);
-                    expand(mLlExpandableContent);
-                }
             }
         });
 
