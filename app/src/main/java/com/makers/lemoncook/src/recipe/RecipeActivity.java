@@ -78,6 +78,8 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
     CustomDialogDelete mCustomDialogDelete;
     CustomDialogModify mCustomDialogModify;
     CustomDialogShared mCustomDialogShared;
+    CustomDialogDeleteShare mCustomDialogDeleteShare;
+
     int mStartRecipeIdx = 1;
     int mZZim;
 
@@ -159,8 +161,18 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
                     showCustomToast("스타레시피는 삭제할 수 없습니다");
                 }
                 else {
-                    mCustomDialogDelete = new CustomDialogDelete(RecipeActivity.this, positiveListener, negativeListener);
-                    mCustomDialogDelete.show();
+                    if (getIntent().getStringExtra("tab") == null) {
+                        mCustomDialogDelete = new CustomDialogDelete(RecipeActivity.this, positiveListener, negativeListener);
+                        mCustomDialogDelete.show();
+                    }
+                    else if (getIntent().getStringExtra("tab").equals("share")) {
+                        mCustomDialogDeleteShare = new CustomDialogDeleteShare(RecipeActivity.this, deleteSharePositiveListener, deleteShareNegativeListener);
+                        mCustomDialogDeleteShare.show();
+                    }
+                    else {
+                        mCustomDialogDelete = new CustomDialogDelete(RecipeActivity.this, positiveListener, negativeListener);
+                        mCustomDialogDelete.show();
+                    }
                 }
             }
         });
@@ -172,8 +184,17 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
                     showCustomToast("스타레시피는 수정할 수 없습니다");
                 }
                 else {
-                    mCustomDialogModify = new CustomDialogModify(RecipeActivity.this, modifyPositiveListener, modifyNegativeListener);
-                    mCustomDialogModify.show();
+                    if (getIntent().getStringExtra("tab") == null) {
+                        mCustomDialogModify = new CustomDialogModify(RecipeActivity.this, modifyPositiveListener, modifyNegativeListener);
+                        mCustomDialogModify.show();
+                    }
+                    else if (getIntent().getStringExtra("tab").equals("share")) {
+                        showCustomToast("공유된 레시피는 수정할 수 없습니다");
+                    }
+                    else {
+                        mCustomDialogModify = new CustomDialogModify(RecipeActivity.this, modifyPositiveListener, modifyNegativeListener);
+                        mCustomDialogModify.show();
+                    }
                 }
             }
         });
@@ -325,6 +346,12 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
         recipeService.deleteRecipe(Integer.toString(mResult.getRecipeNo()));
     }
 
+    public void deleteShare() {
+        showProgressDialog();
+        RecipeService recipeService = new RecipeService(this);
+        recipeService.deleteShare(mResult.getRecipeNo());
+    }
+
     @Override
     public void deleteRecipeSuccess(boolean isSuccess, int code, String message) {
         hideProgressDialog();
@@ -342,6 +369,27 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
 
     @Override
     public void deleteRecipeFailure() {
+        hideProgressDialog();
+        showCustomToast(getResources().getString(R.string.network_error));
+    }
+
+    @Override
+    public void deleteShareSuccess(boolean isSuccess, int code, String message) {
+        hideProgressDialog();
+        if (isSuccess && code == 200) {
+            showCustomToast(message);
+            Intent intent = new Intent(RecipeActivity.this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+        else {
+            showCustomToast(message);
+        }
+    }
+
+    @Override
+    public void deleteShareFailure() {
         hideProgressDialog();
         showCustomToast(getResources().getString(R.string.network_error));
     }
@@ -477,6 +525,20 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
     private View.OnClickListener sharedNegativeListener = new View.OnClickListener() {
         public void onClick(View v) {
             mCustomDialogShared.dismiss();
+        }
+    };
+
+    private View.OnClickListener deleteSharePositiveListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            deleteShare();
+
+            mCustomDialogDeleteShare.dismiss();
+        }
+    };
+
+    private View.OnClickListener deleteShareNegativeListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            mCustomDialogDeleteShare.dismiss();
         }
     };
 }

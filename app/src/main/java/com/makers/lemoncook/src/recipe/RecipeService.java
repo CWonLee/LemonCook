@@ -4,6 +4,7 @@ import com.makers.lemoncook.src.recipe.interfaces.RecipeActivityView;
 import com.makers.lemoncook.src.recipe.interfaces.RecipeRetrofitInterface;
 import com.makers.lemoncook.src.recipe.models.RequestZZim;
 import com.makers.lemoncook.src.recipe.models.ResponseDeleteRecipe;
+import com.makers.lemoncook.src.recipe.models.ResponseDeleteShare;
 import com.makers.lemoncook.src.recipe.models.ResponseDeleteZZim;
 import com.makers.lemoncook.src.recipe.models.ResponseRecipe;
 import com.makers.lemoncook.src.recipe.models.ResponseZZim;
@@ -85,6 +86,23 @@ public class RecipeService {
             public void onFailure(Call<ResponseDeleteRecipe> call, Throwable t) {
                 t.printStackTrace();
                 mRecipeActivityView.deleteRecipeFailure();
+            }
+        });
+    }
+
+    void deleteShare(int recipeNo) {
+        final RecipeRetrofitInterface recipeRetrofitInterface = getRetrofit().create(RecipeRetrofitInterface.class);
+        recipeRetrofitInterface.deleteShare(recipeNo).enqueue(new Callback<ResponseDeleteShare>() {
+            @Override
+            public void onResponse(Call<ResponseDeleteShare> call, Response<ResponseDeleteShare> response) {
+                final ResponseDeleteShare responseDeleteShare = response.body();
+                mRecipeActivityView.deleteShareSuccess(responseDeleteShare.isSuccess(), responseDeleteShare.getCode(), responseDeleteShare.getMessage());
+            }
+
+            @Override
+            public void onFailure(Call<ResponseDeleteShare> call, Throwable t) {
+                t.printStackTrace();
+                mRecipeActivityView.deleteShareFailure();
             }
         });
     }

@@ -22,4 +22,8 @@ public interface RecipeActivityView {
     void deleteRecipeSuccess(boolean isSuccess, int code, String message);
 
     void deleteRecipeFailure();
+
+    void deleteShareSuccess(boolean isSuccess, int code, String message);
+
+    void deleteShareFailure();
 }
