@@ -24,7 +24,7 @@
         android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="n">
-        <activity android:name=".src.loadRecipe.RoadRecipeActivity"></activity>
+        <activity android:name=".src.loadRecipe.LoadRecipeActivity"></activity>
         <activity android:name=".src.modifyRecipe.ModifyActivity" />
         <activity android:name=".src.setting.SettingActivity" />
 

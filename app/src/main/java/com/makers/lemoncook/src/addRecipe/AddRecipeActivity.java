@@ -26,11 +26,15 @@ import com.makers.lemoncook.src.VerticalTextView;
 import com.makers.lemoncook.src.addRecipe.adapters.NewRecipeImageRecyclerViewAdapter;
 import com.makers.lemoncook.src.addRecipe.interfaces.AddRecipeActivityView;
 import com.makers.lemoncook.src.editRecipe.EditRecipeActivity;
+import com.makers.lemoncook.src.loadRecipe.LoadRecipeActivity;
+import com.makers.lemoncook.src.recipe.models.ResponseRecipe;
+import com.makers.lemoncook.src.search.models.ResponseSearch;
 import com.nex3z.flowlayout.FlowLayout;
 import com.opensooq.supernova.gligar.GligarPicker;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class AddRecipeActivity extends BaseActivity implements AddRecipeActivityView {
@@ -57,7 +61,12 @@ public class AddRecipeActivity extends BaseActivity implements AddRecipeActivity
     ArrayList<Integer> mHashTagId = new ArrayList<>();
     final static int PICKER_REQUEST_CODE = 30;
     final static int PICKER_MAIN_REQUEST_CODE = 31;
+    private static final int LOAD_RECIPE = 32;
     int mCategory = -1;
+    boolean mLoad = false;
+    HashMap<String,String> mHashMap = new HashMap<>();
+    ArrayList<Integer> mIsUri = new ArrayList<>();
+    int mNewMainImage = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -224,6 +233,12 @@ public class AddRecipeActivity extends BaseActivity implements AddRecipeActivity
                                         intent.putExtra("material", material);
                                         intent.putExtra("mStringUri", mStringUri);
                                         intent.putExtra("mMainUri", mMainUri);
+                                        if (mLoad) {
+                                            intent.putExtra("isUri", mIsUri);
+                                            intent.putExtra("isNewMainImage", mNewMainImage);
+                                            intent.putExtra("hashMap", mHashMap);
+                                            intent.putExtra("isModify", 2);
+                                        }
                                         startActivity(intent);
                                     }
                                     else if (boolExist == false) {
@@ -236,6 +251,16 @@ public class AddRecipeActivity extends BaseActivity implements AddRecipeActivity
                 }
             }
         });
+
+        mTvLoadRecipe.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                hideKeyboard(v);
+                Intent intent = new Intent(AddRecipeActivity.this, LoadRecipeActivity.class);
+                startActivityForResult(intent, LOAD_RECIPE);
+            }
+        });
+
         mBtnAddHashTag.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -429,11 +454,13 @@ public class AddRecipeActivity extends BaseActivity implements AddRecipeActivity
                 for (int i = pathsList.length - 1; i >= 0; i--) {
                     mUri.add(Uri.parse(pathsList[i]));
                     mStringUri.add(pathsList[i]);
+                    mIsUri.add(1);
                 }
                 mNewRecipeImageRecyclerViewAdapter.notifyDataSetChanged();
                 break;
             }
             case PICKER_MAIN_REQUEST_CODE : {
+                mNewMainImage = 1;
                 String pathsList[]= data.getExtras().getStringArray(GligarPicker.IMAGES_RESULT);
                 mTvMainImage.setVisibility(View.GONE);
                 mIvMainPlusImage.setVisibility(View.GONE);
@@ -441,6 +468,11 @@ public class AddRecipeActivity extends BaseActivity implements AddRecipeActivity
                 mMainUri = pathsList[0];
                 Glide.with(this).load(new File(Uri.parse(pathsList[0]).getPath())).into(mIvMainImage);
                 break;
+            }
+            case LOAD_RECIPE: {
+                int loadRecipeNo = data.getIntExtra("recipeNo", -1);
+                AddRecipeService addRecipeService = new AddRecipeService(this);
+                addRecipeService.getRecipe(loadRecipeNo);
             }
         }
     }
@@ -575,6 +607,225 @@ public class AddRecipeActivity extends BaseActivity implements AddRecipeActivity
     public void removeImage(int idx) {
         mUri.remove(idx);
         mStringUri.remove(idx);
+        mIsUri.remove(idx);
         mNewRecipeImageRecyclerViewAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void getRecipeSuccess(boolean isSuccess, int code, String message, ResponseRecipe.Result result) {
+        hideProgressDialog();
+        if (isSuccess && code == 200) {
+            mLoad = true;
+            mCategory = result.getCategoryNo();
+            if (mCategory == 1) {
+                mBtnCategory1.setBackgroundResource(R.drawable.round_category_empty);
+                mBtnCategory2.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory3.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory4.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory5.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory6.setBackgroundResource(R.drawable.round_category_fill);
+
+                mBtnCategory1.setTextColor(getResources().getColor(R.color.colorWhite));
+                mBtnCategory2.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory3.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory4.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory5.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory6.setTextColor(getResources().getColor(R.color.colorLemon));
+            }
+            else if (mCategory == 2) {
+                mBtnCategory1.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory2.setBackgroundResource(R.drawable.round_category_empty);
+                mBtnCategory3.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory4.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory5.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory6.setBackgroundResource(R.drawable.round_category_fill);
+
+                mBtnCategory1.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory2.setTextColor(getResources().getColor(R.color.colorWhite));
+                mBtnCategory3.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory4.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory5.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory6.setTextColor(getResources().getColor(R.color.colorLemon));
+            }
+            else if (mCategory == 3) {
+                mBtnCategory1.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory2.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory3.setBackgroundResource(R.drawable.round_category_empty);
+                mBtnCategory4.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory5.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory6.setBackgroundResource(R.drawable.round_category_fill);
+
+                mBtnCategory1.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory2.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory3.setTextColor(getResources().getColor(R.color.colorWhite));
+                mBtnCategory4.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory5.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory6.setTextColor(getResources().getColor(R.color.colorLemon));
+            }
+            else if (mCategory == 4) {
+                mBtnCategory1.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory2.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory3.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory4.setBackgroundResource(R.drawable.round_category_empty);
+                mBtnCategory5.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory6.setBackgroundResource(R.drawable.round_category_fill);
+
+                mBtnCategory1.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory2.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory3.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory4.setTextColor(getResources().getColor(R.color.colorWhite));
+                mBtnCategory5.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory6.setTextColor(getResources().getColor(R.color.colorLemon));
+            }
+            else if (mCategory == 5) {
+                mBtnCategory1.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory2.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory3.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory4.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory5.setBackgroundResource(R.drawable.round_category_empty);
+                mBtnCategory6.setBackgroundResource(R.drawable.round_category_fill);
+
+                mBtnCategory1.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory2.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory3.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory4.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory5.setTextColor(getResources().getColor(R.color.colorWhite));
+                mBtnCategory6.setTextColor(getResources().getColor(R.color.colorLemon));
+            }
+            else {
+                mBtnCategory1.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory2.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory3.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory4.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory5.setBackgroundResource(R.drawable.round_category_fill);
+                mBtnCategory6.setBackgroundResource(R.drawable.round_category_empty);
+
+                mBtnCategory1.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory2.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory3.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory4.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory5.setTextColor(getResources().getColor(R.color.colorLemon));
+                mBtnCategory6.setTextColor(getResources().getColor(R.color.colorWhite));
+            }
+
+            mEtTitle.setText(result.getTitle());
+            mEtFoodName.setText(result.getName());
+
+            for (int i = 0; i < mHashTagId.size(); i++) {
+                TextView textView = findViewById(mHashTagId.get(i));
+                mFlowLayout.removeView(textView);
+            }
+            mHashTagId.clear();
+
+            String hashTagArr[] = result.getHashTag().split(" ");
+            for (int i = 0; i < hashTagArr.length; i++) {
+                final TextView textView = new TextView(AddRecipeActivity.this);
+                textView.setId(generateViewId());
+                textView.setText(hashTagArr[i]);
+                textView.setBackgroundResource(R.drawable.radius_8dp_lemon);
+                textView.setTextColor(getResources().getColor(R.color.colorWhite));
+                textView.setTextSize(11);
+                LinearLayout.LayoutParams paramsHashTag = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+                textView.setLayoutParams(paramsHashTag);
+                DisplayMetrics dm = getResources().getDisplayMetrics();
+                textView.setPadding(Math.round(9*dm.density), Math.round(5*dm.density), Math.round(9*dm.density), Math.round(5*dm.density));
+                mHashTagId.add(textView.getId());
+                textView.setOnClickListener(new OnSingleClickListener() {
+                    @Override
+                    public void onSingleClick(View v) {
+                        mHashTagId.remove(Integer.valueOf(textView.getId()));
+                        mFlowLayout.removeView(textView);
+                    }
+                });
+                mFlowLayout.addView(textView);
+                mEtHashTag.setText("");
+            }
+
+            mNewMainImage = 0;
+            mTvMainImage.setVisibility(View.GONE);
+            mIvMainPlusImage.setVisibility(View.GONE);
+            mIvMainImage.setVisibility(View.VISIBLE);
+            mMainUri = result.getImage();
+            Glide.with(this).load(mMainUri).into(mIvMainImage);
+
+            for (int i = 0; i < result.getCookingOrder().size(); i++) {
+                mUri.add(Uri.parse(result.getCookingOrder().get(i).getCookingOrderImage()));
+                mStringUri.add(result.getCookingOrder().get(i).getCookingOrderImage());
+                mIsUri.add(0);
+                mHashMap.put(result.getCookingOrder().get(i).getCookingOrderImage(), result.getCookingOrder().get(i).getContent());
+            }
+
+            mNewRecipeImageRecyclerViewAdapter.notifyDataSetChanged();
+
+            for (int i = 0; i < result.getIngredient().size(); i++) {
+                DisplayMetrics dm = getResources().getDisplayMetrics();
+
+                final LinearLayout rootLinearLayout = new LinearLayout(this);
+                rootLinearLayout.setId(generateViewId());
+                rootLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+                LinearLayout.LayoutParams paramsRoot = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        Math.round(35*dm.density)
+                );
+                paramsRoot.topMargin = Math.round(4*dm.density);
+
+                final EditText firstEt = new EditText(this);
+                firstEt.setId(generateViewId());
+                firstEt.setBackground(getResources().getDrawable(R.drawable.radius_4dp_gray));
+                firstEt.setText(result.getIngredient().get(i).getIngredient());
+                firstEt.setHint(getResources().getString(R.string.newRecipeMaterialHint));
+                firstEt.setHintTextColor(getResources().getColor(R.color.colorLoginGray));
+                firstEt.setTextColor(getResources().getColor(R.color.colorLoginBlack));
+                firstEt.setTextSize(12);
+                firstEt.setInputType(InputType.TYPE_CLASS_TEXT);
+                firstEt.setPadding(Math.round(5*dm.density), 0, Math.round(5*dm.density), 0);
+                LinearLayout.LayoutParams paramsEt1 = new LinearLayout.LayoutParams(
+                        Math.round(0*dm.density),
+                        Math.round(35*dm.density),
+                        1.0f
+                );
+
+                final ImageView deleteBtn = new ImageView(this);
+                deleteBtn.setImageResource(R.drawable.ic_x);
+                LinearLayout.LayoutParams paramsIv = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+                paramsIv.leftMargin = Math.round(8*dm.density);
+
+                rootLinearLayout.addView(firstEt, paramsEt1);
+                rootLinearLayout.addView(deleteBtn, paramsIv);
+
+                mLlDynamicArea.addView(rootLinearLayout, paramsRoot);
+
+                mRootLayoutID.add(rootLinearLayout.getId());
+                mFirstEtID.add(firstEt.getId());
+                mDeleteBtnID.add(deleteBtn.getId());
+
+                deleteBtn.setOnClickListener(new OnSingleClickListener() {
+                    @Override
+                    public void onSingleClick(View v) {
+                        mRootLayoutID.remove(Integer.valueOf(rootLinearLayout.getId()));
+                        mFirstEtID.remove(Integer.valueOf(firstEt.getId()));
+                        mDeleteBtnID.remove(Integer.valueOf(deleteBtn.getId()));
+                        rootLinearLayout.removeView(firstEt);
+                        rootLinearLayout.removeView(deleteBtn);
+                        mLlDynamicArea.removeView(rootLinearLayout);
+                    }
+                });
+            }
+        }
+        else {
+            showCustomToast(message);
+        }
+    }
+
+    @Override
+    public void getRecipeFailure() {
+        hideProgressDialog();
+        showCustomToast(getResources().getString(R.string.network_error));
     }
 }

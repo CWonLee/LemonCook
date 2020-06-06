@@ -1,11 +1,12 @@
-package com.makers.lemoncook.src.search;
+package com.makers.lemoncook.src.loadRecipe;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,44 +18,42 @@ import android.widget.ImageView;
 import com.makers.lemoncook.R;
 import com.makers.lemoncook.src.BaseActivity;
 import com.makers.lemoncook.src.VerticalTextView;
+import com.makers.lemoncook.src.loadRecipe.adapters.LoadRecyclerViewAdapter;
+import com.makers.lemoncook.src.loadRecipe.interfaces.LoadActivityView;
 import com.makers.lemoncook.src.search.adapters.SearchRecyclerViewAdapter;
-import com.makers.lemoncook.src.search.interfaces.SearchActivityView;
 import com.makers.lemoncook.src.search.models.ResponseSearch;
 
 import java.util.ArrayList;
 
-public class SearchActivity extends BaseActivity implements SearchActivityView {
+public class LoadRecipeActivity extends BaseActivity implements LoadActivityView {
 
     EditText mEtSearchBar;
     RecyclerView mRecyclerView;
-    SearchRecyclerViewAdapter mSearchRecyclerViewAdapter;
+    LoadRecyclerViewAdapter mLoadRecyclerViewAdapter;
     ArrayList<ResponseSearch.Result> mData = new ArrayList<>();
     ImageView mIvBack;
-    String mOrder = "인기순";
-    String mFilter;
+    String mOrder = "최신순";
+    String mFilter = "All";
     int mPage = 1;
     boolean mNewPage = true;
-    VerticalTextView mVtPopularOrder, mVtNewOrder;
     LinearLayoutManager mRvLinearLayoutManager;
     NestedScrollView mNestedScrollView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
+        setContentView(R.layout.activity_load_recipe);
 
-        mRecyclerView = findViewById(R.id.search_rv);
-        mEtSearchBar = findViewById(R.id.search_et_search_bar);
-        mIvBack = findViewById(R.id.search_iv_back);
-        mVtPopularOrder = findViewById(R.id.search_vt_popular_order);
-        mVtNewOrder = findViewById(R.id.search_vt_new_order);
-        mNestedScrollView = findViewById(R.id.search_nested_scroll_view);
+        mRecyclerView = findViewById(R.id.load_recipe_rv);
+        mEtSearchBar = findViewById(R.id.load_recipe_et_search_bar);
+        mIvBack = findViewById(R.id.load_recipe_iv_back);
+        mNestedScrollView = findViewById(R.id.load_recipe_nested_scroll_view);
 
         mRecyclerView.setNestedScrollingEnabled(false);
         mRvLinearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mRvLinearLayoutManager);
-        mSearchRecyclerViewAdapter = new SearchRecyclerViewAdapter(mData, this);
-        mRecyclerView.setAdapter(mSearchRecyclerViewAdapter);
+        mLoadRecyclerViewAdapter = new LoadRecyclerViewAdapter(mData, this, this);
+        mRecyclerView.setAdapter(mLoadRecyclerViewAdapter);
 
         mNestedScrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
@@ -71,8 +70,6 @@ public class SearchActivity extends BaseActivity implements SearchActivityView {
                 }
             }
         });
-
-        mFilter = getIntent().getStringExtra("filter");
 
         getSearch("", true);
 
@@ -95,33 +92,6 @@ public class SearchActivity extends BaseActivity implements SearchActivityView {
             }
         });
 
-        mVtPopularOrder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mOrder == "최신순") {
-                    mVtPopularOrder.setTextColor(getResources().getColor(R.color.colorLoginEtBlack));
-                    mVtNewOrder.setTextColor(getResources().getColor(R.color.colorLoginGray));
-                    mOrder = "인기순";
-                    mPage = 1;
-                    mNewPage = true;
-                    getSearch(mEtSearchBar.getText().toString(), true);
-                }
-            }
-        });
-        mVtNewOrder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mOrder == "인기순") {
-                    mVtPopularOrder.setTextColor(getResources().getColor(R.color.colorLoginGray));
-                    mVtNewOrder.setTextColor(getResources().getColor(R.color.colorLoginEtBlack));
-                    mOrder = "최신순";
-                    mPage = 1;
-                    mNewPage = true;
-                    getSearch(mEtSearchBar.getText().toString(), true);
-                }
-            }
-        });
-
         mIvBack.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
@@ -131,8 +101,8 @@ public class SearchActivity extends BaseActivity implements SearchActivityView {
     }
 
     public void getSearch(String search, boolean clearData) {
-        SearchService searchService = new SearchService(this);
-        searchService.getSearch(search, mFilter, mOrder, mPage, clearData);
+        LoadService loadService = new LoadService(this);
+        loadService.getSearch(search, mFilter, mOrder, mPage, clearData);
     }
 
     @Override
@@ -147,12 +117,20 @@ public class SearchActivity extends BaseActivity implements SearchActivityView {
             for (int i = 0; i < result.size(); i++) {
                 mData.add(result.get(i));
             }
-            mSearchRecyclerViewAdapter.notifyDataSetChanged();
+            mLoadRecyclerViewAdapter.notifyDataSetChanged();
         }
     }
 
     @Override
     public void searchFailure() {
         showCustomToast(getResources().getString(R.string.network_error));
+    }
+
+    @Override
+    public void loadRecipeNo(int recipeNo) {
+        Intent intent = new Intent();
+        intent.putExtra("recipeNo", recipeNo);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }

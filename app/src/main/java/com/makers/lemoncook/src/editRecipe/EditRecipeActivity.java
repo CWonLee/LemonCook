@@ -160,6 +160,35 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
             mEditRecipeViewPagerAdapter.notifyDataSetChanged();
             mEditRecipeRecyclerViewAdapter.notifyDataSetChanged();
         }
+        else if (getIntent().getIntExtra("isModify", 0) == 2) {
+            mMainUri = getIntent().getStringExtra("mMainUri");
+            mStringUri = getIntent().getStringArrayListExtra("mStringUri");
+            mCategory = getIntent().getIntExtra("category", -1);
+            mTitle = getIntent().getStringExtra("title");
+            mFoodName = getIntent().getStringExtra("foodName");
+            mHashTag = getIntent().getStringExtra("hashTag");
+            mMaterial = getIntent().getStringExtra("material");
+            mNewMainImage = getIntent().getIntExtra("isNewMainImage", -1);
+            HashMap<String,String> hashMap = (HashMap<String, String>)getIntent().getSerializableExtra("hashMap");
+            for (int i = 0; i < mStringUri.size(); i++) {
+                mUri.add(Uri.parse(mStringUri.get(i)));
+                EditRecipeViewpagerItem editRecipeViewpagerItem = new EditRecipeViewpagerItem();
+                editRecipeViewpagerItem.setmContent(hashMap.get(mStringUri.get(i)));
+                editRecipeViewpagerItem.setmNumber(mUri.size());
+                editRecipeViewpagerItem.setmUri(mUri.get(i));
+                mEditRecipeViewPagerAdapter.addItem(editRecipeViewpagerItem);
+            }
+            for (int i = 0; i < getIntent().getIntegerArrayListExtra("isUri").size(); i++) {
+                if (getIntent().getIntegerArrayListExtra("isUri").get(i) == 0) {
+                    mIsUri.add(false);
+                }
+                else {
+                    mIsUri.add(true);
+                }
+            }
+            mEditRecipeViewPagerAdapter.notifyDataSetChanged();
+            mEditRecipeRecyclerViewAdapter.notifyDataSetChanged();
+        }
         else {
             mMainUri = getIntent().getStringExtra("mMainUri");
             mStringUri = getIntent().getStringArrayListExtra("mStringUri");
@@ -283,7 +312,12 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
         else { // state = 4
             mModifyState = 4;
             ResponseUpload.Result result = new ResponseUpload.Result();
-            modifyRecipe(result);
+            if (getIntent().getIntExtra("isModify", 0) == 1) {
+                modifyRecipe(result);
+            }
+            else if (getIntent().getIntExtra("isModify", 0) == 2) {
+                postRecipe(result);
+            }
         }
     }
 
@@ -370,27 +404,68 @@ public class EditRecipeActivity extends BaseActivity implements EditRecipeActivi
     }
 
     public void postRecipe(ResponseUpload.Result result) {
-        EditRecipeService editRecipeService = new EditRecipeService(this);
-        RequestPostRecipe requestPostRecipe = new RequestPostRecipe();
-        requestPostRecipe.setTitle(mTitle);
-        requestPostRecipe.setCategoryNo(mCategory);
-        requestPostRecipe.setName(mFoodName);
-        requestPostRecipe.setHashTag(mHashTag);
-        requestPostRecipe.setIngredient(mMaterial);
-        requestPostRecipe.setServing("1인분");
-        requestPostRecipe.setImage(result.getImage().getImageUrl());
-        ArrayList<RequestPostRecipe.CookingOrder> cookingOrders = new ArrayList<>();
-
-        for (int i = 0; i < mEditRecipeViewPagerAdapter.getCount(); i++) {
-            RequestPostRecipe.CookingOrder cookingOrder = new RequestPostRecipe.CookingOrder();
-            EditRecipeViewpagerItem editRecipeViewpagerItem = mEditRecipeViewPagerAdapter.getEditRecipeViewpagerItemByIdx(i);
-            cookingOrder.setContent(editRecipeViewpagerItem.getmContent());
-            cookingOrder.setCookingOrder(i + 1);
-            cookingOrder.setCookingOrderImage(result.getCookingOrderImage().get(i).getImageUrl());
-            cookingOrders.add(cookingOrder);
+        if (getIntent().getIntExtra("isModify", 0) == 2) {
+            EditRecipeService editRecipeService = new EditRecipeService(this);
+            RequestPostRecipe requestPostRecipe = new RequestPostRecipe();
+            requestPostRecipe.setTitle(mTitle);
+            requestPostRecipe.setCategoryNo(mCategory);
+            requestPostRecipe.setName(mFoodName);
+            requestPostRecipe.setHashTag(mHashTag);
+            requestPostRecipe.setIngredient(mMaterial);
+            requestPostRecipe.setServing("1인분");
+            if (mModifyState == 1) {
+                requestPostRecipe.setImage(result.getImage().getImageUrl());
+            }
+            else if (mModifyState == 2) {
+                requestPostRecipe.setImage(result.getImage().getImageUrl());
+            }
+            else if (mModifyState == 3) {
+                requestPostRecipe.setImage(mMainUri);
+            }
+            else {
+                requestPostRecipe.setImage(mMainUri);
+            }
+            ArrayList<RequestPostRecipe.CookingOrder> cookingOrders = new ArrayList<>();
+            int uriCnt = 0;
+            for (int i = 0; i < mIsUri.size(); i++) {
+                RequestPostRecipe.CookingOrder cookingOrder = new RequestPostRecipe.CookingOrder();
+                cookingOrder.setContent(mEditRecipeViewPagerAdapter.getEditRecipeViewpagerItemByIdx(i).getmContent());
+                cookingOrder.setCookingOrder(i + 1);
+                if (mIsUri.get(i)) {
+                    cookingOrder.setCookingOrderImage(result.getCookingOrderImage().get(uriCnt).getImageUrl());
+                    uriCnt++;
+                }
+                else {
+                    cookingOrder.setCookingOrderImage(mStringUri.get(i));
+                }
+                cookingOrders.add(cookingOrder);
+            }
+            requestPostRecipe.setCookingOrder(cookingOrders);
+            editRecipeService.postRecipe(requestPostRecipe);
         }
-        requestPostRecipe.setCookingOrder(cookingOrders);
-        editRecipeService.postRecipe(requestPostRecipe);
+        else {
+            EditRecipeService editRecipeService = new EditRecipeService(this);
+            RequestPostRecipe requestPostRecipe = new RequestPostRecipe();
+            requestPostRecipe.setTitle(mTitle);
+            requestPostRecipe.setCategoryNo(mCategory);
+            requestPostRecipe.setName(mFoodName);
+            requestPostRecipe.setHashTag(mHashTag);
+            requestPostRecipe.setIngredient(mMaterial);
+            requestPostRecipe.setServing("1인분");
+            requestPostRecipe.setImage(result.getImage().getImageUrl());
+            ArrayList<RequestPostRecipe.CookingOrder> cookingOrders = new ArrayList<>();
+
+            for (int i = 0; i < mEditRecipeViewPagerAdapter.getCount(); i++) {
+                RequestPostRecipe.CookingOrder cookingOrder = new RequestPostRecipe.CookingOrder();
+                EditRecipeViewpagerItem editRecipeViewpagerItem = mEditRecipeViewPagerAdapter.getEditRecipeViewpagerItemByIdx(i);
+                cookingOrder.setContent(editRecipeViewpagerItem.getmContent());
+                cookingOrder.setCookingOrder(i + 1);
+                cookingOrder.setCookingOrderImage(result.getCookingOrderImage().get(i).getImageUrl());
+                cookingOrders.add(cookingOrder);
+            }
+            requestPostRecipe.setCookingOrder(cookingOrders);
+            editRecipeService.postRecipe(requestPostRecipe);
+        }
     }
 
     public void modifyRecipe(ResponseUpload.Result result) {

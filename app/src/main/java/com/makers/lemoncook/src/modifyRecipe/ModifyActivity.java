@@ -65,7 +65,6 @@ public class ModifyActivity extends BaseActivity implements ModifyActivityView {
     final static int PICKER_MAIN_REQUEST_CODE = 31;
     int mCategory = -1;
     int mNewMainImage = 0;
-    HashMap<Uri, String> mHashMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

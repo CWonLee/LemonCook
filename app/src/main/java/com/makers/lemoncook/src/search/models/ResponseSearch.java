@@ -2,6 +2,7 @@ package com.makers.lemoncook.src.search.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class ResponseSearch {
@@ -17,7 +18,7 @@ public class ResponseSearch {
     @SerializedName("result")
     private ArrayList<Result> result;
 
-    public class Result {
+    public class Result implements Serializable {
         @SerializedName("recipeNo")
         private int recipeNo;
 

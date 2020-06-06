@@ -43,7 +43,7 @@ public class NewRecipeImageRecyclerViewAdapter extends RecyclerView.Adapter<NewR
 
     @Override
     public void onBindViewHolder(@NonNull NewRecipeImageRecyclerViewAdapter.ViewHolder holder, int position) {
-        Glide.with(mContext).load(new File(mData.get(position).getPath())).into(holder.mImageView);
+        Glide.with(mContext).load(mData.get(position)).into(holder.mImageView);
         //Glide.with(mContext).load(mData.get(position)).centerCrop().into(holder.mImageView);
     }
 
