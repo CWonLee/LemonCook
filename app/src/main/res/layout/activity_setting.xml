@@ -70,44 +70,30 @@
 
     </LinearLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/setting_cl_logout"
+    <Button
+        android:id="@+id/setting_btn_logout"
         android:layout_width="match_parent"
         android:layout_height="46dp"
         android:layout_marginTop="30dp"
-        android:background="@color/colorWhite">
+        android:background="@drawable/round_fill_lemon"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:textColor="@color/colorWhite"
+        android:textSize="14sp"
+        android:text="로그아웃"
+        android:textStyle="bold"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#333333"
-            android:textSize="14sp"
-            android:text="로그아웃"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/setting_cl_delete_user"
+    <Button
+        android:id="@+id/setting_btn_delete_user"
         android:layout_width="match_parent"
         android:layout_height="46dp"
-        android:layout_marginTop="10dp"
-        android:background="@color/colorWhite">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#333333"
-            android:textSize="14sp"
-            android:text="회원탈퇴"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_marginTop="15dp"
+        android:background="@drawable/round_fill_lemon"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:textColor="@color/colorWhite"
+        android:textSize="14sp"
+        android:text="회원탈퇴"
+        android:textStyle="bold"/>
 
 </LinearLayout>

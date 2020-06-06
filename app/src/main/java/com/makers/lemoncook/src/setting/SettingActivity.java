@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,8 +23,8 @@ import static com.makers.lemoncook.src.ApplicationClass.sSharedPreferences;
 public class SettingActivity extends BaseActivity {
 
     TextView mTvName;
+    Button mBtnLogout, mBtnDeleteUser;
     CustomDialogLogout mCustomDialogLogout;
-    ConstraintLayout mClLogout;
     ImageView mIvBackBtn;
 
     @Override
@@ -32,11 +33,12 @@ public class SettingActivity extends BaseActivity {
         setContentView(R.layout.activity_setting);
 
         mTvName = findViewById(R.id.setting_tv_user_name);
-        mClLogout = findViewById(R.id.setting_cl_logout);
+        mBtnLogout = findViewById(R.id.setting_btn_logout);
+        mBtnDeleteUser = findViewById(R.id.setting_btn_delete_user);
         mIvBackBtn = findViewById(R.id.setting_iv_back);
 
         mTvName.setText(getIntent().getStringExtra("name"));
-        mClLogout.setOnClickListener(new OnSingleClickListener() {
+        mBtnLogout.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {
                 mCustomDialogLogout = new CustomDialogLogout(SettingActivity.this,positiveListener,negativeListener);
