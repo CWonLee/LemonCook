@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kakao.usermgmt.UserManagement;
@@ -23,6 +24,7 @@ public class SettingActivity extends BaseActivity {
     TextView mTvName;
     CustomDialogLogout mCustomDialogLogout;
     ConstraintLayout mClLogout;
+    ImageView mIvBackBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +33,7 @@ public class SettingActivity extends BaseActivity {
 
         mTvName = findViewById(R.id.setting_tv_user_name);
         mClLogout = findViewById(R.id.setting_cl_logout);
+        mIvBackBtn = findViewById(R.id.setting_iv_back);
 
         mTvName.setText(getIntent().getStringExtra("name"));
         mClLogout.setOnClickListener(new OnSingleClickListener() {
@@ -38,6 +41,12 @@ public class SettingActivity extends BaseActivity {
             public void onSingleClick(View v) {
                 mCustomDialogLogout = new CustomDialogLogout(SettingActivity.this,positiveListener,negativeListener);
                 mCustomDialogLogout.show();
+            }
+        });
+        mIvBackBtn.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                finish();
             }
         });
     }

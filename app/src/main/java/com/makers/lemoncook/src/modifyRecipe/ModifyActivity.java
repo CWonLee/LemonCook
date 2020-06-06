@@ -49,7 +49,7 @@ public class ModifyActivity extends BaseActivity implements ModifyActivityView {
     ModifyRecyclerViewAdapter mModifyRecyclerViewAdapter;
     Button mBtnStart, mBtnAddHashTag, mBtnCategory1, mBtnCategory2, mBtnCategory3, mBtnCategory4, mBtnCategory5, mBtnCategory6;
     TextView mTvMainImage;
-    ImageView mIvMainPlusImage, mIvMainImage;
+    ImageView mIvMainPlusImage, mIvMainImage, mIvBackBtn;
     String mMainUri = "";
     EditText mEtHashTag, mEtTitle, mEtFoodName;
     FlowLayout mFlowLayout;
@@ -95,6 +95,7 @@ public class ModifyActivity extends BaseActivity implements ModifyActivityView {
         mBtnCategory6 = findViewById(R.id.modify_btn_category6);
         mEtTitle = findViewById(R.id.modify_et_little_title);
         mEtFoodName = findViewById(R.id.modify_et_food_name);
+        mIvBackBtn = findViewById(R.id.modify_ic_back);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(RecyclerView.HORIZONTAL);
@@ -113,6 +114,13 @@ public class ModifyActivity extends BaseActivity implements ModifyActivityView {
                 else {
                     showCustomToast("최대 15장만 불러올 수 있습니다");
                 }
+            }
+        });
+
+        mIvBackBtn.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                finish();
             }
         });
 
