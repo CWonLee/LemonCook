@@ -16,15 +16,17 @@ import com.kakao.usermgmt.callback.LogoutResponseCallback;
 import com.makers.lemoncook.R;
 import com.makers.lemoncook.src.BaseActivity;
 import com.makers.lemoncook.src.login.LoginActivity;
+import com.makers.lemoncook.src.setting.interfaces.SettingActivityView;
 import com.makers.lemoncook.src.splash.SplashActivity;
 
 import static com.makers.lemoncook.src.ApplicationClass.sSharedPreferences;
 
-public class SettingActivity extends BaseActivity {
+public class SettingActivity extends BaseActivity implements SettingActivityView {
 
     TextView mTvName;
     Button mBtnLogout, mBtnDeleteUser;
     CustomDialogLogout mCustomDialogLogout;
+    CustomDialogDeleteUser mCustomDialogDeleteUser;
     ImageView mIvBackBtn;
 
     @Override
@@ -49,6 +51,14 @@ public class SettingActivity extends BaseActivity {
             @Override
             public void onSingleClick(View v) {
                 finish();
+            }
+        });
+
+        mBtnDeleteUser.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                mCustomDialogDeleteUser = new CustomDialogDeleteUser(SettingActivity.this, deleteUserPositiveListener, deleteUserNegativeListener);
+                mCustomDialogDeleteUser.show();
             }
         });
     }
@@ -79,4 +89,57 @@ public class SettingActivity extends BaseActivity {
             mCustomDialogLogout.dismiss();
         }
     };
+
+    private View.OnClickListener deleteUserPositiveListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            deleteUser();
+
+            mCustomDialogDeleteUser.dismiss();
+        }
+    };
+
+    private View.OnClickListener deleteUserNegativeListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            mCustomDialogDeleteUser.dismiss();
+        }
+    };
+
+    public void deleteUser() {
+        showProgressDialog();
+        SettingService settingService = new SettingService(this);
+        settingService.deleteUser();
+    }
+
+    @Override
+    public void deleteUserSuccess(boolean isSuccess, int code, String message) {
+        hideProgressDialog();
+        if (isSuccess && code == 200) {
+            showCustomToast(message);
+
+            UserManagement.getInstance().requestLogout(new LogoutResponseCallback() {
+                @Override
+                public void onCompleteLogout() {
+
+                }
+            });
+
+            SharedPreferences.Editor editor = sSharedPreferences.edit();
+            editor.clear();
+            editor.commit();
+
+            Intent intent = new Intent(SettingActivity.this, SplashActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+        else {
+            showCustomToast(message);
+        }
+    }
+
+    @Override
+    public void deleteUserFailure() {
+        hideProgressDialog();
+        showCustomToast(getResources().getString(R.string.network_error));
+    }
 }
