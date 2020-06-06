@@ -19,7 +19,8 @@
         android:textColor="@color/colorLoginBlack"
         android:textSize="40sp"
         android:textStyle="bold"
-        android:layout_marginTop="112dp"></TextView>
+        android:layout_marginTop="112dp"
+        android:fontFamily="@font/mosk_ultra_bold_900_900"></TextView>
 
     <com.kakao.usermgmt.LoginButton
         android:id="@+id/login_kakao_btn"

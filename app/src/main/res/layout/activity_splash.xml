@@ -27,7 +27,8 @@
         android:layout_marginTop="47dp"
         android:textColor="@color/colorSplashTextBlack"
         android:textSize="17sp"
-        android:text="@string/splashStringText1" />
+        android:text="@string/splashStringText1"
+        android:fontFamily="@font/mosk_medium_500_500"/>
 
     <TextView
         android:id="@+id/splash_tv_title"
@@ -39,7 +40,8 @@
         android:textSize="40sp"
         android:textStyle="bold"
         android:textColor="@color/colorSplashTitleBlack"
-        android:text="@string/splashStringTitle"/>
+        android:text="@string/splashStringTitle"
+        android:fontFamily="@font/mosk_ultra_bold_900_900"/>
 
     <TextView
         android:id="@+id/splash_tv_text2"
@@ -52,7 +54,8 @@
         android:gravity="center_horizontal"
         android:textColor="@color/colorSplashTextBlack"
         android:textSize="12sp"
-        android:text="@string/splashStringText2" />
+        android:text="@string/splashStringText2"
+        android:fontFamily="@font/notosanscjkkrr_light"/>
 
     <ImageView
         android:id="@+id/splash_iv_next_btn"
@@ -62,7 +65,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:src="@drawable/ic_next"
-        android:layout_marginBottom="111dp"/>
+        android:layout_marginBottom="111dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
