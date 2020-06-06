@@ -88,8 +88,6 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe);
 
-        System.out.println(getIntent().getStringExtra("tab"));
-
         mIvBackBtn = findViewById(R.id.recipe_iv_back_btn);
         mIvZZim = findViewById(R.id.recipe_iv_lemon);
         mRecyclerView = findViewById(R.id.recipe_rv);
@@ -105,6 +103,10 @@ public class RecipeActivity extends BaseActivity implements RecipeActivityView {
         mRecyclerView.setLayoutManager(layoutManager);
 
         Init();
+
+        if (getIntent().getStringExtra("tab") != null && getIntent().getStringExtra("tab").equals("share")) {
+            mIvZZim.setVisibility(View.GONE);
+        }
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
