@@ -8,4 +8,8 @@ public interface AddRecipeActivityView {
     void getRecipeSuccess(boolean isSuccess, int code, String message, ResponseRecipe.Result result);
 
     void getRecipeFailure();
+
+    void getMaterialSuccess(boolean isSuccess, int code, String message, String result);
+
+    void getMaterialFailure();
 }

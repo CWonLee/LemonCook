@@ -43,16 +43,15 @@ public class ModifyActivity extends BaseActivity implements ModifyActivityView {
 
     LinearLayout mLlDynamicArea;
     ConstraintLayout mClDynamicPlusBtn, mClPlusRecipeImg, mClMainImage;
-    boolean expandable = true;
     VerticalTextView mTvIngredientTitle;
     RecyclerView mRvImage;
     ModifyRecyclerViewAdapter mModifyRecyclerViewAdapter;
-    Button mBtnStart, mBtnAddHashTag, mBtnCategory1, mBtnCategory2, mBtnCategory3, mBtnCategory4, mBtnCategory5, mBtnCategory6;
+    Button mBtnStart, mBtnAddHashTag, mBtnCategory1, mBtnCategory2, mBtnCategory3, mBtnCategory4, mBtnCategory5, mBtnCategory6, mBtnGetMaterial;
     TextView mTvMainImage;
     ImageView mIvMainPlusImage, mIvMainImage, mIvBackBtn;
     String mMainUri = "";
     EditText mEtHashTag, mEtTitle, mEtFoodName;
-    FlowLayout mFlowLayout;
+    FlowLayout mFlowLayout, mFlowLayoutMaterial;
     private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
     ArrayList<Integer> mRootLayoutID = new ArrayList<>();
     ArrayList<Integer> mFirstEtID = new ArrayList<>();
@@ -65,6 +64,7 @@ public class ModifyActivity extends BaseActivity implements ModifyActivityView {
     final static int PICKER_MAIN_REQUEST_CODE = 31;
     int mCategory = -1;
     int mNewMainImage = 0;
+    ArrayList<Integer> mMaterial = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +93,8 @@ public class ModifyActivity extends BaseActivity implements ModifyActivityView {
         mEtTitle = findViewById(R.id.modify_et_little_title);
         mEtFoodName = findViewById(R.id.modify_et_food_name);
         mIvBackBtn = findViewById(R.id.modify_ic_back);
+        mBtnGetMaterial = findViewById(R.id.modify_btn_get_material);
+        mFlowLayoutMaterial = findViewById(R.id.modify_flowLayout_material);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(RecyclerView.HORIZONTAL);
@@ -131,7 +133,19 @@ public class ModifyActivity extends BaseActivity implements ModifyActivityView {
         mClDynamicPlusBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addView();
+                addView("");
+            }
+        });
+
+        mBtnGetMaterial.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                if (mEtFoodName.getText().toString().equals("")) {
+                    showCustomToast("음식명을 입력해주세요");
+                }
+                else {
+                    getMaterial();
+                }
             }
         });
 
@@ -442,63 +456,7 @@ public class ModifyActivity extends BaseActivity implements ModifyActivityView {
         }
     }
 
-    public static void expand(final View v) {
-        int matchParentMeasureSpec = View.MeasureSpec.makeMeasureSpec(((View) v.getParent()).getWidth(), View.MeasureSpec.EXACTLY);
-        int wrapContentMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        v.measure(matchParentMeasureSpec, wrapContentMeasureSpec);
-        final int targetHeight = v.getMeasuredHeight();
-
-        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
-        v.getLayoutParams().height = 1;
-        v.setVisibility(View.VISIBLE);
-        Animation a = new Animation()
-        {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                v.getLayoutParams().height = interpolatedTime == 1
-                        ? LinearLayout.LayoutParams.WRAP_CONTENT
-                        : (int)(targetHeight * interpolatedTime);
-                v.requestLayout();
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        // Expansion speed of 1dp/ms
-        a.setDuration((int)(targetHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
-    }
-
-    public static void collapse(final View v) {
-        final int initialHeight = v.getMeasuredHeight();
-
-        Animation a = new Animation()
-        {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                if(interpolatedTime == 1){
-                    v.setVisibility(View.GONE);
-                }else{
-                    v.getLayoutParams().height = initialHeight - (int)(initialHeight * interpolatedTime);
-                    v.requestLayout();
-                }
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        // Collapse speed of 1dp/ms
-        a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
-    }
-
-    void addView() {
+    void addView(String content) {
         DisplayMetrics dm = getResources().getDisplayMetrics();
 
         final LinearLayout rootLinearLayout = new LinearLayout(this);
@@ -514,6 +472,7 @@ public class ModifyActivity extends BaseActivity implements ModifyActivityView {
         firstEt.setId(generateViewId());
         firstEt.setBackground(getResources().getDrawable(R.drawable.radius_4dp_gray));
         firstEt.setHint(getResources().getString(R.string.newRecipeMaterialHint));
+        firstEt.setText(content);
         firstEt.setHintTextColor(getResources().getColor(R.color.colorLoginGray));
         firstEt.setTextColor(getResources().getColor(R.color.colorLoginBlack));
         firstEt.setTextSize(12);
@@ -574,6 +533,58 @@ public class ModifyActivity extends BaseActivity implements ModifyActivityView {
         mStringUri.remove(idx);
         mIsUri.remove(idx);
         mModifyRecyclerViewAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void getMaterialSuccess(boolean isSuccess, int code, String message, String result) {
+        hideProgressDialog();
+        if (isSuccess && code == 200) {
+            if (result == null) {
+                showCustomToast("추천재료가 없습니다");
+            }
+            else {
+                String material[] = result.split(",");
+                for (int i = 0; i < mMaterial.size(); i++) {
+                    TextView textView = findViewById(Integer.valueOf(mMaterial.get(i)));
+                    mFlowLayoutMaterial.removeView(textView);
+                }
+                mMaterial.clear();
+                for (int i = 0; i < material.length; i++) {
+                    final TextView textView = new TextView(ModifyActivity.this);
+                    textView.setId(generateViewId());
+                    textView.setText(material[i]);
+                    textView.setBackgroundResource(R.drawable.radius_8dp_lemon);
+                    textView.setTextColor(getResources().getColor(R.color.colorWhite));
+                    textView.setTextSize(11);
+                    LinearLayout.LayoutParams paramsHashTag = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    textView.setLayoutParams(paramsHashTag);
+                    DisplayMetrics dm = getResources().getDisplayMetrics();
+                    textView.setPadding(Math.round(9*dm.density), Math.round(5*dm.density), Math.round(9*dm.density), Math.round(5*dm.density));
+                    mMaterial.add(textView.getId());
+                    textView.setOnClickListener(new OnSingleClickListener() {
+                        @Override
+                        public void onSingleClick(View v) {
+                            addView(textView.getText().toString());
+                            mMaterial.remove(Integer.valueOf(textView.getId()));
+                            mFlowLayoutMaterial.removeView(textView);
+                        }
+                    });
+                    mFlowLayoutMaterial.addView(textView);
+                }
+            }
+        }
+        else {
+            showCustomToast(message);
+        }
+    }
+
+    @Override
+    public void getMaterialFailure() {
+        hideProgressDialog();
+        showCustomToast(getResources().getString(R.string.network_error));
     }
 
     public void init() {
@@ -702,5 +713,11 @@ public class ModifyActivity extends BaseActivity implements ModifyActivityView {
             mIsUri.add(0);
         }
         mModifyRecyclerViewAdapter.notifyDataSetChanged();
+    }
+
+    public void getMaterial() {
+        showProgressDialog();
+        ModifyService modifyService = new ModifyService(this);
+        modifyService.getMaterial(mEtFoodName.getText().toString());
     }
 }

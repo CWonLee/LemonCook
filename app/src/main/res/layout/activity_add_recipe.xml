@@ -507,11 +507,40 @@
                     android:textColor="@color/colorMainGray"
                     android:textSize="12sp"/>
 
+                <Button
+                    android:id="@+id/new_recipe_btn_get_material"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:background="@drawable/round_fill_lemon"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginRight="24dp"
+                    android:layout_marginBottom="48dp"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="17sp"
+                    android:text="추천재료 가져오기"/>
+
+                <com.nex3z.flowlayout.FlowLayout
+                    android:id="@+id/new_recipe_flowLayout_material"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/new_recipe_btn_get_material"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="13dp"
+                    app:flChildSpacing="7dp"
+                    app:flRowSpacing="5dp"/>
+
                 <LinearLayout
                     android:id="@+id/new_recipe_ll_dynamic_area"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/new_recipe_flowLayout_material"
                     android:orientation="vertical"
                     android:layout_marginLeft="50dp"
                     android:layout_marginRight="24dp"

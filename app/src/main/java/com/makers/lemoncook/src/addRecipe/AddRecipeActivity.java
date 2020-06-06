@@ -42,16 +42,15 @@ public class AddRecipeActivity extends BaseActivity implements AddRecipeActivity
     TextView mTvNewRecipe, mTvLoadRecipe;
     LinearLayout mLlDynamicArea;
     ConstraintLayout mClDynamicPlusBtn, mClPlusRecipeImg, mClMainImage;
-    boolean expandable = true;
     VerticalTextView mTvIngredientTitle;
     RecyclerView mRvImage;
     NewRecipeImageRecyclerViewAdapter mNewRecipeImageRecyclerViewAdapter;
-    Button mBtnStart, mBtnAddHashTag, mBtnCategory1, mBtnCategory2, mBtnCategory3, mBtnCategory4, mBtnCategory5, mBtnCategory6;
+    Button mBtnStart, mBtnAddHashTag, mBtnCategory1, mBtnCategory2, mBtnCategory3, mBtnCategory4, mBtnCategory5, mBtnCategory6, mBtnGetMaterial;
     TextView mTvMainImage;
     ImageView mIvMainPlusImage, mIvMainImage, mIvBackBtn;
     String mMainUri = "";
     EditText mEtHashTag, mEtTitle, mEtFoodName;
-    FlowLayout mFlowLayout;
+    FlowLayout mFlowLayout, mFlowLayoutMaterial;
     private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
     ArrayList<Integer> mRootLayoutID = new ArrayList<>();
     ArrayList<Integer> mFirstEtID = new ArrayList<>();
@@ -67,6 +66,7 @@ public class AddRecipeActivity extends BaseActivity implements AddRecipeActivity
     HashMap<String,String> mHashMap = new HashMap<>();
     ArrayList<Integer> mIsUri = new ArrayList<>();
     int mNewMainImage = 0;
+    ArrayList<Integer> mMaterial = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +97,8 @@ public class AddRecipeActivity extends BaseActivity implements AddRecipeActivity
         mEtTitle = findViewById(R.id.new_recipe_et_little_title);
         mEtFoodName = findViewById(R.id.new_recipe_et_food_name);
         mIvBackBtn = findViewById(R.id.add_recipe_ic_back);
+        mBtnGetMaterial = findViewById(R.id.new_recipe_btn_get_material);
+        mFlowLayoutMaterial = findViewById(R.id.new_recipe_flowLayout_material);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(RecyclerView.HORIZONTAL);
@@ -133,7 +135,19 @@ public class AddRecipeActivity extends BaseActivity implements AddRecipeActivity
         mClDynamicPlusBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addView();
+                addView("");
+            }
+        });
+
+        mBtnGetMaterial.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                if (mEtFoodName.getText().toString().equals("")) {
+                    showCustomToast("음식명을 입력해주세요");
+                }
+                else {
+                    getMaterial();
+                }
             }
         });
 
@@ -457,63 +471,7 @@ public class AddRecipeActivity extends BaseActivity implements AddRecipeActivity
         }
     }
 
-    public static void expand(final View v) {
-        int matchParentMeasureSpec = View.MeasureSpec.makeMeasureSpec(((View) v.getParent()).getWidth(), View.MeasureSpec.EXACTLY);
-        int wrapContentMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        v.measure(matchParentMeasureSpec, wrapContentMeasureSpec);
-        final int targetHeight = v.getMeasuredHeight();
-
-        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
-        v.getLayoutParams().height = 1;
-        v.setVisibility(View.VISIBLE);
-        Animation a = new Animation()
-        {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                v.getLayoutParams().height = interpolatedTime == 1
-                        ? LinearLayout.LayoutParams.WRAP_CONTENT
-                        : (int)(targetHeight * interpolatedTime);
-                v.requestLayout();
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        // Expansion speed of 1dp/ms
-        a.setDuration((int)(targetHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
-    }
-
-    public static void collapse(final View v) {
-        final int initialHeight = v.getMeasuredHeight();
-
-        Animation a = new Animation()
-        {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                if(interpolatedTime == 1){
-                    v.setVisibility(View.GONE);
-                }else{
-                    v.getLayoutParams().height = initialHeight - (int)(initialHeight * interpolatedTime);
-                    v.requestLayout();
-                }
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        // Collapse speed of 1dp/ms
-        a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
-    }
-
-    void addView() {
+    void addView(String content) {
         DisplayMetrics dm = getResources().getDisplayMetrics();
 
         final LinearLayout rootLinearLayout = new LinearLayout(this);
@@ -528,6 +486,7 @@ public class AddRecipeActivity extends BaseActivity implements AddRecipeActivity
         final EditText firstEt = new EditText(this);
         firstEt.setId(generateViewId());
         firstEt.setBackground(getResources().getDrawable(R.drawable.radius_4dp_gray));
+        firstEt.setText(content);
         firstEt.setHint(getResources().getString(R.string.newRecipeMaterialHint));
         firstEt.setHintTextColor(getResources().getColor(R.color.colorLoginGray));
         firstEt.setTextColor(getResources().getColor(R.color.colorLoginBlack));
@@ -805,6 +764,64 @@ public class AddRecipeActivity extends BaseActivity implements AddRecipeActivity
 
     @Override
     public void getRecipeFailure() {
+        hideProgressDialog();
+        showCustomToast(getResources().getString(R.string.network_error));
+    }
+
+    public void getMaterial() {
+        showProgressDialog();
+        AddRecipeService addRecipeService = new AddRecipeService(this);
+        addRecipeService.getMaterial(mEtFoodName.getText().toString());
+    }
+
+    @Override
+    public void getMaterialSuccess(boolean isSuccess, int code, String message, String result) {
+        hideProgressDialog();
+        if (isSuccess && code == 200) {
+            if (result == null) {
+                showCustomToast("추천재료가 없습니다");
+            }
+            else {
+                String material[] = result.split(",");
+                for (int i = 0; i < mMaterial.size(); i++) {
+                    TextView textView = findViewById(Integer.valueOf(mMaterial.get(i)));
+                    mFlowLayoutMaterial.removeView(textView);
+                }
+                mMaterial.clear();
+                for (int i = 0; i < material.length; i++) {
+                    final TextView textView = new TextView(AddRecipeActivity.this);
+                    textView.setId(generateViewId());
+                    textView.setText(material[i]);
+                    textView.setBackgroundResource(R.drawable.radius_8dp_lemon);
+                    textView.setTextColor(getResources().getColor(R.color.colorWhite));
+                    textView.setTextSize(11);
+                    LinearLayout.LayoutParams paramsHashTag = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    textView.setLayoutParams(paramsHashTag);
+                    DisplayMetrics dm = getResources().getDisplayMetrics();
+                    textView.setPadding(Math.round(9*dm.density), Math.round(5*dm.density), Math.round(9*dm.density), Math.round(5*dm.density));
+                    mMaterial.add(textView.getId());
+                    textView.setOnClickListener(new OnSingleClickListener() {
+                        @Override
+                        public void onSingleClick(View v) {
+                            addView(textView.getText().toString());
+                            mMaterial.remove(Integer.valueOf(textView.getId()));
+                            mFlowLayoutMaterial.removeView(textView);
+                        }
+                    });
+                    mFlowLayoutMaterial.addView(textView);
+                }
+            }
+        }
+        else {
+            showCustomToast(message);
+        }
+    }
+
+    @Override
+    public void getMaterialFailure() {
         hideProgressDialog();
         showCustomToast(getResources().getString(R.string.network_error));
     }
