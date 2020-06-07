@@ -24,7 +24,8 @@
         android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="n">
-        <activity android:name=".src.test.Main2Activity"></activity>
+        <activity android:name=".src.PrivacyPolicy"></activity>
+        <activity android:name=".src.test.Main2Activity" />
         <activity android:name=".src.loadRecipe.LoadRecipeActivity" />
         <activity android:name=".src.modifyRecipe.ModifyActivity" />
         <activity android:name=".src.setting.SettingActivity" />

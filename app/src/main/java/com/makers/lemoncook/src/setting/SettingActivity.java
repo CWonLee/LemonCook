@@ -6,6 +6,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -15,6 +16,7 @@ import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.LogoutResponseCallback;
 import com.makers.lemoncook.R;
 import com.makers.lemoncook.src.BaseActivity;
+import com.makers.lemoncook.src.PrivacyPolicy;
 import com.makers.lemoncook.src.login.LoginActivity;
 import com.makers.lemoncook.src.setting.interfaces.SettingActivityView;
 import com.makers.lemoncook.src.splash.SplashActivity;
@@ -23,7 +25,7 @@ import static com.makers.lemoncook.src.ApplicationClass.sSharedPreferences;
 
 public class SettingActivity extends BaseActivity implements SettingActivityView {
 
-    TextView mTvName;
+    TextView mTvName, mTvPrivacyPolicy;
     Button mBtnLogout, mBtnDeleteUser;
     CustomDialogLogout mCustomDialogLogout;
     CustomDialogDeleteUser mCustomDialogDeleteUser;
@@ -38,6 +40,9 @@ public class SettingActivity extends BaseActivity implements SettingActivityView
         mBtnLogout = findViewById(R.id.setting_btn_logout);
         mBtnDeleteUser = findViewById(R.id.setting_btn_delete_user);
         mIvBackBtn = findViewById(R.id.setting_iv_back);
+        mTvPrivacyPolicy = findViewById(R.id.setting_tv_privacy_policy);
+
+        mTvPrivacyPolicy.setText(Html.fromHtml("<u>개인정보처리방침</u>"));
 
         mTvName.setText(getIntent().getStringExtra("name"));
         mBtnLogout.setOnClickListener(new OnSingleClickListener() {
@@ -59,6 +64,14 @@ public class SettingActivity extends BaseActivity implements SettingActivityView
             public void onSingleClick(View v) {
                 mCustomDialogDeleteUser = new CustomDialogDeleteUser(SettingActivity.this, deleteUserPositiveListener, deleteUserNegativeListener);
                 mCustomDialogDeleteUser.show();
+            }
+        });
+
+        mTvPrivacyPolicy.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                Intent intent = new Intent(SettingActivity.this, PrivacyPolicy.class);
+                startActivity(intent);
             }
         });
     }
