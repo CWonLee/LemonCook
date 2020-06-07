@@ -39,7 +39,8 @@ public class RecipeFragment extends Fragment {
 
         mTvNo.setText(Integer.toString(mNo + 1));
         mTvContent.setText(mContent);
-        Glide.with(getContext()).load(mUrl).into(mIvBackground);
+        mIvBackground.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        Glide.with(getContext()).load(mUrl).centerCrop().into(mIvBackground);
 
         return view;
     }

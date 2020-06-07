@@ -44,7 +44,8 @@ public class MaterialFragment extends Fragment {
         mMaterialRecyclerViewAdapter = new MaterialRecyclerViewAdapter(mData);
         mRecyclerView.setAdapter(mMaterialRecyclerViewAdapter);
 
-        Glide.with(getContext()).load(mResult.getImage()).into(mIvBackground);
+        mIvBackground.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        Glide.with(getContext()).load(mResult.getImage()).centerCrop().into(mIvBackground);
         
         return view;
     }

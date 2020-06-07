@@ -41,7 +41,8 @@ public class MainRecipeFragment extends Fragment {
         mTvFoodName.setText(mResult.getName());
         mTvHashTag.setText(mResult.getHashTag());
 
-        Glide.with(getContext()).load(mResult.getImage()).into(mIvBackground);
+        mIvBackground.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        Glide.with(getContext()).load(mResult.getImage()).centerCrop().into(mIvBackground);
         
         return view;
     }

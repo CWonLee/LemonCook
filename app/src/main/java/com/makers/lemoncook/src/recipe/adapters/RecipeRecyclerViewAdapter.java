@@ -46,7 +46,7 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycl
 
     @Override
     public void onBindViewHolder(@NonNull RecipeRecyclerViewAdapter.ViewHolder holder, final int position) {
-        Glide.with(mContext).load(mData.get(position)).into(holder.mImageView);
+        Glide.with(mContext).load(mData.get(position)).centerCrop().into(holder.mImageView);
         holder.mImageView.setBackgroundResource(R.drawable.radius_2dp);
         if (position == mCurNum) {
             holder.mCl.setBackgroundResource(R.drawable.radius_2dp_lemon);

@@ -54,18 +54,17 @@
         android:gravity="center_horizontal"
         android:textColor="@color/colorSplashTextBlack"
         android:textSize="12sp"
-        android:text="@string/splashStringText2"
-        android:fontFamily="@font/notosanscjkkrr_light"/>
+        android:text="@string/splashStringText2"/>
 
     <ImageView
         android:id="@+id/splash_iv_next_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/splash_tv_text2"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:src="@drawable/ic_next"
-        android:layout_marginBottom="111dp" />
+        android:layout_marginTop="50dp"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
