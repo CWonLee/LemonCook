@@ -13,21 +13,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.makers.lemoncook.R;
 import com.makers.lemoncook.src.addRecipe.AddRecipeActivity;
 import com.makers.lemoncook.src.main.adapter.MainRecyclerViewAdapterMy;
+import com.makers.lemoncook.src.recipeList.RecipeListActivity;
 
 import java.util.ArrayList;
 
 public class MainFragmentMy extends Fragment {
 
-    RecyclerView mRecyclerView;
     MainRecyclerViewAdapterMy mMainRecyclerViewAdapterMy;
+    LinearLayout mLlKorean, mLlChinese, mLlJapanese, mLlWestern, mLlDesert, mLlEtc;
     TextView mTvText1;
-    ArrayList<Integer> mImageList = new ArrayList<>();
-    ArrayList<String> mTextList = new ArrayList<>();
     Button mBtnAddRecipe;
 
     public MainFragmentMy() {
@@ -40,17 +40,14 @@ public class MainFragmentMy extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main_fragment_my, container, false);
 
-        Init();
-
         mTvText1 = view.findViewById(R.id.my_tv_text1);
-        mRecyclerView = view.findViewById(R.id.my_rv);
         mBtnAddRecipe = view.findViewById(R.id.my_btn_plus_recipe);
-
-        mMainRecyclerViewAdapterMy = new MainRecyclerViewAdapterMy(mImageList, mTextList, getContext());
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 3);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 8, true));
-        mRecyclerView.setAdapter(mMainRecyclerViewAdapterMy);
+        mLlKorean = view.findViewById(R.id.fm_my_ll_korean);
+        mLlChinese = view.findViewById(R.id.fm_my_ll_chinese);
+        mLlJapanese = view.findViewById(R.id.fm_my_ll_japanese);
+        mLlWestern = view.findViewById(R.id.fm_my_ll_western);
+        mLlDesert = view.findViewById(R.id.fm_my_ll_desert);
+        mLlEtc = view.findViewById(R.id.fm_my_ll_etc);
 
         mTvText1.setText(Html.fromHtml("오늘은 <b>어떤 요리</b>를<br>하셨나요?"));
 
@@ -62,23 +59,62 @@ public class MainFragmentMy extends Fragment {
             }
         });
 
+        mLlKorean.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                Intent intent = new Intent(getContext(), RecipeListActivity.class);
+                intent.putExtra("filter", "My Recipe");
+                intent.putExtra("category", "한식");
+                startActivity(intent);
+            }
+        });
+        mLlChinese.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                Intent intent = new Intent(getContext(), RecipeListActivity.class);
+                intent.putExtra("filter", "My Recipe");
+                intent.putExtra("category", "중식");
+                startActivity(intent);
+            }
+        });
+        mLlJapanese.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                Intent intent = new Intent(getContext(), RecipeListActivity.class);
+                intent.putExtra("filter", "My Recipe");
+                intent.putExtra("category", "일식");
+                startActivity(intent);
+            }
+        });
+        mLlWestern.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                Intent intent = new Intent(getContext(), RecipeListActivity.class);
+                intent.putExtra("filter", "My Recipe");
+                intent.putExtra("category", "양식");
+                startActivity(intent);
+            }
+        });
+        mLlDesert.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                Intent intent = new Intent(getContext(), RecipeListActivity.class);
+                intent.putExtra("filter", "My Recipe");
+                intent.putExtra("category", "디저트");
+                startActivity(intent);
+            }
+        });
+        mLlEtc.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View v) {
+                Intent intent = new Intent(getContext(), RecipeListActivity.class);
+                intent.putExtra("filter", "My Recipe");
+                intent.putExtra("category", "기타");
+                startActivity(intent);
+            }
+        });
+
         return view;
-    }
-
-    public void Init() {
-        mImageList.add(R.drawable.ic_korean);
-        mImageList.add(R.drawable.ic_chinese);
-        mImageList.add(R.drawable.ic_japanese);
-        mImageList.add(R.drawable.ic_western);
-        mImageList.add(R.drawable.ic_dessert);
-        mImageList.add(R.drawable.ic_etc);
-
-        mTextList.add("한식");
-        mTextList.add("중식");
-        mTextList.add("일식");
-        mTextList.add("양식");
-        mTextList.add("디저트");
-        mTextList.add("기타");
     }
 
     public abstract class OnSingleClickListener implements View.OnClickListener {
