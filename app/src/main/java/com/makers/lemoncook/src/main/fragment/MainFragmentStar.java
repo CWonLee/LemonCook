@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.SystemClock;
 import android.text.Html;
@@ -16,10 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.makers.lemoncook.R;
-import com.makers.lemoncook.src.main.adapter.MainRecyclerViewAdapterStar;
 import com.makers.lemoncook.src.recipeList.RecipeListActivity;
-
-import java.util.ArrayList;
 
 public class MainFragmentStar extends Fragment {
 
