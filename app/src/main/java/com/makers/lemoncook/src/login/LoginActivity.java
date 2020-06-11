@@ -159,8 +159,6 @@ public class LoginActivity extends BaseActivity implements LoginActivityView {
     private View.OnClickListener getRecipePositiveListener = new View.OnClickListener() {
         public void onClick(View v) {
             int recipeNo = Integer.parseInt(Objects.requireNonNull(getIntent().getData()).getQueryParameter("recipeNo"));
-            System.out.println("레시피번호가 안뜬다고?");
-            System.out.println("recipeNo = " + recipeNo);
             postShare(recipeNo);
 
             mCustomDialogGetRecipe.dismiss();

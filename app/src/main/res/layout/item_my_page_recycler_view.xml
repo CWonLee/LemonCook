@@ -15,6 +15,11 @@
         android:scaleType="centerCrop"
         android:adjustViewBounds="true"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/round_list_background"/>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/item_my_page_cl_item"
         android:layout_width="match_parent"
